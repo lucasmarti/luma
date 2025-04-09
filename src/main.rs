@@ -1,6 +1,7 @@
 mod bitboard;
 mod directions;
 mod evaluation;
+mod game;
 mod minimax;
 mod position;
 
