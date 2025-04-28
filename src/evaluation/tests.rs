@@ -17,11 +17,6 @@ fn test_equal_material() {
         black_bishops: Bitboard::from(1),
         black_knights: Bitboard::from(1),
         black_pawns: Bitboard::from(1),
-        white_kingside_castel_is_possible: true,
-        white_queenside_castel_is_possible: true,
-        black_kingside_castel_is_possible: true,
-        black_queenside_castel_is_possible: true,
-        current_player: Color::White,
     };
     assert_eq!(evaluate(&position), 0);
 }
@@ -41,11 +36,6 @@ fn test_white_queen_missing() {
         black_bishops: Bitboard::from(1),
         black_knights: Bitboard::from(1),
         black_pawns: Bitboard::from(1) | Bitboard::from(2),
-        white_kingside_castel_is_possible: true,
-        white_queenside_castel_is_possible: true,
-        black_kingside_castel_is_possible: true,
-        black_queenside_castel_is_possible: true,
-        current_player: Color::White,
     };
     assert_eq!(evaluate(&position), -9);
 }
@@ -65,11 +55,6 @@ fn test_black_queen_missing() {
         black_bishops: Bitboard::from(1),
         black_knights: Bitboard::from(1),
         black_pawns: Bitboard::from(1),
-        white_kingside_castel_is_possible: true,
-        white_queenside_castel_is_possible: true,
-        black_kingside_castel_is_possible: true,
-        black_queenside_castel_is_possible: true,
-        current_player: Color::White,
     };
     assert_eq!(evaluate(&position), 9);
 }

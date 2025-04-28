@@ -1,10 +1,10 @@
+use position::Position;
+
 mod bitboard;
 mod directions;
+mod engine;
 mod evaluation;
-mod game;
 mod minimax;
 mod position;
 
-fn main() {
-    println!("Hello, world!");
-}
+fn main() {}

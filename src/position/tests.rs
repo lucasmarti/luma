@@ -23,3 +23,5 @@ fn test_get_all() {
     let position = Position::new_starting_position();
     assert_eq!(position.get_all().count_ones(), 32);
 }
+
+
