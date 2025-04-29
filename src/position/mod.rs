@@ -1,5 +1,8 @@
-use crate::bitboard::Bitboard;
-
+use crate::{
+    bitboard::Bitboard,
+    piece::{self, Color, Piece, Type},
+};
+#[derive(Clone, Copy)]
 pub struct Position {
     pub white_king: Bitboard,
     pub white_queen: Bitboard,
@@ -52,6 +55,50 @@ impl Position {
 
     pub fn get_all(&self) -> Bitboard {
         self.get_black() | self.get_white()
+    }
+
+    pub fn move_piece(mut self, piece: Piece, from_index: u32, to_index: u32) -> Position {
+        self.remove_piece(from_index)
+            .remove_piece(to_index)
+            .put_piece(piece, to_index)
+    }
+
+    fn put_piece(mut self, piece: Piece, index: u32) -> Position {
+        match piece.color {
+            Color::BLACK => match piece.type_ {
+                Type::KING => self.black_king.set_bit(index),
+                Type::QUEEN => self.black_queen.set_bit(index),
+                Type::ROOK => self.black_rooks.set_bit(index),
+                Type::PAWN => self.black_pawns.set_bit(index),
+                Type::KNIGHT => self.black_knights.set_bit(index),
+                Type::BISHOP => self.black_bishops.set_bit(index),
+            },
+            Color::WHITE => match piece.type_ {
+                Type::KING => self.white_king.set_bit(index),
+                Type::QUEEN => self.white_queen.set_bit(index),
+                Type::ROOK => self.white_rooks.set_bit(index),
+                Type::PAWN => self.white_pawns.set_bit(index),
+                Type::KNIGHT => self.white_knights.set_bit(index),
+                Type::BISHOP => self.white_bishops.set_bit(index),
+            },
+        }
+        self
+    }
+
+    fn remove_piece(mut self, index: u32) -> Position {
+        self.black_king.remove_bit(index);
+        self.black_queen.remove_bit(index);
+        self.black_rooks.remove_bit(index);
+        self.black_pawns.remove_bit(index);
+        self.black_knights.remove_bit(index);
+        self.black_bishops.remove_bit(index);
+        self.white_king.remove_bit(index);
+        self.white_queen.remove_bit(index);
+        self.white_rooks.remove_bit(index);
+        self.white_pawns.remove_bit(index);
+        self.white_knights.remove_bit(index);
+        self.white_bishops.remove_bit(index);
+        self
     }
 }
 

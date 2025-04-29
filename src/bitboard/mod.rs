@@ -30,7 +30,7 @@ impl Bitboard {
         self.0.bit(index)
     }
 
-    fn set_bit(&mut self, index: u32) {
+    pub fn set_bit(&mut self, index: u32) {
         self.0.set_bit(index, true);
     }
 
