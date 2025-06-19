@@ -1,6 +1,6 @@
 use crate::{
     bitboard::Bitboard,
-    directions, engine,
+    chess_moves, directions,
     position::{self, Position},
 };
 

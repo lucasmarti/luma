@@ -1,6 +1,8 @@
 use crate::{
     bitboard::Bitboard,
-    piece::{self, Color, Piece, Type},
+    chess_moves::{ChessMove, Progress, Promotion},
+    directions::*,
+    piece::{Color, Piece, Typ, BLACK_KING, BLACK_ROOK, WHITE_KING, WHITE_ROOK},
 };
 #[derive(Clone, Copy)]
 pub struct Position {
@@ -20,18 +22,18 @@ pub struct Position {
 impl Position {
     pub fn new_starting_position() -> Position {
         Position {
-            white_king: Bitboard::from(4),
-            white_queen: Bitboard::from(3),
-            white_rooks: Bitboard::from_vec(vec![0, 7]),
-            white_bishops: Bitboard::from_vec(vec![2, 5]),
-            white_knights: Bitboard::from_vec(vec![1, 6]),
-            white_pawns: Bitboard::from_vec(vec![8, 9, 10, 11, 12, 13, 14, 15]),
-            black_king: Bitboard::from(60),
-            black_queen: Bitboard::from(59),
-            black_rooks: Bitboard::from_vec(vec![56, 63]),
-            black_bishops: Bitboard::from_vec(vec![58, 61]),
-            black_knights: Bitboard::from_vec(vec![57, 62]),
-            black_pawns: Bitboard::from_vec(vec![48, 49, 50, 51, 52, 53, 54, 55]),
+            white_king: Bitboard::from(E1),
+            white_queen: Bitboard::from(D1),
+            white_rooks: Bitboard::from_vec(vec![A1, H1]),
+            white_bishops: Bitboard::from_vec(vec![C1, F1]),
+            white_knights: Bitboard::from_vec(vec![B1, G1]),
+            white_pawns: Bitboard::from_vec(vec![A2, B2, C2, D2, E2, F2, G2, H2]),
+            black_king: Bitboard::from(E8),
+            black_queen: Bitboard::from(D8),
+            black_rooks: Bitboard::from_vec(vec![A8, H8]),
+            black_bishops: Bitboard::from_vec(vec![C8, F8]),
+            black_knights: Bitboard::from_vec(vec![B8, G8]),
+            black_pawns: Bitboard::from_vec(vec![A7, B7, C7, D7, E7, F7, G7, H7]),
         }
     }
 
@@ -57,29 +59,73 @@ impl Position {
         self.get_black() | self.get_white()
     }
 
-    pub fn move_piece(mut self, piece: Piece, from_index: u32, to_index: u32) -> Position {
-        self.remove_piece(from_index)
-            .remove_piece(to_index)
-            .put_piece(piece, to_index)
+    pub fn move_piece(self, possible_moves: ChessMove) -> Position {
+        match possible_moves {
+            ChessMove::Progress(progress) => self.progress(progress),
+            ChessMove::Promotion(promotion) => self.promote(promotion),
+            ChessMove::BlackKingsideCastle => self.black_kingside_castle(),
+            ChessMove::BlackQueensideCastle => self.black_queenside_castle(),
+            ChessMove::WhiteKingsideCastle => self.white_kingside_castle(),
+            ChessMove::WhiteQueensideCastle => self.white_queenside_castle(),
+        }
+    }
+    fn progress(self, progress: Progress) -> Position {
+        self.remove_piece(progress.from)
+            .remove_piece(progress.to)
+            .put_piece(progress.piece, progress.to)
+    }
+
+    fn promote(self, promotion: Promotion) -> Position {
+        self.remove_piece(promotion.from)
+            .remove_piece(promotion.to)
+            .put_piece(promotion.new_piece, promotion.to)
+    }
+
+    fn white_queenside_castle(self) -> Position {
+        self.remove_piece(E1)
+            .put_piece(WHITE_KING, C1)
+            .remove_piece(A1)
+            .put_piece(WHITE_ROOK, D1)
+    }
+
+    fn white_kingside_castle(self) -> Position {
+        self.remove_piece(E1)
+            .put_piece(WHITE_KING, G1)
+            .remove_piece(H1)
+            .put_piece(WHITE_ROOK, F1)
+    }
+
+    fn black_queenside_castle(self) -> Position {
+        self.remove_piece(E8)
+            .put_piece(BLACK_KING, C8)
+            .remove_piece(A8)
+            .put_piece(BLACK_ROOK, D8)
+    }
+
+    fn black_kingside_castle(self) -> Position {
+        self.remove_piece(E8)
+            .put_piece(BLACK_KING, G8)
+            .remove_piece(H8)
+            .put_piece(BLACK_ROOK, F8)
     }
 
     fn put_piece(mut self, piece: Piece, index: u32) -> Position {
         match piece.color {
-            Color::BLACK => match piece.type_ {
-                Type::KING => self.black_king.set_bit(index),
-                Type::QUEEN => self.black_queen.set_bit(index),
-                Type::ROOK => self.black_rooks.set_bit(index),
-                Type::PAWN => self.black_pawns.set_bit(index),
-                Type::KNIGHT => self.black_knights.set_bit(index),
-                Type::BISHOP => self.black_bishops.set_bit(index),
+            Color::Black => match piece.typ {
+                Typ::King => self.black_king.set_bit(index),
+                Typ::Queen => self.black_queen.set_bit(index),
+                Typ::Rook => self.black_rooks.set_bit(index),
+                Typ::Pawn => self.black_pawns.set_bit(index),
+                Typ::Knight => self.black_knights.set_bit(index),
+                Typ::Bishop => self.black_bishops.set_bit(index),
             },
-            Color::WHITE => match piece.type_ {
-                Type::KING => self.white_king.set_bit(index),
-                Type::QUEEN => self.white_queen.set_bit(index),
-                Type::ROOK => self.white_rooks.set_bit(index),
-                Type::PAWN => self.white_pawns.set_bit(index),
-                Type::KNIGHT => self.white_knights.set_bit(index),
-                Type::BISHOP => self.white_bishops.set_bit(index),
+            Color::White => match piece.typ {
+                Typ::King => self.white_king.set_bit(index),
+                Typ::Queen => self.white_queen.set_bit(index),
+                Typ::Rook => self.white_rooks.set_bit(index),
+                Typ::Pawn => self.white_pawns.set_bit(index),
+                Typ::Knight => self.white_knights.set_bit(index),
+                Typ::Bishop => self.white_bishops.set_bit(index),
             },
         }
         self
