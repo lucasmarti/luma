@@ -1,4 +1,8 @@
-use crate::{directions::*, king::*, position::Position};
+use crate::{
+    directions::*,
+    position::Position,
+    possible_moves::king::{get_possible_black_moves, get_possible_white_moves},
+};
 
 #[test]
 fn test_get_possible_black_moves() {

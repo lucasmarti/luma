@@ -109,7 +109,7 @@ impl Position {
             .put_piece(BLACK_ROOK, F8)
     }
 
-    fn put_piece(mut self, piece: Piece, index: u32) -> Position {
+    pub fn put_piece(mut self, piece: Piece, index: u32) -> Position {
         match piece.color {
             Color::Black => match piece.typ {
                 Typ::King => self.black_king.set_bit(index),

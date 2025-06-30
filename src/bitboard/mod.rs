@@ -2,7 +2,7 @@ use intbits::Bits;
 use iterator::BitboardIterator;
 use std::ops::{BitAnd, BitOr};
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 
 pub struct Bitboard(u64);
 impl Bitboard {

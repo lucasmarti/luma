@@ -1,5 +1,5 @@
 use crate::piece::Piece;
-
+#[derive(PartialEq)]
 pub enum ChessMove {
     Promotion(Promotion),
     Progress(Progress),
@@ -8,6 +8,7 @@ pub enum ChessMove {
     WhiteKingsideCastle,
     WhiteQueensideCastle,
 }
+#[derive(PartialEq)]
 pub struct Promotion {
     pub piece: Piece,
     pub from: u32,
@@ -15,6 +16,7 @@ pub struct Promotion {
     pub new_piece: Piece,
 }
 
+#[derive(PartialEq)]
 pub struct Progress {
     pub piece: Piece,
     pub from: u32,

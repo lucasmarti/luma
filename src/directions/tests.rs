@@ -1,4 +1,4 @@
-use crate::directions::*;
+use crate::directions::{self, *};
 
 #[test]
 fn test_up() {
@@ -94,4 +94,52 @@ fn test_down_down_right() {
     assert_eq!(down_down_right(12), None);
     assert_eq!(down_down_right(39), None);
     assert_eq!(down_down_right(43).unwrap(), 28);
+}
+
+#[test]
+fn test_all_up() {
+    assert_eq!(directions::all_up(G5), vec![G6, G7, G8]);
+    assert_eq!(directions::all_up(B8), vec![]);
+}
+
+#[test]
+fn test_all_down() {
+    assert_eq!(directions::all_down(G5), vec![G4, G3, G2, G1]);
+    assert_eq!(directions::all_down(G1), vec![]);
+}
+
+#[test]
+fn test_all_left() {
+    assert_eq!(directions::all_left(G5), vec![F5, E5, D5, C5, B5, A5]);
+    assert_eq!(directions::all_left(A4), vec![]);
+}
+
+#[test]
+fn test_all_right() {
+    assert_eq!(directions::all_right(E5), vec![F5, G5, H5]);
+    assert_eq!(directions::all_right(H4), vec![]);
+}
+
+#[test]
+fn test_all_up_right() {
+    assert_eq!(directions::all_up_right(E5), vec![F6, G7, H8]);
+    assert_eq!(directions::all_up_right(H4), vec![]);
+}
+
+#[test]
+fn test_all_up_left() {
+    assert_eq!(directions::all_up_left(E5), vec![D6, C7, B8]);
+    assert_eq!(directions::all_up_left(A4), vec![]);
+}
+
+#[test]
+fn test_all_down_left() {
+    assert_eq!(directions::all_down_left(E5), vec![D4, C3, B2, A1]);
+    assert_eq!(directions::all_down_left(A4), vec![]);
+}
+
+#[test]
+fn test_all_down_right() {
+    assert_eq!(directions::all_down_right(E5), vec![F4, G3, H2]);
+    assert_eq!(directions::all_down_right(H4), vec![]);
 }
