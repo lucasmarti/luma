@@ -1,15 +1,12 @@
 use crate::{
-    chess_moves::ChessMove,
-    directions::*,
-    piece::WHITE_QUEEN,
-    position::{self, Position},
-    possible_moves::queen::get_possible_white_moves,
+    chess_moves::ChessMove, directions::*, position::Position,
+    possible_moves::rook::get_possible_black_moves,
 };
 
 #[test]
 fn test_get_possible_white_moves() {
-    let moves = get_possible_white_moves(&Position::default(), G4);
-    assert!(moves.len() == 23);
+    let moves = get_possible_black_moves(&Position::default(), G4);
+    assert!(moves.len() == 14);
     // down
     assert!(contains(&moves, G3));
     // up
@@ -18,18 +15,9 @@ fn test_get_possible_white_moves() {
     assert!(contains(&moves, A4));
     // right
     assert!(contains(&moves, H4));
-    // left up
-    assert!(contains(&moves, F5));
-    // left down
-    assert!(contains(&moves, F3));
-    // right up
-    assert!(contains(&moves, H5));
-    // right down
-    assert!(contains(&moves, H3));
-
+    // not
     assert!(!contains(&moves, B2));
 }
-
 fn contains(moves: &Vec<ChessMove>, field: u32) -> bool {
     for m in moves {
         match m {

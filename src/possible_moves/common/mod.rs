@@ -34,14 +34,14 @@ pub fn explore(position: &Position, from: u32, path: Vec<u32>, piece: Piece) -> 
     moves
 }
 
-fn get_own_pieces(position: &Position, color: Color) -> Bitboard {
+pub fn get_own_pieces(position: &Position, color: Color) -> Bitboard {
     match color {
         Color::Black => position.get_black(),
         Color::White => position.get_white(),
     }
 }
 
-fn get_opponent_pieces(position: &Position, color: Color) -> Bitboard {
+pub fn get_opponent_pieces(position: &Position, color: Color) -> Bitboard {
     match color {
         Color::White => position.get_black(),
         Color::Black => position.get_white(),

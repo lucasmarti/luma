@@ -1,36 +1,40 @@
 use crate::{
+    bitboard::Bitboard,
     chess_moves::{ChessMove, Progress},
     directions::{self, left},
-    piece::{BLACK_KING, WHITE_KING},
+    piece::{Color, Piece, BLACK_KING, WHITE_KING},
     position::Position,
+    possible_moves::common::{get_opponent_pieces, get_own_pieces},
 };
 
-pub fn get_possible_black_moves(position: &Position, index: u32) -> Vec<ChessMove> {
+pub fn get_possible_black_moves(position: &Position, from: u32) -> Vec<ChessMove> {
+    get_possible_moves(position, from, Color::Black)
+}
+pub fn get_possible_white_moves(position: &Position, from: u32) -> Vec<ChessMove> {
+    get_possible_moves(position, from, Color::White)
+}
+
+fn get_possible_moves(position: &Position, from: u32, color: Color) -> Vec<ChessMove> {
+    let king = get_king(color);
+    let own_pieces: Bitboard = get_own_pieces(position, color);
     let mut moves: Vec<ChessMove> = Vec::new();
-    for neighbour in get_neighbours(index) {
-        if !position.get_black().contains(neighbour) {
+    for neighbour in get_neighbours(from) {
+        if !own_pieces.contains(neighbour) {
             moves.push(ChessMove::Progress(Progress {
-                from: index,
+                from: from,
                 to: neighbour,
-                piece: BLACK_KING,
+                piece: king,
             }));
         }
     }
     moves
 }
 
-pub fn get_possible_white_moves(position: &Position, index: u32) -> Vec<ChessMove> {
-    let mut moves: Vec<ChessMove> = Vec::new();
-    for neighbour in get_neighbours(index) {
-        if !position.get_white().contains(neighbour) {
-            moves.push(ChessMove::Progress(Progress {
-                from: index,
-                to: neighbour,
-                piece: WHITE_KING,
-            }));
-        }
+fn get_king(color: Color) -> Piece {
+    match color {
+        Color::Black => BLACK_KING,
+        Color::White => WHITE_KING,
     }
-    moves
 }
 
 fn get_neighbours(index: u32) -> Vec<u32> {

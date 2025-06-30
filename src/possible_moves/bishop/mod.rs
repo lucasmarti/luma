@@ -1,10 +1,9 @@
 use crate::{
-    bitboard::Bitboard,
-    chess_moves::{ChessMove, Progress},
+    chess_moves::ChessMove,
     directions,
-    piece::{Color, Piece, BLACK_QUEEN, WHITE_QUEEN},
+    piece::{Color, Piece, BLACK_BISHOP, WHITE_BISHOP},
     position::Position,
-    possible_moves::{common::explore, queen},
+    possible_moves::common::explore,
 };
 
 pub fn get_possible_white_moves(position: &Position, from: u32) -> Vec<ChessMove> {
@@ -16,43 +15,39 @@ pub fn get_possible_black_moves(position: &Position, from: u32) -> Vec<ChessMove
 }
 
 fn get_possible_moves(position: &Position, from: u32, color: Color) -> Vec<ChessMove> {
-    let queen = get_queen(color);
+    let bishop = get_bishop(color);
     let mut moves: Vec<ChessMove> = Vec::new();
-    moves.extend(explore(position, from, directions::all_up(from), queen));
-    moves.extend(explore(position, from, directions::all_left(from), queen));
-    moves.extend(explore(position, from, directions::all_down(from), queen));
-    moves.extend(explore(position, from, directions::all_right(from), queen));
     moves.extend(explore(
         position,
         from,
         directions::all_up_left(from),
-        queen,
+        bishop,
     ));
     moves.extend(explore(
         position,
         from,
         directions::all_up_right(from),
-        queen,
+        bishop,
     ));
     moves.extend(explore(
         position,
         from,
         directions::all_down_left(from),
-        queen,
+        bishop,
     ));
     moves.extend(explore(
         position,
         from,
         directions::all_down_right(from),
-        queen,
+        bishop,
     ));
     moves
 }
 
-fn get_queen(color: Color) -> Piece {
+fn get_bishop(color: Color) -> Piece {
     match color {
-        Color::Black => BLACK_QUEEN,
-        Color::White => WHITE_QUEEN,
+        Color::Black => BLACK_BISHOP,
+        Color::White => WHITE_BISHOP,
     }
 }
 mod tests;
