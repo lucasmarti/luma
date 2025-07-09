@@ -143,3 +143,24 @@ fn test_all_down_right() {
     assert_eq!(directions::all_down_right(E5), vec![F4, G3, H2]);
     assert_eq!(directions::all_down_right(H4), vec![]);
 }
+
+#[test]
+fn test_row_2() {
+    assert!(is_in_row_2(F2));
+}
+#[test]
+fn test_row_7() {
+    assert!(is_in_row_7(E7));
+}
+
+#[test]
+fn test_two_up() {
+    assert_eq!(two_up(E5), Some(E7));
+    assert_eq!(two_up(F7), None);
+}
+
+#[test]
+fn test_two_down() {
+    assert_eq!(two_down(C3), Some(C1));
+    assert_eq!(two_down(C1), None);
+}

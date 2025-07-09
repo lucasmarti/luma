@@ -1,6 +1,6 @@
 use crate::{
     bitboard::Bitboard,
-    chess_moves::{self, ChessMove, Progress, Promotion},
+    chess_moves::{self, ChessMove, EnPassant, Progress, Promotion},
     directions::*,
     piece::*,
     position,
@@ -57,6 +57,23 @@ fn test_promotion() {
     assert_eq!(new_position.white_queen.contains(A8), true);
     assert_eq!(new_position.white_pawns.contains(A7), false);
 }
+#[test]
+fn test_en_passant() {
+    let position = Position::default()
+        .put_piece(WHITE_PAWN, D4)
+        .put_piece(BLACK_PAWN, E4);
+    let enPassant = EnPassant {
+        piece: BLACK_PAWN,
+        from: E4,
+        to: D3,
+        capture: D4,
+    };
+    let new_position = position.move_piece(ChessMove::EnPassant(enPassant));
+    assert!(!new_position.white_pawns.contains(D4));
+    assert!(!new_position.black_pawns.contains(E4));
+    assert!(new_position.black_pawns.contains(D3));
+}
+
 #[test]
 fn test_white_kingside_castle() {
     let position = Position::default()

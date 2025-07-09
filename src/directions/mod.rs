@@ -116,7 +116,39 @@ pub const H5: u32 = 39;
 pub const H6: u32 = 47;
 pub const H7: u32 = 55;
 pub const H8: u32 = 63;
+#[derive(Copy, Clone)]
+pub enum EnPassantField {
+    A4,
+    B4,
+    C4,
+    D4,
+    E4,
+    F4,
+    G4,
+    H4,
+    A5,
+    B5,
+    C5,
+    D5,
+    E5,
+    F5,
+    G5,
+    H5,
+}
 
+pub fn two_up(index: u32) -> Option<u32> {
+    if let Some(one_up) = up(index) {
+        return up(one_up);
+    }
+    None
+}
+
+pub fn two_down(index: u32) -> Option<u32> {
+    if let Some(one_down) = down(index) {
+        return down(one_down);
+    }
+    None
+}
 pub fn all_up(index: u32) -> Vec<u32> {
     let mut all: Vec<u32> = Vec::new();
     let mut optional = up(index);
@@ -321,19 +353,19 @@ pub fn left_left_down(index: u32) -> Option<u32> {
         None
     }
 }
-fn is_in_last_or_second_last_row(index: u32) -> bool {
-    index >= 48
+pub fn is_in_last_or_second_last_row(index: u32) -> bool {
+    index >= A7
 }
 
-fn is_in_first_or_second_row(index: u32) -> bool {
-    index <= 15
+pub fn is_in_first_or_second_row(index: u32) -> bool {
+    index <= H2
 }
 
 fn is_in_first_or_second_column(index: u32) -> bool {
     (index % 8 == 0) || (index % 8 == 1)
 }
 
-fn is_in_last_or_second_last_column(index: u32) -> bool {
+pub fn is_in_last_or_second_last_column(index: u32) -> bool {
     (index % 8 == 7) || (index % 8 == 6)
 }
 
@@ -345,12 +377,20 @@ fn is_in_last_column(index: u32) -> bool {
     index % 8 == 7
 }
 
-fn is_in_first_row(index: u32) -> bool {
-    index < 8
+pub fn is_in_first_row(index: u32) -> bool {
+    index < A2
 }
 
-fn is_in_last_row(index: u32) -> bool {
-    index > 55
+pub fn is_in_last_row(index: u32) -> bool {
+    index >= A8
+}
+
+pub fn is_in_row_2(index: u32) -> bool {
+    index >= A2 && index <= H2
+}
+
+pub fn is_in_row_7(index: u32) -> bool {
+    index >= A7 && index <= H7
 }
 
 #[cfg(test)]

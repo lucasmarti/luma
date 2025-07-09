@@ -1,6 +1,6 @@
 use crate::{
     bitboard::Bitboard,
-    chess_moves::{ChessMove, Progress, Promotion},
+    chess_moves::{ChessMove, EnPassant, Progress, Promotion},
     directions::*,
     piece::{Color, Piece, Typ, BLACK_KING, BLACK_ROOK, WHITE_KING, WHITE_ROOK},
 };
@@ -12,12 +12,17 @@ pub struct Position {
     pub white_bishops: Bitboard,
     pub white_knights: Bitboard,
     pub white_pawns: Bitboard,
+    pub white_kingside_castle: bool,
+    pub white_queenside_castle: bool,
     pub black_king: Bitboard,
     pub black_queen: Bitboard,
     pub black_rooks: Bitboard,
     pub black_bishops: Bitboard,
     pub black_knights: Bitboard,
     pub black_pawns: Bitboard,
+    pub black_kingside_castle: bool,
+    pub black_queenside_castle: bool,
+    pub en_passant: Option<u32>,
 }
 impl Position {
     pub fn new_starting_position() -> Position {
@@ -34,6 +39,7 @@ impl Position {
             black_bishops: Bitboard::from_vec(vec![C8, F8]),
             black_knights: Bitboard::from_vec(vec![B8, G8]),
             black_pawns: Bitboard::from_vec(vec![A7, B7, C7, D7, E7, F7, G7, H7]),
+            ..Default::default()
         }
     }
 
@@ -63,6 +69,7 @@ impl Position {
         match possible_moves {
             ChessMove::Progress(progress) => self.progress(progress),
             ChessMove::Promotion(promotion) => self.promote(promotion),
+            ChessMove::EnPassant(en_passant) => self.enPassant(en_passant),
             ChessMove::BlackKingsideCastle => self.black_kingside_castle(),
             ChessMove::BlackQueensideCastle => self.black_queenside_castle(),
             ChessMove::WhiteKingsideCastle => self.white_kingside_castle(),
@@ -79,6 +86,12 @@ impl Position {
         self.remove_piece(promotion.from)
             .remove_piece(promotion.to)
             .put_piece(promotion.new_piece, promotion.to)
+    }
+    fn enPassant(self, enPassant: EnPassant) -> Position {
+        self.remove_piece(enPassant.from)
+            .remove_piece(enPassant.capture)
+            .remove_piece(enPassant.to)
+            .put_piece(enPassant.piece, enPassant.to)
     }
 
     fn white_queenside_castle(self) -> Position {
@@ -163,6 +176,11 @@ impl Default for Position {
             black_bishops: Default::default(),
             black_knights: Default::default(),
             black_pawns: Default::default(),
+            white_kingside_castle: false,
+            white_queenside_castle: false,
+            black_kingside_castle: false,
+            black_queenside_castle: false,
+            en_passant: None,
         }
     }
 }

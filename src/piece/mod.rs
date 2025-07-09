@@ -1,10 +1,10 @@
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 
 pub struct Piece {
     pub typ: Typ,
     pub color: Color,
 }
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub enum Typ {
     King,
     Queen,
@@ -13,7 +13,7 @@ pub enum Typ {
     Knight,
     Bishop,
 }
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub enum Color {
     Black,
     White,
