@@ -45,6 +45,8 @@ const TWO_ROWS: u32 = 16;
 const ONE_COLUMN: u32 = 1;
 const TWO_COLUMNS: u32 = 2;
 
+pub type DirectionFn = fn(u32) -> Option<u32>;
+
 pub const A1: u32 = 0;
 pub const A2: u32 = 8;
 pub const A3: u32 = 16;

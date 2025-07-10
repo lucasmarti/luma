@@ -1,9 +1,9 @@
 use crate::{
     chess_moves::ChessMove,
-    directions,
+    directions::{self, DirectionFn},
     piece::{Color, Piece, BLACK_ROOK, WHITE_ROOK},
     position::Position,
-    possible_moves::common::explore,
+    possible_moves::common::get_sliding_moves,
 };
 
 pub fn get_possible_white_moves(position: &Position, from: u32) -> Vec<ChessMove> {
@@ -13,14 +13,16 @@ pub fn get_possible_white_moves(position: &Position, from: u32) -> Vec<ChessMove
 pub fn get_possible_black_moves(position: &Position, from: u32) -> Vec<ChessMove> {
     get_possible_moves(position, from, Color::Black)
 }
+const ROOK_DIRECTIONS: [DirectionFn; 4] = [
+    directions::up,
+    directions::down,
+    directions::left,
+    directions::right,
+];
+
 fn get_possible_moves(position: &Position, from: u32, color: Color) -> Vec<ChessMove> {
     let rook = get_rook(color);
-    let mut moves: Vec<ChessMove> = Vec::new();
-    moves.extend(explore(position, from, directions::all_up(from), rook));
-    moves.extend(explore(position, from, directions::all_left(from), rook));
-    moves.extend(explore(position, from, directions::all_down(from), rook));
-    moves.extend(explore(position, from, directions::all_right(from), rook));
-    moves
+    get_sliding_moves(position, from, color, &ROOK_DIRECTIONS, rook)
 }
 
 fn get_rook(color: Color) -> Piece {

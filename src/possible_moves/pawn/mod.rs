@@ -1,7 +1,7 @@
 use crate::{
     bitboard::Bitboard,
     chess_moves::{ChessMove, EnPassant, Progress, Promotion},
-    directions,
+    directions::{self, DirectionFn},
     piece::{
         Piece, BLACK_BISHOP, BLACK_KNIGHT, BLACK_PAWN, BLACK_QUEEN, BLACK_ROOK, WHITE_BISHOP,
         WHITE_KNIGHT, WHITE_PAWN, WHITE_QUEEN, WHITE_ROOK,
@@ -50,7 +50,6 @@ fn get_possible_black_moves(position: &Position, from: u32) -> Vec<ChessMove> {
     moves.extend(get_moves_black_promotion_right_capture(position, from));
     moves
 }
-type DirectionFn = fn(u32) -> Option<u32>;
 type MoveFn = fn(&Position, u32) -> Option<ChessMove>;
 
 const WHITE_PROMOTION_PIECES: [Piece; 4] = [WHITE_QUEEN, WHITE_ROOK, WHITE_BISHOP, WHITE_KNIGHT];

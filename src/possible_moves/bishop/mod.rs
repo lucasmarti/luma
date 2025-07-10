@@ -1,9 +1,9 @@
 use crate::{
     chess_moves::ChessMove,
-    directions,
+    directions::{self, DirectionFn},
     piece::{Color, Piece, BLACK_BISHOP, WHITE_BISHOP},
     position::Position,
-    possible_moves::common::explore,
+    possible_moves::common::get_sliding_moves,
 };
 
 pub fn get_possible_white_moves(position: &Position, from: u32) -> Vec<ChessMove> {
@@ -14,34 +14,16 @@ pub fn get_possible_black_moves(position: &Position, from: u32) -> Vec<ChessMove
     get_possible_moves(position, from, Color::Black)
 }
 
+const BISHOP_DIRECTIONS: [DirectionFn; 4] = [
+    directions::up_left,
+    directions::up_right,
+    directions::down_left,
+    directions::down_right,
+];
+
 fn get_possible_moves(position: &Position, from: u32, color: Color) -> Vec<ChessMove> {
     let bishop = get_bishop(color);
-    let mut moves: Vec<ChessMove> = Vec::new();
-    moves.extend(explore(
-        position,
-        from,
-        directions::all_up_left(from),
-        bishop,
-    ));
-    moves.extend(explore(
-        position,
-        from,
-        directions::all_up_right(from),
-        bishop,
-    ));
-    moves.extend(explore(
-        position,
-        from,
-        directions::all_down_left(from),
-        bishop,
-    ));
-    moves.extend(explore(
-        position,
-        from,
-        directions::all_down_right(from),
-        bishop,
-    ));
-    moves
+    get_sliding_moves(position, from, color, &BISHOP_DIRECTIONS, bishop)
 }
 
 fn get_bishop(color: Color) -> Piece {
