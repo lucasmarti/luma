@@ -1,4 +1,5 @@
 mod bitboard;
+mod check;
 mod chess_moves;
 mod directions;
 mod evaluation;
