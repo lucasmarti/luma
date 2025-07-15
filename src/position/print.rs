@@ -1,4 +1,4 @@
-use crate::bitboard::Bitboard;
+use crate::position::bitboard::Bitboard;
 
 use super::Position;
 

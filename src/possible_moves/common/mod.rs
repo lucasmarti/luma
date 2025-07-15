@@ -1,5 +1,4 @@
 use crate::{
-    bitboard::Bitboard,
     chess_moves::{ChessMove, Progress},
     directions::DirectionFn,
     piece::{Color, Piece},
@@ -8,14 +7,12 @@ use crate::{
 
 pub fn slide(position: &Position, from: u32, path: Vec<u32>, piece: Piece) -> Vec<ChessMove> {
     let mut moves: Vec<ChessMove> = Vec::new();
-    let own_pieces: Bitboard = get_own_pieces(position, piece.color);
-    let opponent_pieces: Bitboard = get_opponent_pieces(position, piece.color);
 
     for field in path {
-        if own_pieces.contains(field) {
+        if position.is_occupied_by_color(field, piece.color) {
             // collision with own
             return moves;
-        } else if opponent_pieces.contains(field) {
+        } else if position.is_occupied_by_color(field, piece.color.get_opponent_color()) {
             // capture
             moves.push(ChessMove::Progress(Progress {
                 from: from,
@@ -33,20 +30,6 @@ pub fn slide(position: &Position, from: u32, path: Vec<u32>, piece: Piece) -> Ve
         }
     }
     moves
-}
-
-pub fn get_own_pieces(position: &Position, color: Color) -> Bitboard {
-    match color {
-        Color::Black => position.get_black(),
-        Color::White => position.get_white(),
-    }
-}
-
-pub fn get_opponent_pieces(position: &Position, color: Color) -> Bitboard {
-    match color {
-        Color::White => position.get_black(),
-        Color::Black => position.get_white(),
-    }
 }
 
 pub fn get_piece_moves(

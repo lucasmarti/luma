@@ -1,5 +1,4 @@
 use crate::{
-    bitboard::Bitboard,
     chess_moves::{ChessMove, EnPassant, Progress, Promotion},
     directions::{self, DirectionFn},
     piece::{
@@ -60,10 +59,9 @@ fn get_move_capture(
     from: u32,
     direction: DirectionFn,
     piece: Piece,
-    opponent: Bitboard,
 ) -> Option<ChessMove> {
     if let Some(to) = direction(from) {
-        if opponent.contains(to) {
+        if position.is_occupied_by_color(to, piece.color.get_opponent_color()) {
             return Some(ChessMove::Progress(Progress { piece, from, to }));
         }
     }
@@ -74,13 +72,7 @@ fn get_move_white_left_capture(position: &Position, from: u32) -> Option<ChessMo
     if directions::is_in_row_7(from) {
         return None;
     }
-    return get_move_capture(
-        position,
-        from,
-        directions::up_left,
-        WHITE_PAWN,
-        position.get_black(),
-    );
+    return get_move_capture(position, from, directions::up_left, WHITE_PAWN);
 }
 
 fn get_move_white_right_capture(position: &Position, from: u32) -> Option<ChessMove> {
@@ -88,13 +80,7 @@ fn get_move_white_right_capture(position: &Position, from: u32) -> Option<ChessM
     if directions::is_in_row_7(from) {
         return None;
     }
-    return get_move_capture(
-        position,
-        from,
-        directions::up_right,
-        WHITE_PAWN,
-        position.get_black(),
-    );
+    return get_move_capture(position, from, directions::up_right, WHITE_PAWN);
 }
 
 fn get_move_black_left_capture(position: &Position, from: u32) -> Option<ChessMove> {
@@ -102,13 +88,7 @@ fn get_move_black_left_capture(position: &Position, from: u32) -> Option<ChessMo
     if directions::is_in_row_2(from) {
         return None;
     }
-    return get_move_capture(
-        position,
-        from,
-        directions::down_left,
-        BLACK_PAWN,
-        position.get_white(),
-    );
+    return get_move_capture(position, from, directions::down_left, BLACK_PAWN);
 }
 
 fn get_move_black_right_capture(position: &Position, from: u32) -> Option<ChessMove> {
@@ -116,13 +96,7 @@ fn get_move_black_right_capture(position: &Position, from: u32) -> Option<ChessM
     if directions::is_in_row_2(from) {
         return None;
     }
-    return get_move_capture(
-        position,
-        from,
-        directions::down_right,
-        BLACK_PAWN,
-        position.get_white(),
-    );
+    return get_move_capture(position, from, directions::down_right, BLACK_PAWN);
 }
 
 fn get_move_white_right_en_passant(position: &Position, from: u32) -> Option<ChessMove> {
@@ -213,7 +187,6 @@ fn get_moves_white_promotion_left_capture(position: &Position, from: u32) -> Vec
             from,
             directions::up_left,
             WHITE_PAWN,
-            position.get_black(),
             WHITE_PROMOTION_PIECES.to_vec(),
         );
     }
@@ -227,7 +200,6 @@ fn get_moves_white_promotion_right_capture(position: &Position, from: u32) -> Ve
             from,
             directions::up_right,
             WHITE_PAWN,
-            position.get_black(),
             WHITE_PROMOTION_PIECES.to_vec(),
         );
     }
@@ -241,7 +213,6 @@ fn get_moves_black_promotion_left_capture(position: &Position, from: u32) -> Vec
             from,
             directions::down_left,
             BLACK_PAWN,
-            position.get_white(),
             BLACK_PROMOTION_PIECES.to_vec(),
         );
     }
@@ -255,7 +226,6 @@ fn get_moves_black_promotion_right_capture(position: &Position, from: u32) -> Ve
             from,
             directions::down_right,
             BLACK_PAWN,
-            position.get_white(),
             BLACK_PROMOTION_PIECES.to_vec(),
         );
     }
@@ -270,7 +240,7 @@ fn get_promotion(
 ) -> Vec<ChessMove> {
     let mut moves: Vec<ChessMove> = Vec::new();
     if let Some(to) = direction(from) {
-        if !position.get_all().contains(to) {
+        if !position.is_occupied(to) {
             for promotion_piece in promotion_set {
                 moves.push(ChessMove::Promotion(Promotion {
                     piece,
@@ -289,12 +259,11 @@ fn get_promotion_capture(
     from: u32,
     direction: DirectionFn,
     piece: Piece,
-    opponent: Bitboard,
     promotion_set: Vec<Piece>,
 ) -> Vec<ChessMove> {
     let mut moves: Vec<ChessMove> = Vec::new();
     if let Some(to) = direction(from) {
-        if opponent.contains(to) {
+        if position.is_occupied_by_color(to, piece.color.get_opponent_color()) {
             for promotion_piece in promotion_set {
                 moves.push(ChessMove::Promotion(Promotion {
                     piece,
@@ -329,7 +298,7 @@ fn get_move_forward(
     direction: DirectionFn,
 ) -> Option<ChessMove> {
     if let Some(to) = direction(from) {
-        if !position.get_all().contains(to) {
+        if !position.is_occupied(to) {
             return Some(ChessMove::Progress(Progress {
                 piece: piece,
                 from: from,
@@ -361,9 +330,9 @@ fn get_move_two_forward(
     direction: DirectionFn,
 ) -> Option<ChessMove> {
     if let Some(one_forward) = direction(from) {
-        if !position.get_all().contains(one_forward) {
+        if !position.is_occupied(one_forward) {
             if let Some(two_forward) = direction(one_forward) {
-                if !position.get_all().contains(two_forward) {
+                if !position.is_occupied(two_forward) {
                     return Some(ChessMove::Progress(Progress {
                         piece,
                         from,

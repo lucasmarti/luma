@@ -1,5 +1,4 @@
 use crate::{
-    bitboard::Bitboard,
     chess_moves, directions,
     position::{self, Position},
 };

@@ -1,5 +1,4 @@
 use crate::{
-    bitboard::{self, Bitboard},
     directions::{self, DirectionFn},
     piece::{Color, Typ, *},
     position::Position,

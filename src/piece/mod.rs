@@ -19,6 +19,15 @@ pub enum Color {
     White,
 }
 
+impl Color {
+    pub fn get_opponent_color(self) -> Color {
+        match self {
+            Color::Black => Color::White,
+            Color::White => Color::Black,
+        }
+    }
+}
+
 pub const BLACK_KING: Piece = Piece {
     color: Color::Black,
     typ: Typ::King,

@@ -1,75 +1,59 @@
-use crate::bitboard::Bitboard;
 use crate::evaluation::*;
+use crate::piece::{
+    BLACK_BISHOP, BLACK_KING, BLACK_KNIGHT, BLACK_PAWN, BLACK_QUEEN, BLACK_ROOK, WHITE_BISHOP,
+    WHITE_KING, WHITE_KNIGHT, WHITE_PAWN, WHITE_QUEEN, WHITE_ROOK,
+};
+use crate::position;
 use crate::position::*;
 
 #[test]
 fn test_equal_material() {
-    let position: Position = Position {
-        white_king: Bitboard::from(1),
-        white_queen: Bitboard::from(1),
-        white_rooks: Bitboard::from(1),
-        white_bishops: Bitboard::from(1),
-        white_knights: Bitboard::from(1),
-        white_pawns: Bitboard::from(1),
-        white_kingside_castle: false,
-        white_queenside_castle: false,
-        black_king: Bitboard::from(1),
-        black_queen: Bitboard::from(1),
-        black_rooks: Bitboard::from(1),
-        black_bishops: Bitboard::from(1),
-        black_knights: Bitboard::from(1),
-        black_pawns: Bitboard::from(1),
-        black_kingside_castle: false,
-        black_queenside_castle: false,
-        en_passant: None,
-    };
+    let mut position = Position::default()
+        .put_piece(WHITE_KING, 1)
+        .put_piece(WHITE_BISHOP, 1)
+        .put_piece(WHITE_PAWN, 1)
+        .put_piece(WHITE_ROOK, 1)
+        .put_piece(WHITE_KNIGHT, 1)
+        .put_piece(WHITE_QUEEN, 1)
+        .put_piece(BLACK_KING, 1)
+        .put_piece(BLACK_BISHOP, 1)
+        .put_piece(BLACK_KNIGHT, 1)
+        .put_piece(BLACK_PAWN, 1)
+        .put_piece(BLACK_ROOK, 1)
+        .put_piece(BLACK_QUEEN, 1);
     assert_eq!(evaluate(&position), 0);
 }
 
 #[test]
 fn test_white_queen_missing() {
-    let position: Position = Position {
-        white_king: Bitboard::from(1),
-        white_queen: Bitboard::new(),
-        white_rooks: Bitboard::from(1),
-        white_bishops: Bitboard::from(1),
-        white_knights: Bitboard::from(1),
-        white_pawns: Bitboard::from(1) | Bitboard::from(2),
-        white_kingside_castle: false,
-        white_queenside_castle: false,
-        black_king: Bitboard::from(1),
-        black_queen: Bitboard::from(1),
-        black_rooks: Bitboard::from(1),
-        black_bishops: Bitboard::from(1),
-        black_knights: Bitboard::from(1),
-        black_pawns: Bitboard::from(1) | Bitboard::from(2),
-        black_kingside_castle: false,
-        black_queenside_castle: false,
-        en_passant: None,
-    };
+    let mut position = Position::default()
+        .put_piece(WHITE_KING, 1)
+        .put_piece(WHITE_BISHOP, 1)
+        .put_piece(WHITE_PAWN, 1)
+        .put_piece(WHITE_ROOK, 1)
+        .put_piece(WHITE_KNIGHT, 1)
+        .put_piece(BLACK_QUEEN, 1)
+        .put_piece(BLACK_KING, 1)
+        .put_piece(BLACK_BISHOP, 1)
+        .put_piece(BLACK_KNIGHT, 1)
+        .put_piece(BLACK_PAWN, 1)
+        .put_piece(BLACK_ROOK, 1);
     assert_eq!(evaluate(&position), -9);
 }
 
 #[test]
 fn test_black_queen_missing() {
-    let position: Position = Position {
-        white_king: Bitboard::from(1),
-        white_queen: Bitboard::from(1),
-        white_rooks: Bitboard::from(1),
-        white_bishops: Bitboard::from(1),
-        white_knights: Bitboard::from(1),
-        white_pawns: Bitboard::from(1),
-        white_kingside_castle: false,
-        white_queenside_castle: false,
-        black_king: Bitboard::from(1),
-        black_queen: Bitboard::new(),
-        black_rooks: Bitboard::from(1),
-        black_bishops: Bitboard::from(1),
-        black_knights: Bitboard::from(1),
-        black_pawns: Bitboard::from(1),
-        black_kingside_castle: false,
-        black_queenside_castle: false,
-        en_passant: None,
-    };
+    let mut position = Position::default()
+        .put_piece(WHITE_KING, 1)
+        .put_piece(WHITE_BISHOP, 1)
+        .put_piece(WHITE_PAWN, 1)
+        .put_piece(WHITE_ROOK, 1)
+        .put_piece(WHITE_KNIGHT, 1)
+        .put_piece(WHITE_QUEEN, 1)
+        .put_piece(BLACK_KING, 1)
+        .put_piece(BLACK_BISHOP, 1)
+        .put_piece(BLACK_KNIGHT, 1)
+        .put_piece(BLACK_PAWN, 1)
+        .put_piece(BLACK_ROOK, 1);
     assert_eq!(evaluate(&position), 9);
 }

@@ -1,5 +1,4 @@
 use crate::{
-    bitboard::Bitboard,
     chess_moves::{self, ChessMove, EnPassant, Progress, Promotion},
     directions::*,
     piece::*,
@@ -39,9 +38,9 @@ fn test_progress_white_king() {
         piece: WHITE_KING,
     };
     let new_position = position.move_piece(chess_moves::ChessMove::Progress(progress));
-    assert_eq!(position.white_king.contains(E1), true);
-    assert_eq!(new_position.white_king.contains(E1), false);
-    assert_eq!(new_position.white_king.contains(E2), true);
+    assert!(position.is_occupied_by_piece(E1, WHITE_KING));
+    assert!(!new_position.is_occupied_by_piece(E1, WHITE_KING));
+    assert!(new_position.is_occupied_by_piece(E2, WHITE_KING));
 }
 
 #[test]
@@ -54,8 +53,8 @@ fn test_promotion() {
         new_piece: WHITE_QUEEN,
     };
     let new_position = position.move_piece(ChessMove::Promotion(promotion));
-    assert_eq!(new_position.white_queen.contains(A8), true);
-    assert_eq!(new_position.white_pawns.contains(A7), false);
+    assert!(new_position.is_occupied_by_piece(A8, WHITE_QUEEN));
+    assert!(!new_position.is_occupied_by_piece(A7, WHITE_PAWN));
 }
 #[test]
 fn test_en_passant() {
@@ -69,9 +68,9 @@ fn test_en_passant() {
         capture: D4,
     };
     let new_position = position.move_piece(ChessMove::EnPassant(enPassant));
-    assert!(!new_position.white_pawns.contains(D4));
-    assert!(!new_position.black_pawns.contains(E4));
-    assert!(new_position.black_pawns.contains(D3));
+    assert!(!new_position.is_occupied_by_piece(D4, WHITE_PAWN));
+    assert!(!new_position.is_occupied_by_piece(E4, BLACK_PAWN));
+    assert!(new_position.is_occupied_by_piece(D3, BLACK_PAWN));
 }
 
 #[test]
@@ -80,8 +79,8 @@ fn test_white_kingside_castle() {
         .put_piece(WHITE_KING, E1)
         .put_piece(WHITE_ROOK, H1);
     let new_position = position.move_piece(ChessMove::WhiteKingsideCastle);
-    assert_eq!(new_position.white_king.contains(G1), true);
-    assert_eq!(new_position.white_rooks.contains(F1), true);
+    assert!(new_position.is_occupied_by_piece(G1, WHITE_KING));
+    assert!(new_position.is_occupied_by_piece(F1, WHITE_ROOK));
 }
 
 #[test]
@@ -90,8 +89,8 @@ fn test_white_queenside_castle() {
         .put_piece(WHITE_KING, E1)
         .put_piece(WHITE_ROOK, A1);
     let new_position = position.move_piece(ChessMove::WhiteQueensideCastle);
-    assert_eq!(new_position.white_king.contains(C1), true);
-    assert_eq!(new_position.white_rooks.contains(D1), true);
+    assert!(new_position.is_occupied_by_piece(C1, WHITE_KING));
+    assert!(new_position.is_occupied_by_piece(D1, WHITE_ROOK));
 }
 
 #[test]
@@ -100,8 +99,8 @@ fn test_black_kingside_castle() {
         .put_piece(BLACK_KING, E8)
         .put_piece(BLACK_ROOK, H8);
     let new_position = position.move_piece(ChessMove::BlackKingsideCastle);
-    assert_eq!(new_position.black_king.contains(G8), true);
-    assert_eq!(new_position.black_rooks.contains(F8), true);
+    assert!(new_position.is_occupied_by_piece(G8, BLACK_KING));
+    assert!(new_position.is_occupied_by_piece(F8, BLACK_ROOK));
 }
 
 #[test]
@@ -110,8 +109,8 @@ fn test_black_queenside_castle() {
         .put_piece(BLACK_KING, E8)
         .put_piece(BLACK_ROOK, A8);
     let new_position = position.move_piece(ChessMove::BlackQueensideCastle);
-    assert_eq!(new_position.black_king.contains(C8), true);
-    assert_eq!(new_position.black_rooks.contains(D8), true);
+    assert!(new_position.is_occupied_by_piece(C8, BLACK_KING));
+    assert!(new_position.is_occupied_by_piece(D8, BLACK_ROOK));
 }
 
 #[test]
@@ -126,6 +125,6 @@ fn test_remove_white_king() {
 fn test_put_white_king() {
     let position = Position::new_starting_position();
     let new_position = position.put_piece(WHITE_KING, E2);
-    assert_eq!(position.white_king.contains(E2), false);
-    assert_eq!(new_position.white_king.contains(E2), true);
+    assert_ne!(position.is_occupied_by_piece(E2, WHITE_KING), true);
+    assert_eq!(new_position.is_occupied_by_piece(E2, WHITE_KING), true);
 }

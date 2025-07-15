@@ -1,8 +1,8 @@
 use crate::{
-    bitboard::Bitboard,
     chess_moves::{ChessMove, EnPassant, Progress, Promotion},
     directions::*,
     piece::{Color, Piece, Typ, BLACK_KING, BLACK_ROOK, WHITE_KING, WHITE_ROOK},
+    position::bitboard::Bitboard,
 };
 #[derive(Clone, Copy)]
 pub struct Position {
@@ -43,7 +43,20 @@ impl Position {
         }
     }
 
-    pub fn get_black(&self) -> Bitboard {
+    pub fn is_occupied(&self, index: u32) -> bool {
+        self.get_all().contains(index)
+    }
+    pub fn is_occupied_by_color(&self, index: u32, color: Color) -> bool {
+        match color {
+            Color::Black => self.get_black().contains(index),
+            Color::White => self.get_white().contains(index),
+        }
+    }
+    pub fn is_occupied_by_piece(&self, index: u32, piece: Piece) -> bool {
+        self.get_pieces(piece).contains(index)
+    }
+
+    fn get_black(&self) -> Bitboard {
         self.black_king
             | self.black_queen
             | self.black_rooks
@@ -52,7 +65,7 @@ impl Position {
             | self.black_bishops
     }
 
-    pub fn get_white(&self) -> Bitboard {
+    fn get_white(&self) -> Bitboard {
         self.white_king
             | self.white_queen
             | self.white_rooks
@@ -61,7 +74,7 @@ impl Position {
             | self.white_bishops
     }
 
-    pub fn get_all(&self) -> Bitboard {
+    fn get_all(&self) -> Bitboard {
         self.get_black() | self.get_white()
     }
 
@@ -205,6 +218,7 @@ impl Default for Position {
         }
     }
 }
+mod bitboard;
 mod print;
 
 #[cfg(test)]

@@ -3,22 +3,8 @@ use crate::{
     directions::{self, *},
     piece::*,
     position::{self, Position},
-    possible_moves::common::{get_opponent_pieces, get_own_pieces, get_piece_moves, slide},
+    possible_moves::common::{get_piece_moves, slide},
 };
-
-#[test]
-fn test_get_own_pieces() {
-    let position: Position = Position::new_starting_position();
-    let own_pieces = get_own_pieces(&position, Color::White);
-    assert!(own_pieces == position.get_white());
-}
-
-#[test]
-fn test_get_opponent_pieces() {
-    let position: Position = Position::new_starting_position();
-    let opponent_pieces = get_opponent_pieces(&position, Color::White);
-    assert!(opponent_pieces == position.get_black());
-}
 
 #[test]
 fn test_slide1() {

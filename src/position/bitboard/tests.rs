@@ -1,4 +1,4 @@
-use crate::bitboard::*;
+use crate::position::bitboard::Bitboard;
 #[test]
 fn test_count_ones() {
     let bits: u64 = 1 << 0 | 1 << 1 | 1 << 2;
