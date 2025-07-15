@@ -13,7 +13,7 @@ const ROOK_DIRECTIONS: [DirectionFn; 4] = [
     directions::right,
 ];
 
-pub fn get_possible_moves(position: &Position, from: u32, piece: Piece) -> Vec<ChessMove> {
+pub fn get_possible_moves(position: &Position, from: u32, piece: Piece) -> Vec<Position> {
     get_piece_moves(position, from, &ROOK_DIRECTIONS, piece, u32::MAX)
 }
 

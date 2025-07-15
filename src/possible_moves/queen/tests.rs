@@ -5,38 +5,64 @@ use crate::{
 
 #[test]
 fn test_get_possible_white_moves() {
-    let moves = get_possible_moves(&Position::default(), G4, WHITE_QUEEN);
-    assert!(moves.len() == 23);
-    // down
-    assert!(contains(&moves, G3));
-    // up
-    assert!(contains(&moves, G8));
-    // left
-    assert!(contains(&moves, A4));
-    // right
-    assert!(contains(&moves, H4));
-    // left up
-    assert!(contains(&moves, F5));
-    // left down
-    assert!(contains(&moves, F3));
-    // right up
-    assert!(contains(&moves, H5));
-    // right down
-    assert!(contains(&moves, H3));
+    let positions = get_possible_moves(&Position::default(), G4, WHITE_QUEEN);
+    assert!(positions.len() == 23);
 
-    assert!(!contains(&moves, B2));
-}
+    let mut found_up = false;
+    let mut found_down = false;
+    let mut found_left = false;
+    let mut found_right = false;
+    let mut found_not = true;
+    let mut found_left_up = false;
+    let mut found_left_down = false;
+    let mut found_right_up = false;
+    let mut found_right_down = false;
 
-fn contains(moves: &Vec<ChessMove>, field: u32) -> bool {
-    for m in moves {
-        match m {
-            ChessMove::Progress(progress) => {
-                if progress.to == field {
-                    return true;
-                }
-            }
-            _ => {}
+    for position in positions {
+        if position.is_occupied_by_piece(G3, WHITE_QUEEN) {
+            found_down = true;
+        }
+        if position.is_occupied_by_piece(G8, WHITE_QUEEN) {
+            found_up = true;
+        }
+        if position.is_occupied_by_piece(A4, WHITE_QUEEN) {
+            found_left = true;
+        }
+        if position.is_occupied_by_piece(H4, WHITE_QUEEN) {
+            found_right = true;
+        }
+        if position.is_occupied_by_piece(B2, WHITE_QUEEN) {
+            found_not = false;
+        }
+        if position.is_occupied_by_piece(F5, WHITE_QUEEN) {
+            found_left_up = true;
+        }
+        if position.is_occupied_by_piece(F3, WHITE_QUEEN) {
+            found_left_down = true;
+        }
+        if position.is_occupied_by_piece(H5, WHITE_QUEEN) {
+            found_right_up = true;
+        }
+        if position.is_occupied_by_piece(H3, WHITE_QUEEN) {
+            found_right_down = true;
         }
     }
-    return false;
+    // down
+    assert!(found_down);
+    // up
+    assert!(found_up);
+    // left
+    assert!(found_left);
+    // right
+    assert!(found_right);
+    // not
+    assert!(found_not);
+    // left up
+    assert!(found_left_up);
+    // left down
+    assert!(found_left_down);
+    // right up
+    assert!(found_right_up);
+    // right down
+    assert!(found_right_down);
 }

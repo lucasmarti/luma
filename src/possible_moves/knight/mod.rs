@@ -17,7 +17,7 @@ pub const KNIGHT_DIRECTIONS: [DirectionFn; 8] = [
     directions::down_down_right,
 ];
 
-pub fn get_possible_moves(position: &Position, from: u32, piece: Piece) -> Vec<ChessMove> {
+pub fn get_possible_moves(position: &Position, from: u32, piece: Piece) -> Vec<Position> {
     get_piece_moves(position, from, &KNIGHT_DIRECTIONS, piece, 1)
 }
 mod tests;

@@ -1,4 +1,4 @@
-use crate::{directions::*, piece::*, position::Position};
+use crate::{check::is_check, directions::*, piece::*, position::Position};
 #[derive(PartialEq)]
 pub enum ChessMove {
     Promotion(Promotion),
@@ -61,6 +61,19 @@ pub fn move_piece(position: &Position, possible_moves: ChessMove) -> Position {
         ChessMove::WhiteQueensideCastle(white_queenside_castle) => {
             white_queenside_castle.execute(position)
         }
+    }
+}
+
+pub fn progess(position: &Position, piece: Piece, from: u32, to: u32) -> Option<Position> {
+    let new_position = position
+        .remove_piece(from)
+        .remove_piece(to)
+        .put_piece(piece, to);
+
+    if is_check(&new_position, piece.color) {
+        None
+    } else {
+        Some(new_position)
     }
 }
 

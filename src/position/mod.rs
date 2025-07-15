@@ -4,7 +4,7 @@ use crate::{
     piece::{Color, Piece, Typ, BLACK_KING, BLACK_ROOK, WHITE_KING, WHITE_ROOK},
     position::bitboard::Bitboard,
 };
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq, Debug)]
 pub struct Position {
     pub white_king: Bitboard,
     pub white_queen: Bitboard,
@@ -153,7 +153,7 @@ impl Position {
 
 impl Default for Position {
     fn default() -> Self {
-        Self {
+        let mut position = Self {
             white_king: Default::default(),
             white_queen: Default::default(),
             white_rooks: Default::default(),
@@ -171,7 +171,8 @@ impl Default for Position {
             black_kingside_castle: false,
             black_queenside_castle: false,
             en_passant: None,
-        }
+        };
+        position.put_piece(WHITE_KING, E1).put_piece(BLACK_KING, E8)
     }
 }
 mod bitboard;

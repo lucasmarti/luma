@@ -704,10 +704,10 @@ fn test_get_moves_white_promotion_left_capture_no_enemy() {
 #[test]
 fn test_get_moves_white_promotion_right_capture_own_piece() {
     let mut position = Position::default();
-    position = position.put_piece(WHITE_PAWN, D7);
-    position = position.put_piece(WHITE_QUEEN, E8); // Own piece on E8
+    position = position.put_piece(WHITE_PAWN, B7);
+    position = position.put_piece(WHITE_QUEEN, C8); // Own piece on C8
 
-    let result = get_moves_white_promotion_right_capture(&position, D7);
+    let result = get_moves_white_promotion_right_capture(&position, B7);
 
     assert_eq!(result.len(), 0);
 }
@@ -726,10 +726,10 @@ fn test_get_moves_black_promotion_left_capture_no_enemy() {
 #[test]
 fn test_get_moves_black_promotion_right_capture_own_piece() {
     let mut position = Position::default();
-    position = position.put_piece(BLACK_PAWN, D2);
-    position = position.put_piece(BLACK_QUEEN, E1); // Own piece on E1
+    position = position.put_piece(BLACK_PAWN, A2);
+    position = position.put_piece(BLACK_QUEEN, B1); // Own piece on E1
 
-    let result = get_moves_black_promotion_right_capture(&position, D2);
+    let result = get_moves_black_promotion_right_capture(&position, A2);
 
     assert_eq!(result.len(), 0);
 }

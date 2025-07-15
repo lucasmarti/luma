@@ -1,35 +1,31 @@
 use crate::{
-    chess_moves::{ChessMove, Progress},
+    chess_moves::{progess, ChessMove, Progress},
     directions::DirectionFn,
     piece::{Color, Piece},
     position::Position,
 };
 
-pub fn slide(position: &Position, from: u32, path: Vec<u32>, piece: Piece) -> Vec<ChessMove> {
-    let mut moves: Vec<ChessMove> = Vec::new();
+pub fn slide(position: &Position, from: u32, path: Vec<u32>, piece: Piece) -> Vec<Position> {
+    let mut new_positions: Vec<Position> = Vec::new();
 
     for field in path {
         if position.is_occupied_by_color(field, piece.color) {
             // collision with own
-            return moves;
+            return new_positions;
         } else if position.is_occupied_by_color(field, piece.color.get_opponent_color()) {
             // capture
-            moves.push(ChessMove::Progress(Progress {
-                from: from,
-                to: field,
-                piece: piece,
-            }));
-            return moves;
+            if let Some(pos) = progess(position, piece, from, field) {
+                new_positions.push(pos);
+            }
+            return new_positions;
         } else {
             // empty field
-            moves.push(ChessMove::Progress(Progress {
-                from: from,
-                to: field,
-                piece: piece,
-            }));
+            if let Some(pos) = progess(position, piece, from, field) {
+                new_positions.push(pos);
+            }
         }
     }
-    moves
+    new_positions
 }
 
 pub fn get_piece_moves(
@@ -38,15 +34,15 @@ pub fn get_piece_moves(
     directions: &[DirectionFn],
     piece: Piece,
     max_distance: u32,
-) -> Vec<ChessMove> {
-    let mut moves: Vec<ChessMove> = Vec::new();
+) -> Vec<Position> {
+    let mut new_positions: Vec<Position> = Vec::new();
 
     for direction_fn in directions {
         let path = generate_path_with_limit(from, *direction_fn, max_distance);
-        moves.extend(slide(position, from, path, piece));
+        new_positions.extend(slide(position, from, path, piece));
     }
 
-    moves
+    new_positions
 }
 
 fn generate_path_with_limit(from: u32, direction_fn: DirectionFn, max_distance: u32) -> Vec<u32> {
