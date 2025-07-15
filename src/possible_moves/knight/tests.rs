@@ -1,11 +1,9 @@
-use std::default;
-
 use crate::{
     chess_moves::ChessMove,
     directions::*,
     piece::{BLACK_PAWN, WHITE_KNIGHT, WHITE_PAWN},
     position::Position,
-    possible_moves::knight::get_possible_white_moves,
+    possible_moves::knight::get_possible_moves,
 };
 
 #[test]
@@ -16,7 +14,7 @@ fn test_knight_moves() {
         .put_piece(WHITE_PAWN, C5)
         .put_piece(BLACK_PAWN, D2);
 
-    let moves = get_possible_white_moves(&position, E4);
+    let moves = get_possible_moves(&position, E4, WHITE_KNIGHT);
 
     assert!(!contains(&moves, C5));
     assert!(contains(&moves, C3));

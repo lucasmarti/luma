@@ -49,55 +49,36 @@ pub fn get_opponent_pieces(position: &Position, color: Color) -> Bitboard {
     }
 }
 
-pub fn get_single_step_moves(
+pub fn get_piece_moves(
     position: &Position,
     from: u32,
-    color: Color,
     directions: &[DirectionFn],
     piece: Piece,
+    max_distance: u32,
 ) -> Vec<ChessMove> {
-    let own_pieces: Bitboard = get_own_pieces(position, color);
     let mut moves: Vec<ChessMove> = Vec::new();
 
     for direction_fn in directions {
-        if let Some(field) = direction_fn(from) {
-            if !own_pieces.contains(field) {
-                moves.push(ChessMove::Progress(Progress {
-                    from,
-                    to: field,
-                    piece,
-                }));
-            }
-        }
-    }
-
-    moves
-}
-
-pub fn get_sliding_moves(
-    position: &Position,
-    from: u32,
-    color: Color,
-    direction_fns: &[DirectionFn],
-    piece: Piece,
-) -> Vec<ChessMove> {
-    let mut moves: Vec<ChessMove> = Vec::new();
-
-    for direction_fn in direction_fns {
-        let path = generate_path_in_direction(from, *direction_fn);
+        let path = generate_path_with_limit(from, *direction_fn, max_distance);
         moves.extend(slide(position, from, path, piece));
     }
 
     moves
 }
 
-fn generate_path_in_direction(from: u32, direction_fn: DirectionFn) -> Vec<u32> {
+fn generate_path_with_limit(from: u32, direction_fn: DirectionFn, max_distance: u32) -> Vec<u32> {
     let mut path: Vec<u32> = Vec::new();
     let mut current_pos = from;
+    let mut distance = 0;
 
-    while let Some(next_pos) = direction_fn(current_pos) {
-        path.push(next_pos);
-        current_pos = next_pos;
+    while distance < max_distance {
+        if let Some(next_pos) = direction_fn(current_pos) {
+            path.push(next_pos);
+            current_pos = next_pos;
+            distance += 1;
+        } else {
+            break;
+        }
     }
 
     path

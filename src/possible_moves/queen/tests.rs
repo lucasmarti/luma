@@ -1,14 +1,11 @@
 use crate::{
-    chess_moves::ChessMove,
-    directions::*,
-    piece::WHITE_QUEEN,
-    position::{self, Position},
-    possible_moves::queen::get_possible_white_moves,
+    chess_moves::ChessMove, directions::*, piece::WHITE_QUEEN, position::Position,
+    possible_moves::queen::get_possible_moves,
 };
 
 #[test]
 fn test_get_possible_white_moves() {
-    let moves = get_possible_white_moves(&Position::default(), G4);
+    let moves = get_possible_moves(&Position::default(), G4, WHITE_QUEEN);
     assert!(moves.len() == 23);
     // down
     assert!(contains(&moves, G3));

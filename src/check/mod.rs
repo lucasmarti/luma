@@ -1,37 +1,24 @@
-use crate::{piece::Color, position::Position};
+use crate::{
+    bitboard::{self, Bitboard},
+    directions::{self, DirectionFn},
+    piece::{Color, Typ, *},
+    position::Position,
+    possible_moves::{king::KING_DIRECTIONS, knight::KNIGHT_DIRECTIONS},
+};
 
-/// Mock implementation of check detection
-/// TODO: Implement proper check detection logic
-pub fn is_in_check(position: &Position, color: Color) -> bool {
-    // For now, always return false to allow castling implementation
-    // This should be replaced with proper check detection logic
-    false
-}
+const HORIZONTAL_VERTICAL_DIRECTIONS: [DirectionFn; 4] = [
+    directions::up,
+    directions::down,
+    directions::left,
+    directions::right,
+];
 
-/// Mock implementation to check if a square is under attack
-/// TODO: Implement proper square attack detection logic
-pub fn is_square_attacked(position: &Position, square: u32, by_color: Color) -> bool {
-    // For now, always return false to allow castling implementation
-    // This should be replaced with proper attack detection logic
-    false
-}
+const DIAGONAL_DIRECTIONS: [DirectionFn; 4] = [
+    directions::up_left,
+    directions::up_right,
+    directions::down_left,
+    directions::down_right,
+];
 
 #[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::position::Position;
-
-    #[test]
-    fn test_is_in_check_mock() {
-        let position = Position::new_starting_position();
-        assert!(!is_in_check(&position, Color::White));
-        assert!(!is_in_check(&position, Color::Black));
-    }
-
-    #[test]
-    fn test_is_square_attacked_mock() {
-        let position = Position::new_starting_position();
-        assert!(!is_square_attacked(&position, 0, Color::White));
-        assert!(!is_square_attacked(&position, 0, Color::Black));
-    }
-}
+mod tests;

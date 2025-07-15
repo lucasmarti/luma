@@ -1,11 +1,11 @@
 use crate::{
-    chess_moves::ChessMove, directions::*, position::Position,
-    possible_moves::bishop::get_possible_white_moves,
+    chess_moves::ChessMove, directions::*, piece::WHITE_BISHOP, position::Position,
+    possible_moves::bishop::get_possible_moves,
 };
 
 #[test]
 fn test_get_possible_white_moves() {
-    let moves = get_possible_white_moves(&Position::default(), G4);
+    let moves = get_possible_moves(&Position::default(), G4, WHITE_BISHOP);
     assert!(moves.len() == 9);
     // left up
     assert!(contains(&moves, F5));

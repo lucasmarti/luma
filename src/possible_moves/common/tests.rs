@@ -3,9 +3,7 @@ use crate::{
     directions::{self, *},
     piece::*,
     position::{self, Position},
-    possible_moves::common::{
-        get_opponent_pieces, get_own_pieces, get_single_step_moves, get_sliding_moves, slide,
-    },
+    possible_moves::common::{get_opponent_pieces, get_own_pieces, get_piece_moves, slide},
 };
 
 #[test]
@@ -47,7 +45,7 @@ fn test_slide1() {
 }
 
 #[test]
-fn test_get_single_step_moves() {
+fn test_get_piece_moves_king() {
     let mut position: Position = Position::default();
     position = position.put_piece(WHITE_KING, D4);
 
@@ -55,7 +53,7 @@ fn test_get_single_step_moves() {
     let king_directions = [
         up, down, left, right, up_left, up_right, down_left, down_right,
     ];
-    let moves = get_single_step_moves(&position, D4, Color::White, &king_directions, WHITE_KING);
+    let moves = get_piece_moves(&position, D4, &king_directions, WHITE_KING, 1);
 
     assert_eq!(moves.len(), 8);
 
@@ -67,14 +65,14 @@ fn test_get_single_step_moves() {
 }
 
 #[test]
-fn test_get_single_step_moves_blocked_by_own_piece() {
+fn test_get_piece_moves_king_blocked_by_own_piece() {
     let mut position: Position = Position::default();
     position = position.put_piece(WHITE_KING, D4).put_piece(WHITE_PAWN, D5); // Block upward movement
 
     let king_directions = [
         up, down, left, right, up_left, up_right, down_left, down_right,
     ];
-    let moves = get_single_step_moves(&position, D4, Color::White, &king_directions, WHITE_KING);
+    let moves = get_piece_moves(&position, D4, &king_directions, WHITE_KING, 1);
 
     assert_eq!(moves.len(), 7); // One less because D5 is blocked
 
@@ -83,12 +81,12 @@ fn test_get_single_step_moves_blocked_by_own_piece() {
 }
 
 #[test]
-fn test_get_sliding_moves() {
+fn test_get_piece_moves_rook() {
     let position: Position = Position::default();
 
     // Test rook directions (4 directions)
     let rook_directions = [up, down, left, right];
-    let moves = get_sliding_moves(&position, D4, Color::White, &rook_directions, WHITE_ROOK);
+    let moves = get_piece_moves(&position, D4, &rook_directions, WHITE_ROOK, u32::MAX);
 
     // Should be able to move in all 4 directions until board edge
     // Up: D5, D6, D7, D8 (4 moves)
@@ -99,7 +97,7 @@ fn test_get_sliding_moves() {
 }
 
 #[test]
-fn test_get_sliding_moves_with_obstacles() {
+fn test_get_piece_moves_rook_with_obstacles() {
     let mut position: Position = Position::default();
     position = position
         .put_piece(WHITE_ROOK, D4)
@@ -107,7 +105,7 @@ fn test_get_sliding_moves_with_obstacles() {
         .put_piece(BLACK_PAWN, F4); // Enemy piece at F4 (can capture)
 
     let rook_directions = [up, down, left, right];
-    let moves = get_sliding_moves(&position, D4, Color::White, &rook_directions, WHITE_ROOK);
+    let moves = get_piece_moves(&position, D4, &rook_directions, WHITE_ROOK, u32::MAX);
 
     // Up: only D5 (blocked by own pawn at D6)
     assert!(contains_move(&moves, D5));

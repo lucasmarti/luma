@@ -118,25 +118,6 @@ pub const H5: u32 = 39;
 pub const H6: u32 = 47;
 pub const H7: u32 = 55;
 pub const H8: u32 = 63;
-#[derive(Copy, Clone)]
-pub enum EnPassantField {
-    A4,
-    B4,
-    C4,
-    D4,
-    E4,
-    F4,
-    G4,
-    H4,
-    A5,
-    B5,
-    C5,
-    D5,
-    E5,
-    F5,
-    G5,
-    H5,
-}
 
 pub fn two_up(index: u32) -> Option<u32> {
     if let Some(one_up) = up(index) {

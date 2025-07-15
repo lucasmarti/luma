@@ -1,19 +1,12 @@
 use crate::{
     chess_moves::ChessMove,
     directions::{self, DirectionFn},
-    piece::{Color, Piece, BLACK_KNIGHT, WHITE_KNIGHT},
+    piece::Piece,
     position::Position,
-    possible_moves::common::get_single_step_moves,
+    possible_moves::common::get_piece_moves,
 };
 
-pub fn get_possible_black_moves(position: &Position, from: u32) -> Vec<ChessMove> {
-    get_possible_moves(position, from, Color::Black)
-}
-pub fn get_possible_white_moves(position: &Position, from: u32) -> Vec<ChessMove> {
-    get_possible_moves(position, from, Color::White)
-}
-
-const KNIGHT_DIRECTIONS: [DirectionFn; 8] = [
+pub const KNIGHT_DIRECTIONS: [DirectionFn; 8] = [
     directions::right_right_down,
     directions::right_right_up,
     directions::left_left_up,
@@ -24,15 +17,7 @@ const KNIGHT_DIRECTIONS: [DirectionFn; 8] = [
     directions::down_down_right,
 ];
 
-fn get_possible_moves(position: &Position, from: u32, color: Color) -> Vec<ChessMove> {
-    let knight = get_knight(color);
-    get_single_step_moves(position, from, color, &KNIGHT_DIRECTIONS, knight)
-}
-
-fn get_knight(color: Color) -> Piece {
-    match color {
-        Color::Black => BLACK_KNIGHT,
-        Color::White => WHITE_KNIGHT,
-    }
+pub fn get_possible_moves(position: &Position, from: u32, piece: Piece) -> Vec<ChessMove> {
+    get_piece_moves(position, from, &KNIGHT_DIRECTIONS, piece, 1)
 }
 mod tests;

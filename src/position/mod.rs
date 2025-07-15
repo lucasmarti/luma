@@ -65,6 +65,27 @@ impl Position {
         self.get_black() | self.get_white()
     }
 
+    pub fn get_pieces(&self, piece: Piece) -> Bitboard {
+        match piece.color {
+            Color::Black => match piece.typ {
+                Typ::King => self.black_king,
+                Typ::Queen => self.black_queen,
+                Typ::Rook => self.black_rooks,
+                Typ::Pawn => self.black_pawns,
+                Typ::Knight => self.black_knights,
+                Typ::Bishop => self.black_bishops,
+            },
+            Color::White => match piece.typ {
+                Typ::King => self.white_king,
+                Typ::Queen => self.white_queen,
+                Typ::Rook => self.white_rooks,
+                Typ::Pawn => self.white_pawns,
+                Typ::Knight => self.white_knights,
+                Typ::Bishop => self.white_bishops,
+            },
+        }
+    }
+
     pub fn move_piece(self, possible_moves: ChessMove) -> Position {
         match possible_moves {
             ChessMove::Progress(progress) => self.progress(progress),
