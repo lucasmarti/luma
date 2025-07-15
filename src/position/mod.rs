@@ -56,6 +56,19 @@ impl Position {
         self.get_pieces(piece).contains(index)
     }
 
+    pub fn get_king_square(&self, color: Color) -> u32 {
+        for square in self
+            .get_pieces(Piece {
+                typ: Typ::King,
+                color: color,
+            })
+            .iter()
+        {
+            return square;
+        }
+        panic!("No King found");
+    }
+
     fn get_black(&self) -> Bitboard {
         self.black_king
             | self.black_queen
@@ -78,7 +91,7 @@ impl Position {
         self.get_black() | self.get_white()
     }
 
-    pub fn get_pieces(&self, piece: Piece) -> Bitboard {
+    fn get_pieces(&self, piece: Piece) -> Bitboard {
         match piece.color {
             Color::Black => match piece.typ {
                 Typ::King => self.black_king,
@@ -97,63 +110,6 @@ impl Position {
                 Typ::Bishop => self.white_bishops,
             },
         }
-    }
-
-    pub fn move_piece(self, possible_moves: ChessMove) -> Position {
-        match possible_moves {
-            ChessMove::Progress(progress) => self.progress(progress),
-            ChessMove::Promotion(promotion) => self.promote(promotion),
-            ChessMove::EnPassant(en_passant) => self.enPassant(en_passant),
-            ChessMove::BlackKingsideCastle => self.black_kingside_castle(),
-            ChessMove::BlackQueensideCastle => self.black_queenside_castle(),
-            ChessMove::WhiteKingsideCastle => self.white_kingside_castle(),
-            ChessMove::WhiteQueensideCastle => self.white_queenside_castle(),
-        }
-    }
-    fn progress(self, progress: Progress) -> Position {
-        self.remove_piece(progress.from)
-            .remove_piece(progress.to)
-            .put_piece(progress.piece, progress.to)
-    }
-
-    fn promote(self, promotion: Promotion) -> Position {
-        self.remove_piece(promotion.from)
-            .remove_piece(promotion.to)
-            .put_piece(promotion.new_piece, promotion.to)
-    }
-    fn enPassant(self, enPassant: EnPassant) -> Position {
-        self.remove_piece(enPassant.from)
-            .remove_piece(enPassant.capture)
-            .remove_piece(enPassant.to)
-            .put_piece(enPassant.piece, enPassant.to)
-    }
-
-    fn white_queenside_castle(self) -> Position {
-        self.remove_piece(E1)
-            .put_piece(WHITE_KING, C1)
-            .remove_piece(A1)
-            .put_piece(WHITE_ROOK, D1)
-    }
-
-    fn white_kingside_castle(self) -> Position {
-        self.remove_piece(E1)
-            .put_piece(WHITE_KING, G1)
-            .remove_piece(H1)
-            .put_piece(WHITE_ROOK, F1)
-    }
-
-    fn black_queenside_castle(self) -> Position {
-        self.remove_piece(E8)
-            .put_piece(BLACK_KING, C8)
-            .remove_piece(A8)
-            .put_piece(BLACK_ROOK, D8)
-    }
-
-    fn black_kingside_castle(self) -> Position {
-        self.remove_piece(E8)
-            .put_piece(BLACK_KING, G8)
-            .remove_piece(H8)
-            .put_piece(BLACK_ROOK, F8)
     }
 
     pub fn put_piece(mut self, piece: Piece, index: u32) -> Position {
@@ -178,7 +134,7 @@ impl Position {
         self
     }
 
-    fn remove_piece(mut self, index: u32) -> Position {
+    pub fn remove_piece(mut self, index: u32) -> Position {
         self.black_king.remove_bit(index);
         self.black_queen.remove_bit(index);
         self.black_rooks.remove_bit(index);
