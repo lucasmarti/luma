@@ -3,6 +3,7 @@ use crate::{
     piece::{Color, Piece, Typ, BLACK_KING, BLACK_ROOK, WHITE_KING, WHITE_ROOK},
     position::{self, bitboard::Bitboard},
 };
+
 #[derive(Clone, Copy, PartialEq, Debug)]
 pub struct Position {
     white_king: Bitboard,
@@ -83,17 +84,16 @@ impl Position {
         }
     }
     pub fn is_occupied_by_piece(&self, index: u32, piece: Piece) -> bool {
-        self.get_pieces(piece).contains(index)
+        self.get_squares(piece).contains(index)
     }
 
     pub fn count_pieces(&self, piece: Piece) -> u32 {
-        self.get_pieces(piece).count_ones()
+        self.get_squares(piece).count_ones()
     }
 
     pub fn get_king_square(&self, color: Color) -> u32 {
-        println!("Number of BLACK_KINGS {:?}", self.count_pieces(BLACK_KING));
         for square in self
-            .get_pieces(Piece {
+            .get_squares(Piece {
                 typ: Typ::King,
                 color: color,
             })
@@ -126,7 +126,7 @@ impl Position {
         self.get_black() | self.get_white()
     }
 
-    fn get_pieces(&self, piece: Piece) -> Bitboard {
+    pub fn get_squares(&self, piece: Piece) -> Bitboard {
         match piece.color {
             Color::Black => match piece.typ {
                 Typ::King => self.black_king,
@@ -210,7 +210,7 @@ impl Default for Position {
     }
 }
 mod bitboard;
-mod print;
+pub mod print;
 
 #[cfg(test)]
 mod tests;

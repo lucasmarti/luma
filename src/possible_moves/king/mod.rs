@@ -109,15 +109,16 @@ fn get_castle(position: &Position, castle: &Castle) -> Option<Position> {
     if !is_empty_path(position, castle.empty_path_squares) {
         return None;
     }
+    if !(position.is_occupied_by_piece(castle.rook_from, castle.rook)
+        && position.is_occupied_by_piece(castle.king_from, castle.king))
+    {
+        return None;
+    }
 
     if !is_save_passage(position, castle.empty_path_squares, castle.color) {
         return None;
     }
-    println!(
-        "Number of Black Kings {:?}",
-        position.count_pieces(BLACK_KING)
-    );
-    println!("Color {:?},", castle.color);
+
     if is_check(position, castle.color) {
         return None;
     }
