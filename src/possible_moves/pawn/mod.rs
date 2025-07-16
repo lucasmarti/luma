@@ -8,6 +8,14 @@ use crate::{
     position::{self, Position},
 };
 
+pub fn get_possible_moves(position: &Position, from: u32, piece: Piece) -> Vec<Position> {
+    match piece {
+        WHITE_PAWN => get_possible_white_moves(position, from),
+        BLACK_PAWN => get_possible_black_moves(position, from),
+        _ => Vec::new(),
+    }
+}
+
 fn get_possible_white_moves(position: &Position, from: u32) -> Vec<Position> {
     let mut positions: Vec<Position> = Vec::new();
     let move_functions: Vec<MoveFn> = vec![
