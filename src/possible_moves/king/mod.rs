@@ -12,7 +12,7 @@ pub const KING_DIRECTIONS: [DirectionFn; 8] = [
 
 pub fn get_possible_moves(position: &Position, from: u32, piece: Piece) -> Vec<Position> {
     let mut new_positions = get_piece_moves(position, from, &KING_DIRECTIONS, piece, 1);
-    new_positions.extend(get_castle_moves(position, from, piece.color));
+    new_positions.extend(get_castle_moves(position, piece.color));
     new_positions
 }
 
@@ -74,26 +74,32 @@ const BLACK_QUEENSIDE: Castle = Castle {
     king: BLACK_KING,
     rook: BLACK_ROOK,
 };
-fn get_castle_moves(position: &Position, _from: u32, _color: Color) -> Vec<Position> {
+fn get_castle_moves(position: &Position, color: Color) -> Vec<Position> {
     let mut positions: Vec<Position> = Vec::new();
-    if position.is_black_queenside_castle_allowed() {
-        if let Some(position) = get_castle(position, &BLACK_QUEENSIDE) {
-            positions.push(position);
+    match color {
+        Color::Black => {
+            if position.is_black_queenside_castle_allowed() {
+                if let Some(position) = get_castle(position, &BLACK_QUEENSIDE) {
+                    positions.push(position);
+                }
+            }
+            if position.is_black_kingside_castle_allowed() {
+                if let Some(position) = get_castle(position, &BLACK_KINGSIDE) {
+                    positions.push(position);
+                }
+            }
         }
-    }
-    if position.is_black_kingside_castle_allowed() {
-        if let Some(position) = get_castle(position, &BLACK_KINGSIDE) {
-            positions.push(position);
-        }
-    }
-    if position.is_white_queenside_castle_allowed() {
-        if let Some(position) = get_castle(position, &WHITE_QUEENSIDE) {
-            positions.push(position);
-        }
-    }
-    if position.is_white_kingside_castle_allowed() {
-        if let Some(position) = get_castle(position, &WHITE_KINGSIDE) {
-            positions.push(position);
+        Color::White => {
+            if position.is_white_queenside_castle_allowed() {
+                if let Some(position) = get_castle(position, &WHITE_QUEENSIDE) {
+                    positions.push(position);
+                }
+            }
+            if position.is_white_kingside_castle_allowed() {
+                if let Some(position) = get_castle(position, &WHITE_KINGSIDE) {
+                    positions.push(position);
+                }
+            }
         }
     }
     positions
@@ -107,6 +113,11 @@ fn get_castle(position: &Position, castle: &Castle) -> Option<Position> {
     if !is_save_passage(position, castle.empty_path_squares, castle.color) {
         return None;
     }
+    println!(
+        "Number of Black Kings {:?}",
+        position.count_pieces(BLACK_KING)
+    );
+    println!("Color {:?},", castle.color);
     if is_check(position, castle.color) {
         return None;
     }

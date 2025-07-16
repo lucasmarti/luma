@@ -13,7 +13,7 @@ pub enum Typ {
     Knight,
     Bishop,
 }
-#[derive(Clone, Copy, PartialEq, Eq)]
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum Color {
     Black,
     White,

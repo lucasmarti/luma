@@ -1,26 +1,26 @@
 use crate::{
     directions::*,
     piece::{Color, Piece, Typ, BLACK_KING, BLACK_ROOK, WHITE_KING, WHITE_ROOK},
-    position::bitboard::Bitboard,
+    position::{self, bitboard::Bitboard},
 };
 #[derive(Clone, Copy, PartialEq, Debug)]
 pub struct Position {
-    pub white_king: Bitboard,
-    pub white_queen: Bitboard,
-    pub white_rooks: Bitboard,
-    pub white_bishops: Bitboard,
-    pub white_knights: Bitboard,
-    pub white_pawns: Bitboard,
-    pub white_kingside_castle_allowed: bool,
-    pub white_queenside_castle_allowed: bool,
-    pub black_king: Bitboard,
-    pub black_queen: Bitboard,
-    pub black_rooks: Bitboard,
-    pub black_bishops: Bitboard,
-    pub black_knights: Bitboard,
-    pub black_pawns: Bitboard,
-    pub black_kingside_castle_allowed: bool,
-    pub black_queenside_castle_allowed: bool,
+    white_king: Bitboard,
+    white_queen: Bitboard,
+    white_rooks: Bitboard,
+    white_bishops: Bitboard,
+    white_knights: Bitboard,
+    white_pawns: Bitboard,
+    white_kingside_castle_allowed: bool,
+    white_queenside_castle_allowed: bool,
+    black_king: Bitboard,
+    black_queen: Bitboard,
+    black_rooks: Bitboard,
+    black_bishops: Bitboard,
+    black_knights: Bitboard,
+    black_pawns: Bitboard,
+    black_kingside_castle_allowed: bool,
+    black_queenside_castle_allowed: bool,
     pub en_passant: Option<u32>,
 }
 impl Position {
@@ -53,9 +53,29 @@ impl Position {
     pub fn is_black_queenside_castle_allowed(&self) -> bool {
         self.black_queenside_castle_allowed
     }
+
+    pub fn disallow_white_kingside_castle(mut self) -> Position {
+        self.white_kingside_castle_allowed = false;
+        self
+    }
+
+    pub fn disallow_white_queenside_castle(mut self) -> Position {
+        self.white_queenside_castle_allowed = false;
+        self
+    }
+    pub fn disallow_black_kingside_castle(mut self) -> Position {
+        self.black_kingside_castle_allowed = false;
+        self
+    }
+
+    pub fn disallow_black_queenside_castle(mut self) -> Position {
+        self.black_queenside_castle_allowed = false;
+        self
+    }
     pub fn is_occupied(&self, index: u32) -> bool {
         self.get_all().contains(index)
     }
+
     pub fn is_occupied_by_color(&self, index: u32, color: Color) -> bool {
         match color {
             Color::Black => self.get_black().contains(index),
@@ -66,7 +86,12 @@ impl Position {
         self.get_pieces(piece).contains(index)
     }
 
+    pub fn count_pieces(&self, piece: Piece) -> u32 {
+        self.get_pieces(piece).count_ones()
+    }
+
     pub fn get_king_square(&self, color: Color) -> u32 {
+        println!("Number of BLACK_KINGS {:?}", self.count_pieces(BLACK_KING));
         for square in self
             .get_pieces(Piece {
                 typ: Typ::King,
@@ -176,10 +201,10 @@ impl Default for Position {
             black_bishops: Default::default(),
             black_knights: Default::default(),
             black_pawns: Default::default(),
-            white_kingside_castle_allowed: false,
-            white_queenside_castle_allowed: false,
-            black_kingside_castle_allowed: false,
-            black_queenside_castle_allowed: false,
+            white_kingside_castle_allowed: true,
+            white_queenside_castle_allowed: true,
+            black_kingside_castle_allowed: true,
+            black_queenside_castle_allowed: true,
             en_passant: None,
         }
     }
