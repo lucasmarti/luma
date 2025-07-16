@@ -1,5 +1,4 @@
 use crate::{
-    chess_moves::{ChessMove, EnPassant, Progress, Promotion},
     directions::*,
     piece::{Color, Piece, Typ, BLACK_KING, BLACK_ROOK, WHITE_KING, WHITE_ROOK},
     position::bitboard::Bitboard,
@@ -12,16 +11,16 @@ pub struct Position {
     pub white_bishops: Bitboard,
     pub white_knights: Bitboard,
     pub white_pawns: Bitboard,
-    pub white_kingside_castle: bool,
-    pub white_queenside_castle: bool,
+    pub white_kingside_castle_allowed: bool,
+    pub white_queenside_castle_allowed: bool,
     pub black_king: Bitboard,
     pub black_queen: Bitboard,
     pub black_rooks: Bitboard,
     pub black_bishops: Bitboard,
     pub black_knights: Bitboard,
     pub black_pawns: Bitboard,
-    pub black_kingside_castle: bool,
-    pub black_queenside_castle: bool,
+    pub black_kingside_castle_allowed: bool,
+    pub black_queenside_castle_allowed: bool,
     pub en_passant: Option<u32>,
 }
 impl Position {
@@ -42,7 +41,18 @@ impl Position {
             ..Default::default()
         }
     }
-
+    pub fn is_white_kingside_castle_allowed(&self) -> bool {
+        self.white_kingside_castle_allowed
+    }
+    pub fn is_white_queenside_castle_allowed(&self) -> bool {
+        self.white_queenside_castle_allowed
+    }
+    pub fn is_black_kingside_castle_allowed(&self) -> bool {
+        self.black_kingside_castle_allowed
+    }
+    pub fn is_black_queenside_castle_allowed(&self) -> bool {
+        self.black_queenside_castle_allowed
+    }
     pub fn is_occupied(&self, index: u32) -> bool {
         self.get_all().contains(index)
     }
@@ -153,7 +163,7 @@ impl Position {
 
 impl Default for Position {
     fn default() -> Self {
-        let mut position = Self {
+        Self {
             white_king: Default::default(),
             white_queen: Default::default(),
             white_rooks: Default::default(),
@@ -166,13 +176,12 @@ impl Default for Position {
             black_bishops: Default::default(),
             black_knights: Default::default(),
             black_pawns: Default::default(),
-            white_kingside_castle: false,
-            white_queenside_castle: false,
-            black_kingside_castle: false,
-            black_queenside_castle: false,
+            white_kingside_castle_allowed: false,
+            white_queenside_castle_allowed: false,
+            black_kingside_castle_allowed: false,
+            black_queenside_castle_allowed: false,
             en_passant: None,
-        };
-        position.put_piece(WHITE_KING, E1).put_piece(BLACK_KING, E8)
+        }
     }
 }
 mod bitboard;

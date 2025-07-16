@@ -1,5 +1,5 @@
 use crate::{
-    chess_moves::{progess, ChessMove, Progress},
+    chess_moves::*,
     directions::DirectionFn,
     piece::{Color, Piece},
     position::Position,
@@ -14,15 +14,11 @@ pub fn slide(position: &Position, from: u32, path: Vec<u32>, piece: Piece) -> Ve
             return new_positions;
         } else if position.is_occupied_by_color(field, piece.color.get_opponent_color()) {
             // capture
-            if let Some(pos) = progess(position, piece, from, field) {
-                new_positions.push(pos);
-            }
+            new_positions.push(progess(position, piece, from, field));
             return new_positions;
         } else {
             // empty field
-            if let Some(pos) = progess(position, piece, from, field) {
-                new_positions.push(pos);
-            }
+            new_positions.push(progess(position, piece, from, field));
         }
     }
     new_positions

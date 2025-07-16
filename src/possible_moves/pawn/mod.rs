@@ -1,15 +1,15 @@
 use crate::{
-    chess_moves::{ChessMove, EnPassant, Progress, Promotion},
+    chess_moves::{en_passant, progess, promote},
     directions::{self, DirectionFn},
     piece::{
         Piece, BLACK_BISHOP, BLACK_KNIGHT, BLACK_PAWN, BLACK_QUEEN, BLACK_ROOK, WHITE_BISHOP,
         WHITE_KNIGHT, WHITE_PAWN, WHITE_QUEEN, WHITE_ROOK,
     },
-    position::Position,
+    position::{self, Position},
 };
 
-fn get_possible_white_moves(position: &Position, from: u32) -> Vec<ChessMove> {
-    let mut moves: Vec<ChessMove> = Vec::new();
+fn get_possible_white_moves(position: &Position, from: u32) -> Vec<Position> {
+    let mut positions: Vec<Position> = Vec::new();
     let move_functions: Vec<MoveFn> = vec![
         get_move_white_forward,
         get_move_white_two_forward,
@@ -20,17 +20,17 @@ fn get_possible_white_moves(position: &Position, from: u32) -> Vec<ChessMove> {
     ];
     for move_function in move_functions {
         if let Some(chess_move) = move_function(position, from) {
-            moves.push(chess_move);
+            positions.push(chess_move);
         }
     }
-    moves.extend(get_moves_white_promotion(position, from));
-    moves.extend(get_moves_white_promotion_left_capture(position, from));
-    moves.extend(get_moves_white_promotion_right_capture(position, from));
-    moves
+    positions.extend(get_moves_white_promotion(position, from));
+    positions.extend(get_moves_white_promotion_left_capture(position, from));
+    positions.extend(get_moves_white_promotion_right_capture(position, from));
+    positions
 }
 
-fn get_possible_black_moves(position: &Position, from: u32) -> Vec<ChessMove> {
-    let mut moves: Vec<ChessMove> = Vec::new();
+fn get_possible_black_moves(position: &Position, from: u32) -> Vec<Position> {
+    let mut positions: Vec<Position> = Vec::new();
     let move_functions: Vec<MoveFn> = vec![
         get_move_black_forward,
         get_move_black_two_forward,
@@ -41,15 +41,15 @@ fn get_possible_black_moves(position: &Position, from: u32) -> Vec<ChessMove> {
     ];
     for move_function in move_functions {
         if let Some(chess_move) = move_function(position, from) {
-            moves.push(chess_move);
+            positions.push(chess_move);
         }
     }
-    moves.extend(get_moves_black_promotion(position, from));
-    moves.extend(get_moves_black_promotion_left_capture(position, from));
-    moves.extend(get_moves_black_promotion_right_capture(position, from));
-    moves
+    positions.extend(get_moves_black_promotion(position, from));
+    positions.extend(get_moves_black_promotion_left_capture(position, from));
+    positions.extend(get_moves_black_promotion_right_capture(position, from));
+    positions
 }
-type MoveFn = fn(&Position, u32) -> Option<ChessMove>;
+type MoveFn = fn(&Position, u32) -> Option<Position>;
 
 const WHITE_PROMOTION_PIECES: [Piece; 4] = [WHITE_QUEEN, WHITE_ROOK, WHITE_BISHOP, WHITE_KNIGHT];
 const BLACK_PROMOTION_PIECES: [Piece; 4] = [BLACK_QUEEN, BLACK_ROOK, BLACK_BISHOP, BLACK_KNIGHT];
@@ -59,15 +59,15 @@ fn get_move_capture(
     from: u32,
     direction: DirectionFn,
     piece: Piece,
-) -> Option<ChessMove> {
+) -> Option<Position> {
     if let Some(to) = direction(from) {
         if position.is_occupied_by_color(to, piece.color.get_opponent_color()) {
-            return Some(ChessMove::Progress(Progress { piece, from, to }));
+            return Some(progess(position, piece, from, to));
         }
     }
     None
 }
-fn get_move_white_left_capture(position: &Position, from: u32) -> Option<ChessMove> {
+fn get_move_white_left_capture(position: &Position, from: u32) -> Option<Position> {
     // Exclude promotion rank captures (handled by promotion capture functions)
     if directions::is_in_row_7(from) {
         return None;
@@ -75,7 +75,7 @@ fn get_move_white_left_capture(position: &Position, from: u32) -> Option<ChessMo
     return get_move_capture(position, from, directions::up_left, WHITE_PAWN);
 }
 
-fn get_move_white_right_capture(position: &Position, from: u32) -> Option<ChessMove> {
+fn get_move_white_right_capture(position: &Position, from: u32) -> Option<Position> {
     // Exclude promotion rank captures (handled by promotion capture functions)
     if directions::is_in_row_7(from) {
         return None;
@@ -83,7 +83,7 @@ fn get_move_white_right_capture(position: &Position, from: u32) -> Option<ChessM
     return get_move_capture(position, from, directions::up_right, WHITE_PAWN);
 }
 
-fn get_move_black_left_capture(position: &Position, from: u32) -> Option<ChessMove> {
+fn get_move_black_left_capture(position: &Position, from: u32) -> Option<Position> {
     // Exclude promotion rank captures (handled by promotion capture functions)
     if directions::is_in_row_2(from) {
         return None;
@@ -91,7 +91,7 @@ fn get_move_black_left_capture(position: &Position, from: u32) -> Option<ChessMo
     return get_move_capture(position, from, directions::down_left, BLACK_PAWN);
 }
 
-fn get_move_black_right_capture(position: &Position, from: u32) -> Option<ChessMove> {
+fn get_move_black_right_capture(position: &Position, from: u32) -> Option<Position> {
     // Exclude promotion rank captures (handled by promotion capture functions)
     if directions::is_in_row_2(from) {
         return None;
@@ -99,62 +99,42 @@ fn get_move_black_right_capture(position: &Position, from: u32) -> Option<ChessM
     return get_move_capture(position, from, directions::down_right, BLACK_PAWN);
 }
 
-fn get_move_white_right_en_passant(position: &Position, from: u32) -> Option<ChessMove> {
+fn get_move_white_right_en_passant(position: &Position, from: u32) -> Option<Position> {
     if directions::right(from) == position.en_passant {
         if let (Some(to), Some(capture)) = (directions::up_right(from), directions::right(from)) {
-            return Some(ChessMove::EnPassant(EnPassant {
-                piece: WHITE_PAWN,
-                from,
-                to,
-                capture,
-            }));
+            return Some(en_passant(position, WHITE_PAWN, from, to, capture));
         }
     }
     None
 }
 
-fn get_move_white_left_en_passant(position: &Position, from: u32) -> Option<ChessMove> {
+fn get_move_white_left_en_passant(position: &Position, from: u32) -> Option<Position> {
     if directions::left(from) == position.en_passant {
         if let (Some(to), Some(capture)) = (directions::up_left(from), directions::left(from)) {
-            return Some(ChessMove::EnPassant(EnPassant {
-                piece: WHITE_PAWN,
-                from,
-                to,
-                capture,
-            }));
+            return Some(en_passant(position, WHITE_PAWN, from, to, capture));
         }
     }
     None
 }
 
-fn get_move_black_right_en_passant(position: &Position, from: u32) -> Option<ChessMove> {
+fn get_move_black_right_en_passant(position: &Position, from: u32) -> Option<Position> {
     if directions::right(from) == position.en_passant {
         if let (Some(to), Some(capture)) = (directions::down_right(from), directions::right(from)) {
-            return Some(ChessMove::EnPassant(EnPassant {
-                piece: BLACK_PAWN,
-                from,
-                to,
-                capture,
-            }));
+            return Some(en_passant(position, BLACK_PAWN, from, to, capture));
         }
     }
     None
 }
-fn get_move_black_left_en_passant(position: &Position, from: u32) -> Option<ChessMove> {
+fn get_move_black_left_en_passant(position: &Position, from: u32) -> Option<Position> {
     if directions::left(from) == position.en_passant {
         if let (Some(to), Some(capture)) = (directions::down_left(from), directions::left(from)) {
-            return Some(ChessMove::EnPassant(EnPassant {
-                piece: BLACK_PAWN,
-                from,
-                to,
-                capture,
-            }));
+            return Some(en_passant(position, BLACK_PAWN, from, to, capture));
         }
     }
     None
 }
 
-fn get_moves_white_promotion(position: &Position, from: u32) -> Vec<ChessMove> {
+fn get_moves_white_promotion(position: &Position, from: u32) -> Vec<Position> {
     if directions::is_in_row_7(from) {
         return get_promotion(
             position,
@@ -167,7 +147,7 @@ fn get_moves_white_promotion(position: &Position, from: u32) -> Vec<ChessMove> {
     Vec::new()
 }
 
-fn get_moves_black_promotion(position: &Position, from: u32) -> Vec<ChessMove> {
+fn get_moves_black_promotion(position: &Position, from: u32) -> Vec<Position> {
     if directions::is_in_row_2(from) {
         return get_promotion(
             position,
@@ -180,7 +160,7 @@ fn get_moves_black_promotion(position: &Position, from: u32) -> Vec<ChessMove> {
     Vec::new()
 }
 
-fn get_moves_white_promotion_left_capture(position: &Position, from: u32) -> Vec<ChessMove> {
+fn get_moves_white_promotion_left_capture(position: &Position, from: u32) -> Vec<Position> {
     if directions::is_in_row_7(from) {
         return get_promotion_capture(
             position,
@@ -193,7 +173,7 @@ fn get_moves_white_promotion_left_capture(position: &Position, from: u32) -> Vec
     Vec::new()
 }
 
-fn get_moves_white_promotion_right_capture(position: &Position, from: u32) -> Vec<ChessMove> {
+fn get_moves_white_promotion_right_capture(position: &Position, from: u32) -> Vec<Position> {
     if directions::is_in_row_7(from) {
         return get_promotion_capture(
             position,
@@ -206,7 +186,7 @@ fn get_moves_white_promotion_right_capture(position: &Position, from: u32) -> Ve
     Vec::new()
 }
 
-fn get_moves_black_promotion_left_capture(position: &Position, from: u32) -> Vec<ChessMove> {
+fn get_moves_black_promotion_left_capture(position: &Position, from: u32) -> Vec<Position> {
     if directions::is_in_row_2(from) {
         return get_promotion_capture(
             position,
@@ -219,7 +199,7 @@ fn get_moves_black_promotion_left_capture(position: &Position, from: u32) -> Vec
     Vec::new()
 }
 
-fn get_moves_black_promotion_right_capture(position: &Position, from: u32) -> Vec<ChessMove> {
+fn get_moves_black_promotion_right_capture(position: &Position, from: u32) -> Vec<Position> {
     if directions::is_in_row_2(from) {
         return get_promotion_capture(
             position,
@@ -237,21 +217,16 @@ fn get_promotion(
     direction: DirectionFn,
     piece: Piece,
     promotion_set: Vec<Piece>,
-) -> Vec<ChessMove> {
-    let mut moves: Vec<ChessMove> = Vec::new();
+) -> Vec<Position> {
+    let mut positions: Vec<Position> = Vec::new();
     if let Some(to) = direction(from) {
         if !position.is_occupied(to) {
             for promotion_piece in promotion_set {
-                moves.push(ChessMove::Promotion(Promotion {
-                    piece,
-                    from,
-                    to,
-                    new_piece: promotion_piece,
-                }));
+                positions.push(promote(position, from, to, promotion_piece));
             }
         }
     }
-    moves
+    positions
 }
 
 fn get_promotion_capture(
@@ -260,31 +235,26 @@ fn get_promotion_capture(
     direction: DirectionFn,
     piece: Piece,
     promotion_set: Vec<Piece>,
-) -> Vec<ChessMove> {
-    let mut moves: Vec<ChessMove> = Vec::new();
+) -> Vec<Position> {
+    let mut positions: Vec<Position> = Vec::new();
     if let Some(to) = direction(from) {
         if position.is_occupied_by_color(to, piece.color.get_opponent_color()) {
             for promotion_piece in promotion_set {
-                moves.push(ChessMove::Promotion(Promotion {
-                    piece,
-                    from,
-                    to,
-                    new_piece: promotion_piece,
-                }));
+                positions.push(promote(position, from, to, promotion_piece));
             }
         }
     }
-    moves
+    positions
 }
 
-fn get_move_white_forward(position: &Position, from: u32) -> Option<ChessMove> {
+fn get_move_white_forward(position: &Position, from: u32) -> Option<Position> {
     if !directions::is_in_last_or_second_last_row(from) {
         return get_move_forward(position, from, WHITE_PAWN, directions::up);
     }
     None
 }
 
-fn get_move_black_forward(position: &Position, from: u32) -> Option<ChessMove> {
+fn get_move_black_forward(position: &Position, from: u32) -> Option<Position> {
     if !directions::is_in_first_or_second_row(from) {
         return get_move_forward(position, from, BLACK_PAWN, directions::down);
     }
@@ -296,27 +266,23 @@ fn get_move_forward(
     from: u32,
     piece: Piece,
     direction: DirectionFn,
-) -> Option<ChessMove> {
+) -> Option<Position> {
     if let Some(to) = direction(from) {
         if !position.is_occupied(to) {
-            return Some(ChessMove::Progress(Progress {
-                piece: piece,
-                from: from,
-                to: to,
-            }));
+            return Some(progess(position, piece, from, to));
         }
     }
     None
 }
 
-fn get_move_white_two_forward(position: &Position, from: u32) -> Option<ChessMove> {
+fn get_move_white_two_forward(position: &Position, from: u32) -> Option<Position> {
     if directions::is_in_row_2(from) {
         return get_move_two_forward(position, from, WHITE_PAWN, directions::up);
     }
     None
 }
 
-fn get_move_black_two_forward(position: &Position, from: u32) -> Option<ChessMove> {
+fn get_move_black_two_forward(position: &Position, from: u32) -> Option<Position> {
     if directions::is_in_row_7(from) {
         return get_move_two_forward(position, from, BLACK_PAWN, directions::down);
     }
@@ -328,16 +294,12 @@ fn get_move_two_forward(
     from: u32,
     piece: Piece,
     direction: DirectionFn,
-) -> Option<ChessMove> {
+) -> Option<Position> {
     if let Some(one_forward) = direction(from) {
         if !position.is_occupied(one_forward) {
             if let Some(two_forward) = direction(one_forward) {
                 if !position.is_occupied(two_forward) {
-                    return Some(ChessMove::Progress(Progress {
-                        piece,
-                        from,
-                        to: two_forward,
-                    }));
+                    return Some(progess(position, piece, from, two_forward));
                 }
             }
         }

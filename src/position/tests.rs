@@ -1,9 +1,4 @@
-use crate::{
-    chess_moves::{self, ChessMove, EnPassant, Progress, Promotion},
-    directions::*,
-    piece::*,
-    position,
-};
+use crate::{chess_moves::*, directions::*, piece::*, position};
 
 use super::{print::Print, Position};
 

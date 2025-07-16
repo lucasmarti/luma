@@ -1,5 +1,5 @@
 use crate::{
-    chess_moves::ChessMove, directions::*, piece::WHITE_QUEEN, position::Position,
+    directions::*, piece::WHITE_QUEEN, position::Position,
     possible_moves::queen::get_possible_moves,
 };
 
