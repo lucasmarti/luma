@@ -26,7 +26,7 @@ pub fn is_check(position: &Position, color: Color) -> bool {
 }
 
 /// Check if a square is under attack by the opponent
-fn is_under_attack(position: &Position, square: u32, color: Color) -> bool {
+pub fn is_under_attack(position: &Position, square: u32, color: Color) -> bool {
     let opponent = color.get_opponent_color();
 
     // Check horizontal/vertical attacks (rook/queen)
