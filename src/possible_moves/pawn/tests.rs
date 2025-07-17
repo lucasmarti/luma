@@ -374,10 +374,10 @@ mod test_white_en_passant {
 
     #[test]
     fn test_left_en_passant_valid() {
-        let mut position = Position::default()
+        let position = Position::default()
             .put_piece(WHITE_PAWN, E5)
-            .put_piece(BLACK_PAWN, D5);
-        position.en_passant = Some(D5);
+            .put_piece(BLACK_PAWN, D5)
+            .set_en_passant(D5);
 
         let result = get_move_white_left_en_passant(&position, E5);
 
@@ -390,10 +390,10 @@ mod test_white_en_passant {
 
     #[test]
     fn test_right_en_passant_valid() {
-        let mut position = Position::default()
+        let position = Position::default()
             .put_piece(WHITE_PAWN, E5)
-            .put_piece(BLACK_PAWN, F5);
-        position.en_passant = Some(F5);
+            .put_piece(BLACK_PAWN, F5)
+            .set_en_passant(F5);
 
         let result = get_move_white_right_en_passant(&position, E5);
 
@@ -421,8 +421,9 @@ mod test_white_en_passant {
 
     #[test]
     fn test_en_passant_not_adjacent() {
-        let mut position = Position::default().put_piece(WHITE_PAWN, E5);
-        position.en_passant = Some(C5); // Not adjacent
+        let position = Position::default()
+            .put_piece(WHITE_PAWN, E5)
+            .set_en_passant(C5); // Not adjacent
 
         let left_result = get_move_white_left_en_passant(&position, E5);
         let right_result = get_move_white_right_en_passant(&position, E5);
@@ -434,15 +435,17 @@ mod test_white_en_passant {
     #[test]
     fn test_en_passant_edge_cases() {
         // A-file can't en passant left
-        let mut position = Position::default().put_piece(WHITE_PAWN, A5);
-        position.en_passant = Some(B5);
+        let position = Position::default()
+            .put_piece(WHITE_PAWN, A5)
+            .set_en_passant(B5);
 
         let a_left = get_move_white_left_en_passant(&position, A5);
         assert!(a_left.is_none());
 
         // H-file can't en passant right
-        let mut position2 = Position::default().put_piece(WHITE_PAWN, H5);
-        position2.en_passant = Some(G5);
+        let position2 = Position::default()
+            .put_piece(WHITE_PAWN, H5)
+            .set_en_passant(G5);
 
         let h_right = get_move_white_right_en_passant(&position2, H5);
         assert!(h_right.is_none());
@@ -455,10 +458,10 @@ mod test_black_en_passant {
 
     #[test]
     fn test_left_en_passant_valid() {
-        let mut position = Position::default()
+        let position = Position::default()
             .put_piece(BLACK_PAWN, E4)
-            .put_piece(WHITE_PAWN, D4);
-        position.en_passant = Some(D4);
+            .put_piece(WHITE_PAWN, D4)
+            .set_en_passant(D4);
 
         let result = get_move_black_left_en_passant(&position, E4);
 
@@ -471,10 +474,10 @@ mod test_black_en_passant {
 
     #[test]
     fn test_right_en_passant_valid() {
-        let mut position = Position::default()
+        let position = Position::default()
             .put_piece(BLACK_PAWN, E4)
-            .put_piece(WHITE_PAWN, F4);
-        position.en_passant = Some(F4);
+            .put_piece(WHITE_PAWN, F4)
+            .set_en_passant(F4);
 
         let result = get_move_black_right_en_passant(&position, E4);
 
@@ -744,10 +747,10 @@ mod test_aggregate_functions {
 
     #[test]
     fn test_get_possible_white_moves_en_passant() {
-        let mut position = Position::default()
+        let position = Position::default()
             .put_piece(WHITE_PAWN, E5)
-            .put_piece(BLACK_PAWN, D5);
-        position.en_passant = Some(D5);
+            .put_piece(BLACK_PAWN, D5)
+            .set_en_passant(D5);
 
         let moves = get_possible_white_moves(&position, E5);
 
@@ -839,12 +842,12 @@ mod test_public_interface {
 
     #[test]
     fn test_get_possible_moves_complex_position() {
-        let mut position = Position::default()
+        let position = Position::default()
             .put_piece(WHITE_PAWN, E5)
             .put_piece(BLACK_PAWN, D5)
             .put_piece(BLACK_PAWN, F5)
-            .put_piece(BLACK_KNIGHT, E6);
-        position.en_passant = Some(D5);
+            .put_piece(BLACK_KNIGHT, E6)
+            .set_en_passant(D5);
 
         let moves = get_possible_moves(&position, E5, WHITE_PAWN);
 

@@ -22,7 +22,8 @@ pub struct Position {
     black_pawns: Bitboard,
     black_kingside_castle_allowed: bool,
     black_queenside_castle_allowed: bool,
-    pub en_passant: Option<u32>,
+    en_passant: Option<u32>,
+    player: Color,
 }
 impl Position {
     pub fn new_starting_position() -> Position {
@@ -102,6 +103,35 @@ impl Position {
             return square;
         }
         panic!("No King found");
+    }
+
+    pub fn set_en_passant(mut self, index: u32) -> Position {
+        if A4 <= index && index <= H5 {
+            self.en_passant = Some(index);
+            self
+        } else {
+            panic!("Invalid en passant square {:?}", index);
+        }
+    }
+    pub fn reset_en_passant(mut self) -> Position {
+        self.en_passant = None;
+        self
+    }
+
+    pub fn get_player(&self) -> Color {
+        self.player
+    }
+
+    pub fn get_en_passant(&self) -> Option<u32> {
+        self.en_passant
+    }
+
+    pub fn toggle_player(mut self) -> Position {
+        match self.player {
+            Color::Black => self.player = Color::White,
+            Color::White => self.player = Color::Black,
+        }
+        self
     }
 
     fn get_black(&self) -> Bitboard {
@@ -206,6 +236,7 @@ impl Default for Position {
             black_kingside_castle_allowed: true,
             black_queenside_castle_allowed: true,
             en_passant: None,
+            player: Color::White,
         }
     }
 }

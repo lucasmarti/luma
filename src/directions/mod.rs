@@ -369,11 +369,18 @@ pub fn is_in_last_row(index: u32) -> bool {
 }
 
 pub fn is_in_row_2(index: u32) -> bool {
-    index >= A2 && index <= H2
+    A2 <= index && index <= H2
 }
 
+pub fn is_in_row_4(index: u32) -> bool {
+    A4 <= index && index <= H4
+}
+
+pub fn is_in_row_5(index: u32) -> bool {
+    A5 <= index && index <= H5
+}
 pub fn is_in_row_7(index: u32) -> bool {
-    index >= A7 && index <= H7
+    A7 <= index && index <= H7
 }
 
 #[cfg(test)]

@@ -108,7 +108,7 @@ fn get_move_black_right_capture(position: &Position, from: u32) -> Option<Positi
 }
 
 fn get_move_white_right_en_passant(position: &Position, from: u32) -> Option<Position> {
-    if directions::right(from) == position.en_passant {
+    if directions::right(from) == position.get_en_passant() {
         if let (Some(to), Some(capture)) = (directions::up_right(from), directions::right(from)) {
             return Some(en_passant(position, WHITE_PAWN, from, to, capture));
         }
@@ -117,7 +117,7 @@ fn get_move_white_right_en_passant(position: &Position, from: u32) -> Option<Pos
 }
 
 fn get_move_white_left_en_passant(position: &Position, from: u32) -> Option<Position> {
-    if directions::left(from) == position.en_passant {
+    if directions::left(from) == position.get_en_passant() {
         if let (Some(to), Some(capture)) = (directions::up_left(from), directions::left(from)) {
             return Some(en_passant(position, WHITE_PAWN, from, to, capture));
         }
@@ -126,7 +126,7 @@ fn get_move_white_left_en_passant(position: &Position, from: u32) -> Option<Posi
 }
 
 fn get_move_black_right_en_passant(position: &Position, from: u32) -> Option<Position> {
-    if directions::right(from) == position.en_passant {
+    if directions::right(from) == position.get_en_passant() {
         if let (Some(to), Some(capture)) = (directions::down_right(from), directions::right(from)) {
             return Some(en_passant(position, BLACK_PAWN, from, to, capture));
         }
@@ -134,7 +134,7 @@ fn get_move_black_right_en_passant(position: &Position, from: u32) -> Option<Pos
     None
 }
 fn get_move_black_left_en_passant(position: &Position, from: u32) -> Option<Position> {
-    if directions::left(from) == position.en_passant {
+    if directions::left(from) == position.get_en_passant() {
         if let (Some(to), Some(capture)) = (directions::down_left(from), directions::left(from)) {
             return Some(en_passant(position, BLACK_PAWN, from, to, capture));
         }
