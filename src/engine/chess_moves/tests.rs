@@ -1,0 +1,622 @@
+use crate::engine::{
+    chess_moves::{
+        self,
+        castle::{
+            black_kingside_castle, black_queenside_castle, disallow_castle_if_necessary,
+            white_kingside_castle, white_queenside_castle,
+        },
+        common::{
+            get_moves_for_king_at_square, get_moves_for_knight_at_square,
+            get_moves_for_queen_at_square, get_moves_for_rook_at_square, progess,
+        },
+        get_black_moves, get_white_moves,
+        pawn::{en_passant, is_pawn_two_rows_forward, promote, set_en_passant_if_necessary},
+    },
+    directions::{self, *},
+    piece::*,
+    position::{self, Position},
+};
+#[test]
+fn test_progress_white_king() {
+    let position = Position::default();
+    let new_position = progess(&position, WHITE_KING, E1, E2);
+    assert!(!new_position.is_occupied_by_piece(E1, WHITE_KING));
+    assert!(new_position.is_occupied_by_piece(E2, WHITE_KING));
+}
+
+#[test]
+fn test_promotion() {
+    let position = Position::default().put_piece(WHITE_PAWN, A7);
+    let new_position = promote(&position, A7, A8, WHITE_QUEEN);
+    assert!(new_position.is_occupied_by_piece(A8, WHITE_QUEEN));
+    assert!(!new_position.is_occupied_by_piece(A7, WHITE_PAWN));
+}
+#[test]
+fn test_en_passant() {
+    let position = Position::default()
+        .put_piece(WHITE_PAWN, D4)
+        .put_piece(BLACK_PAWN, E4);
+
+    let new_position = en_passant(&position, BLACK_PAWN, E4, D3, D4);
+    assert!(!new_position.is_occupied_by_piece(D4, WHITE_PAWN));
+    assert!(!new_position.is_occupied_by_piece(E4, BLACK_PAWN));
+    assert!(new_position.is_occupied_by_piece(D3, BLACK_PAWN));
+}
+
+#[test]
+fn test_white_kingside_castle() {
+    let position = Position::default()
+        .put_piece(WHITE_KING, E1)
+        .put_piece(WHITE_ROOK, H1);
+    let new_position = white_kingside_castle(&position);
+    assert!(new_position.is_some());
+    assert!(new_position.unwrap().is_occupied_by_piece(G1, WHITE_KING));
+    assert!(new_position.unwrap().is_occupied_by_piece(F1, WHITE_ROOK));
+}
+
+#[test]
+fn test_white_queenside_castle() {
+    let position = Position::default()
+        .put_piece(WHITE_KING, E1)
+        .put_piece(WHITE_ROOK, A1);
+    let new_position = white_queenside_castle(&position);
+    assert!(new_position.is_some());
+    assert!(new_position.unwrap().is_occupied_by_piece(C1, WHITE_KING));
+    assert!(new_position.unwrap().is_occupied_by_piece(D1, WHITE_ROOK));
+}
+
+#[test]
+fn test_black_kingside_castle() {
+    let position = Position::default()
+        .put_piece(BLACK_KING, E8)
+        .put_piece(BLACK_ROOK, H8);
+    let new_position = black_kingside_castle(&position);
+    assert!(new_position.is_some());
+    assert!(new_position.unwrap().is_occupied_by_piece(G8, BLACK_KING));
+    assert!(new_position.unwrap().is_occupied_by_piece(F8, BLACK_ROOK));
+}
+
+#[test]
+fn test_black_queenside_castle() {
+    let position = Position::default()
+        .put_piece(BLACK_KING, E8)
+        .put_piece(BLACK_ROOK, A8);
+    let new_position = black_queenside_castle(&position);
+    assert!(new_position.is_some());
+    assert!(new_position.unwrap().is_occupied_by_piece(C8, BLACK_KING));
+    assert!(new_position.unwrap().is_occupied_by_piece(D8, BLACK_ROOK));
+}
+
+// Tests for is_pawn_two_rows_forward function
+#[test]
+fn test_is_pawn_two_rows_forward_white_valid() {
+    // White pawn moving from row 2 to row 4
+    assert!(is_pawn_two_rows_forward(WHITE_PAWN, E2, E4));
+    assert!(is_pawn_two_rows_forward(WHITE_PAWN, A2, A4));
+    assert!(is_pawn_two_rows_forward(WHITE_PAWN, H2, H4));
+}
+
+#[test]
+fn test_is_pawn_two_rows_forward_white_invalid() {
+    // White pawn not moving two rows
+    assert!(!is_pawn_two_rows_forward(WHITE_PAWN, E2, E3));
+    assert!(!is_pawn_two_rows_forward(WHITE_PAWN, E3, E4));
+    assert!(!is_pawn_two_rows_forward(WHITE_PAWN, E4, E5));
+}
+
+#[test]
+fn test_is_pawn_two_rows_forward_black_valid() {
+    // Black pawn moving from row 7 to row 5
+    assert!(is_pawn_two_rows_forward(BLACK_PAWN, E7, E5));
+    assert!(is_pawn_two_rows_forward(BLACK_PAWN, A7, A5));
+    assert!(is_pawn_two_rows_forward(BLACK_PAWN, H7, H5));
+}
+
+#[test]
+fn test_is_pawn_two_rows_forward_black_invalid() {
+    // Black pawn not moving two rows
+    assert!(!is_pawn_two_rows_forward(BLACK_PAWN, E7, E6));
+    assert!(!is_pawn_two_rows_forward(BLACK_PAWN, E6, E5));
+    assert!(!is_pawn_two_rows_forward(BLACK_PAWN, E5, E4));
+}
+
+// Tests for set_en_passant_if_necessary function
+#[test]
+fn test_set_en_passant_if_necessary_white_pawn_two_squares() {
+    let position = Position::default();
+    let new_position = set_en_passant_if_necessary(position, WHITE_PAWN, E2, E4);
+    // En passant should be set to E4 (the destination square)
+    assert_eq!(new_position.get_en_passant(), Some(E4));
+}
+
+#[test]
+fn test_set_en_passant_if_necessary_black_pawn_two_squares() {
+    let position = Position::default();
+    let new_position = set_en_passant_if_necessary(position, BLACK_PAWN, E7, E5);
+    // En passant should be set to E5 (the destination square)
+    assert_eq!(new_position.get_en_passant(), Some(E5));
+}
+
+#[test]
+fn test_set_en_passant_if_necessary_white_pawn_one_square() {
+    let position = Position::default();
+    let new_position = set_en_passant_if_necessary(position, WHITE_PAWN, E2, E3);
+    // En passant should not be set for one square moves
+    assert_eq!(new_position.get_en_passant(), None);
+}
+
+#[test]
+fn test_set_en_passant_if_necessary_non_pawn() {
+    let position = Position::default();
+    let new_position = set_en_passant_if_necessary(position, WHITE_KING, E1, E2);
+    // En passant should not be set for non-pawn moves
+    assert_eq!(new_position.get_en_passant(), None);
+}
+
+// Tests for disallow_castle_if_necessary function
+#[test]
+fn test_disallow_castle_if_necessary_white_king_move() {
+    let position = Position::default();
+    let new_position = disallow_castle_if_necessary(position, E1);
+    assert!(!new_position.is_white_kingside_castle_allowed());
+    assert!(!new_position.is_white_queenside_castle_allowed());
+    // Black castle rights should remain unchanged
+    assert!(new_position.is_black_kingside_castle_allowed());
+    assert!(new_position.is_black_queenside_castle_allowed());
+}
+
+#[test]
+fn test_disallow_castle_if_necessary_white_kingside_rook_move() {
+    let position = Position::default();
+    let new_position = disallow_castle_if_necessary(position, H1);
+    assert!(!new_position.is_white_kingside_castle_allowed());
+    // White queenside should remain allowed
+    assert!(new_position.is_white_queenside_castle_allowed());
+    // Black castle rights should remain unchanged
+    assert!(new_position.is_black_kingside_castle_allowed());
+    assert!(new_position.is_black_queenside_castle_allowed());
+}
+
+#[test]
+fn test_disallow_castle_if_necessary_white_queenside_rook_move() {
+    let position = Position::default();
+    let new_position = disallow_castle_if_necessary(position, A1);
+    assert!(!new_position.is_white_queenside_castle_allowed());
+    // White kingside should remain allowed
+    assert!(new_position.is_white_kingside_castle_allowed());
+    // Black castle rights should remain unchanged
+    assert!(new_position.is_black_kingside_castle_allowed());
+    assert!(new_position.is_black_queenside_castle_allowed());
+}
+
+#[test]
+fn test_disallow_castle_if_necessary_black_king_move() {
+    let position = Position::default();
+    let new_position = disallow_castle_if_necessary(position, E8);
+    assert!(!new_position.is_black_kingside_castle_allowed());
+    assert!(!new_position.is_black_queenside_castle_allowed());
+    // White castle rights should remain unchanged
+    assert!(new_position.is_white_kingside_castle_allowed());
+    assert!(new_position.is_white_queenside_castle_allowed());
+}
+
+#[test]
+fn test_disallow_castle_if_necessary_black_kingside_rook_move() {
+    let position = Position::default();
+    let new_position = disallow_castle_if_necessary(position, H8);
+    assert!(!new_position.is_black_kingside_castle_allowed());
+    // Black queenside should remain allowed
+    assert!(new_position.is_black_queenside_castle_allowed());
+    // White castle rights should remain unchanged
+    assert!(new_position.is_white_kingside_castle_allowed());
+    assert!(new_position.is_white_queenside_castle_allowed());
+}
+
+#[test]
+fn test_disallow_castle_if_necessary_black_queenside_rook_move() {
+    let position = Position::default();
+    let new_position = disallow_castle_if_necessary(position, A8);
+    assert!(!new_position.is_black_queenside_castle_allowed());
+    // Black kingside should remain allowed
+    assert!(new_position.is_black_kingside_castle_allowed());
+    // White castle rights should remain unchanged
+    assert!(new_position.is_white_kingside_castle_allowed());
+    assert!(new_position.is_white_queenside_castle_allowed());
+}
+
+#[test]
+fn test_disallow_castle_if_necessary_other_piece_move() {
+    let position = Position::default();
+    let new_position = disallow_castle_if_necessary(position, D4);
+    // Moving a piece from D4 should not affect castle rights
+    assert!(new_position.is_white_kingside_castle_allowed());
+    assert!(new_position.is_white_queenside_castle_allowed());
+    assert!(new_position.is_black_kingside_castle_allowed());
+    assert!(new_position.is_black_queenside_castle_allowed());
+}
+
+// Integration tests for progess function
+#[test]
+fn test_progess_toggles_player() {
+    let position = Position::default(); // White to move
+    let new_position = progess(&position, WHITE_PAWN, E2, E3);
+    assert_eq!(new_position.get_player(), Color::Black);
+}
+
+#[test]
+fn test_progess_sets_en_passant_for_pawn_two_squares() {
+    let position = Position::default();
+    let new_position = progess(&position, WHITE_PAWN, E2, E4);
+    assert_eq!(new_position.get_en_passant(), Some(E4));
+}
+
+#[test]
+fn test_progess_disallows_castle_for_king_move() {
+    let position = Position::default();
+    let new_position = progess(&position, WHITE_KING, E1, E2);
+    assert!(!new_position.is_white_kingside_castle_allowed());
+    assert!(!new_position.is_white_queenside_castle_allowed());
+}
+
+#[test]
+fn test_progess_disallows_castle_for_rook_move() {
+    let position = Position::default();
+    let new_position = progess(&position, WHITE_ROOK, H1, H2);
+    assert!(!new_position.is_white_kingside_castle_allowed());
+    // Queenside should still be allowed
+    assert!(new_position.is_white_queenside_castle_allowed());
+}
+
+// Integration tests for castle methods
+#[test]
+fn test_castle_methods_toggle_player() {
+    let position = Position::default()
+        .put_piece(WHITE_ROOK, A1)
+        .put_piece(WHITE_ROOK, H1)
+        .put_piece(WHITE_KING, E1)
+        .put_piece(BLACK_ROOK, A8)
+        .put_piece(BLACK_ROOK, H8)
+        .put_piece(BLACK_KING, E8);
+    // White to move
+
+    let white_kingside = white_kingside_castle(&position);
+    assert_eq!(white_kingside.unwrap().get_player(), Color::Black);
+
+    let white_queenside = white_queenside_castle(&position);
+    assert_eq!(white_queenside.unwrap().get_player(), Color::Black);
+
+    let position_black = position.toggle_player(); // Black to move
+    let black_kingside = black_kingside_castle(&position_black);
+    assert_eq!(black_kingside.unwrap().get_player(), Color::White);
+
+    let black_queenside = black_queenside_castle(&position_black);
+    assert_eq!(black_queenside.unwrap().get_player(), Color::White);
+}
+
+#[test]
+fn test_castle_methods_reset_en_passant() {
+    let position = Position::default()
+        .put_piece(WHITE_ROOK, A1)
+        .put_piece(WHITE_ROOK, H1)
+        .put_piece(WHITE_KING, E1)
+        .put_piece(BLACK_ROOK, A8)
+        .put_piece(BLACK_ROOK, H8)
+        .put_piece(BLACK_KING, E8)
+        .set_en_passant(E4);
+
+    let white_kingside = white_kingside_castle(&position);
+    assert_eq!(white_kingside.unwrap().get_en_passant(), None);
+
+    let white_queenside = white_queenside_castle(&position);
+    assert_eq!(white_queenside.unwrap().get_en_passant(), None);
+
+    let black_kingside = black_kingside_castle(&position);
+    assert_eq!(black_kingside.unwrap().get_en_passant(), None);
+
+    let black_queenside = black_queenside_castle(&position);
+    assert_eq!(black_queenside.unwrap().get_en_passant(), None);
+}
+
+#[test]
+fn test_castle_methods_disable_castle_rights() {
+    let position = Position::default()
+        .put_piece(WHITE_ROOK, A1)
+        .put_piece(WHITE_ROOK, H1)
+        .put_piece(WHITE_KING, E1)
+        .put_piece(BLACK_ROOK, A8)
+        .put_piece(BLACK_ROOK, H8)
+        .put_piece(BLACK_KING, E8);
+
+    let white_kingside = white_kingside_castle(&position);
+    assert!(!white_kingside.unwrap().is_white_kingside_castle_allowed());
+    assert!(!white_kingside.unwrap().is_white_queenside_castle_allowed());
+
+    let white_queenside = white_queenside_castle(&position);
+    assert!(!white_queenside.unwrap().is_white_kingside_castle_allowed());
+    assert!(!white_queenside.unwrap().is_white_queenside_castle_allowed());
+
+    let black_kingside = black_kingside_castle(&position);
+    assert!(!black_kingside.unwrap().is_black_kingside_castle_allowed());
+    assert!(!black_kingside.unwrap().is_black_queenside_castle_allowed());
+
+    let black_queenside = black_queenside_castle(&position);
+    assert!(!black_queenside.unwrap().is_black_kingside_castle_allowed());
+    assert!(!black_queenside.unwrap().is_black_queenside_castle_allowed());
+}
+
+#[test]
+fn test_all_moves_from_starting_position() {
+    let position = Position::new_starting_position();
+    assert_eq!(get_white_moves(&position).len(), 20);
+}
+#[test]
+fn test_position1() {
+    let white = Position::default()
+        .put_piece(WHITE_PAWN, A2)
+        .put_piece(WHITE_PAWN, C3)
+        .put_piece(WHITE_PAWN, C4)
+        .put_piece(WHITE_QUEEN, D3)
+        .put_piece(WHITE_ROOK, F1)
+        .put_piece(WHITE_PAWN, F2)
+        .put_piece(WHITE_KNIGHT, F3)
+        .put_piece(WHITE_KING, G1)
+        .put_piece(WHITE_BISHOP, G2)
+        .put_piece(WHITE_PAWN, G3)
+        .put_piece(WHITE_PAWN, H2);
+    let positions = get_white_moves(&white);
+    assert!(positions.len() == 35);
+    let black = Position::default()
+        .put_piece(BLACK_PAWN, A7)
+        .put_piece(BLACK_PAWN, B7)
+        .put_piece(BLACK_PAWN, D6)
+        .put_piece(BLACK_PAWN, F7)
+        .put_piece(BLACK_PAWN, G7)
+        .put_piece(BLACK_PAWN, H6)
+        .put_piece(BLACK_BISHOP, B6)
+        .put_piece(BLACK_ROOK, E4)
+        .put_piece(BLACK_BISHOP, G4)
+        .put_piece(BLACK_QUEEN, G6)
+        .put_piece(BLACK_KING, G8);
+    let positions = get_black_moves(&black);
+    assert_eq!(positions.len(), 44);
+
+    let all = Position::default()
+        .put_piece(WHITE_PAWN, A2)
+        .put_piece(WHITE_PAWN, C3)
+        .put_piece(WHITE_PAWN, C4)
+        .put_piece(WHITE_QUEEN, D3)
+        .put_piece(WHITE_ROOK, F1)
+        .put_piece(WHITE_PAWN, F2)
+        .put_piece(WHITE_KNIGHT, F3)
+        .put_piece(WHITE_KING, G1)
+        .put_piece(WHITE_BISHOP, G2)
+        .put_piece(WHITE_PAWN, G3)
+        .put_piece(WHITE_PAWN, H2)
+        .put_piece(BLACK_PAWN, A7)
+        .put_piece(BLACK_PAWN, B7)
+        .put_piece(BLACK_PAWN, D6)
+        .put_piece(BLACK_PAWN, F7)
+        .put_piece(BLACK_PAWN, G7)
+        .put_piece(BLACK_PAWN, H6)
+        .put_piece(BLACK_BISHOP, B6)
+        .put_piece(BLACK_ROOK, E4)
+        .put_piece(BLACK_BISHOP, G4)
+        .put_piece(BLACK_QUEEN, G6)
+        .put_piece(BLACK_KING, G8);
+
+    assert!(39 == get_black_moves(&all).len());
+    assert!(29 == get_white_moves(&all).len());
+}
+
+#[test]
+fn test_bishop_white_moves() {
+    let position = Position::default().put_piece(WHITE_BISHOP, G4);
+    let positions = get_white_moves(&position);
+    assert_eq!(positions.len(), 9);
+    let mut left_up = false;
+    let mut left_down = false;
+    let mut right_up = false;
+    let mut right_down = false;
+    let mut not_valid = false;
+
+    for position in positions {
+        if position.is_occupied_by_piece(F5, WHITE_BISHOP) {
+            left_up = true;
+        }
+        if position.is_occupied_by_piece(F3, WHITE_BISHOP) {
+            left_down = true;
+        }
+        if position.is_occupied_by_piece(H5, WHITE_BISHOP) {
+            right_up = true;
+        }
+        if position.is_occupied_by_piece(H3, WHITE_BISHOP) {
+            right_down = true;
+        }
+        if position.is_occupied_by_piece(B2, WHITE_BISHOP) {
+            not_valid = true;
+        }
+    }
+
+    assert!(left_up);
+    assert!(left_down);
+    assert!(right_up);
+    assert!(right_down);
+    assert!(!not_valid);
+}
+#[test]
+fn test_king_black_moves() {
+    let position: Position = Position::new_starting_position();
+    assert!(get_moves_for_king_at_square(&position, BLACK_KING, D8).len() == 0);
+    assert!(get_moves_for_king_at_square(&position, BLACK_KING, D3).len() == 8);
+    assert!(get_moves_for_king_at_square(&position, BLACK_KING, F6).len() == 5);
+    assert!(get_moves_for_king_at_square(&position, BLACK_KING, H6).len() == 3);
+}
+
+#[test]
+fn test_king_white_moves() {
+    let position: Position = Position::new_starting_position();
+
+    assert!(get_moves_for_king_at_square(&position, WHITE_KING, D8).len() == 5);
+    assert!(get_moves_for_king_at_square(&position, WHITE_KING, D3).len() == 5);
+    assert!(get_moves_for_king_at_square(&position, WHITE_KING, F2).len() == 3);
+    assert!(get_moves_for_king_at_square(&position, WHITE_KING, H6).len() == 5);
+}
+
+#[test]
+fn test_knight_moves() {
+    let mut position = Position::default();
+    position = position
+        .put_piece(WHITE_KNIGHT, E4)
+        .put_piece(WHITE_PAWN, C5)
+        .put_piece(BLACK_PAWN, G2);
+
+    let positions = get_moves_for_knight_at_square(&position, WHITE_KNIGHT, E4);
+
+    let mut found_c3 = false;
+    let mut found_d6 = false;
+    let mut found_f6 = false;
+    let mut found_d2 = false;
+    let mut found_f2 = false;
+    let mut found_g3 = false;
+    let mut found_g5 = false;
+    let mut found_not_c5 = true;
+
+    println!("{:?}", positions.len());
+    for position in positions {
+        if position.is_occupied_by_piece(C3, WHITE_KNIGHT) {
+            found_c3 = true;
+        }
+        if position.is_occupied_by_piece(D6, WHITE_KNIGHT) {
+            found_d6 = true;
+        }
+        if position.is_occupied_by_piece(F6, WHITE_KNIGHT) {
+            found_f6 = true;
+        }
+        if position.is_occupied_by_piece(D2, WHITE_KNIGHT) {
+            found_d2 = true;
+        }
+        if position.is_occupied_by_piece(F2, WHITE_KNIGHT) {
+            found_f2 = true;
+        }
+        if position.is_occupied_by_piece(G3, WHITE_KNIGHT) {
+            found_g3 = true;
+        }
+        if position.is_occupied_by_piece(G5, WHITE_KNIGHT) {
+            found_g5 = true;
+        }
+        if position.is_occupied_by_piece(C5, WHITE_KNIGHT) {
+            found_not_c5 = false;
+        }
+    }
+
+    assert!(found_c3);
+    assert!(found_d6);
+    assert!(found_f6);
+    assert!(found_d2);
+    assert!(found_f2);
+    assert!(found_g3);
+    assert!(found_g5);
+    assert!(found_not_c5);
+}
+#[test]
+fn test_queen_white_moves() {
+    let positions = get_moves_for_queen_at_square(&Position::default(), WHITE_QUEEN, G4);
+    assert!(positions.len() == 23);
+
+    let mut found_up = false;
+    let mut found_down = false;
+    let mut found_left = false;
+    let mut found_right = false;
+    let mut found_not = true;
+    let mut found_left_up = false;
+    let mut found_left_down = false;
+    let mut found_right_up = false;
+    let mut found_right_down = false;
+
+    for position in positions {
+        if position.is_occupied_by_piece(G3, WHITE_QUEEN) {
+            found_down = true;
+        }
+        if position.is_occupied_by_piece(G8, WHITE_QUEEN) {
+            found_up = true;
+        }
+        if position.is_occupied_by_piece(A4, WHITE_QUEEN) {
+            found_left = true;
+        }
+        if position.is_occupied_by_piece(H4, WHITE_QUEEN) {
+            found_right = true;
+        }
+        if position.is_occupied_by_piece(B2, WHITE_QUEEN) {
+            found_not = false;
+        }
+        if position.is_occupied_by_piece(F5, WHITE_QUEEN) {
+            found_left_up = true;
+        }
+        if position.is_occupied_by_piece(F3, WHITE_QUEEN) {
+            found_left_down = true;
+        }
+        if position.is_occupied_by_piece(H5, WHITE_QUEEN) {
+            found_right_up = true;
+        }
+        if position.is_occupied_by_piece(H3, WHITE_QUEEN) {
+            found_right_down = true;
+        }
+    }
+    // down
+    assert!(found_down);
+    // up
+    assert!(found_up);
+    // left
+    assert!(found_left);
+    // right
+    assert!(found_right);
+    // not
+    assert!(found_not);
+    // left up
+    assert!(found_left_up);
+    // left down
+    assert!(found_left_down);
+    // right up
+    assert!(found_right_up);
+    // right down
+    assert!(found_right_down);
+}
+#[test]
+fn test_rook_white_moves() {
+    let positions = get_moves_for_rook_at_square(&Position::default(), BLACK_ROOK, G4);
+
+    assert!(positions.len() == 14);
+    let mut found_up = false;
+    let mut found_down = false;
+    let mut found_left = false;
+    let mut found_right = false;
+    let mut found_not = true;
+
+    for position in positions {
+        if position.is_occupied_by_piece(G3, BLACK_ROOK) {
+            found_down = true;
+        }
+        if position.is_occupied_by_piece(G8, BLACK_ROOK) {
+            found_up = true;
+        }
+        if position.is_occupied_by_piece(A4, BLACK_ROOK) {
+            found_left = true;
+        }
+        if position.is_occupied_by_piece(H4, BLACK_ROOK) {
+            found_right = true;
+        }
+        if position.is_occupied_by_piece(B2, BLACK_ROOK) {
+            found_not = false;
+        }
+    }
+    // down
+    assert!(found_down);
+    // up
+    assert!(found_up);
+    // left
+    assert!(found_left);
+    // right
+    assert!(found_right);
+    // not
+    assert!(found_not);
+}
