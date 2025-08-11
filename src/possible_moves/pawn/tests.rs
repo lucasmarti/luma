@@ -700,7 +700,7 @@ mod test_aggregate_functions {
     fn test_get_possible_white_moves_basic() {
         let position = Position::default().put_piece(WHITE_PAWN, E2);
 
-        let moves = get_possible_white_moves(&position, E2);
+        let moves = get_white_pawn_moves(&position, E2);
 
         // Should have forward and two-forward moves
         assert_eq!(moves.len(), 2);
@@ -719,7 +719,7 @@ mod test_aggregate_functions {
             .put_piece(BLACK_PAWN, D5)
             .put_piece(BLACK_PAWN, F5);
 
-        let moves = get_possible_white_moves(&position, E4);
+        let moves = get_white_pawn_moves(&position, E4);
 
         // Forward, left capture, right capture
         assert_eq!(moves.len(), 3);
@@ -739,7 +739,7 @@ mod test_aggregate_functions {
             .put_piece(WHITE_PAWN, E7)
             .put_piece(BLACK_KNIGHT, D8);
 
-        let moves = get_possible_white_moves(&position, E7);
+        let moves = get_white_pawn_moves(&position, E7);
 
         // 4 forward promotions + 4 left capture promotions
         assert_eq!(moves.len(), 8);
@@ -752,7 +752,7 @@ mod test_aggregate_functions {
             .put_piece(BLACK_PAWN, D5)
             .set_en_passant(D5);
 
-        let moves = get_possible_white_moves(&position, E5);
+        let moves = get_white_pawn_moves(&position, E5);
 
         // Forward + en passant
         assert_eq!(moves.len(), 2);
@@ -768,7 +768,7 @@ mod test_aggregate_functions {
     fn test_get_possible_black_moves_basic() {
         let position = Position::default().put_piece(BLACK_PAWN, E7);
 
-        let moves = get_possible_black_moves(&position, E7);
+        let moves = get_black_pawn_moves(&position, E7);
 
         // Should have forward and two-forward moves
         assert_eq!(moves.len(), 2);
@@ -787,7 +787,7 @@ mod test_aggregate_functions {
             .put_piece(WHITE_KNIGHT, D1)
             .put_piece(WHITE_BISHOP, F1);
 
-        let moves = get_possible_black_moves(&position, E2);
+        let moves = get_black_pawn_moves(&position, E2);
 
         // 4 forward + 4 left capture + 4 right capture promotions
         assert_eq!(moves.len(), 12);
@@ -796,13 +796,14 @@ mod test_aggregate_functions {
 
 #[cfg(test)]
 mod test_public_interface {
+    use crate::possible_moves::common::get_moves_for_pieces;
+
     use super::*;
 
     #[test]
     fn test_get_possible_moves_white_pawn() {
         let position = Position::default().put_piece(WHITE_PAWN, E2);
-
-        let moves = get_possible_moves(&position, E2, WHITE_PAWN);
+        let moves = get_white_pawn_moves(&position, E2);
 
         // Should have forward and two-forward moves
         assert_eq!(moves.len(), 2);
@@ -818,7 +819,7 @@ mod test_public_interface {
     fn test_get_possible_moves_black_pawn() {
         let position = Position::default().put_piece(BLACK_PAWN, E7);
 
-        let moves = get_possible_moves(&position, E7, BLACK_PAWN);
+        let moves = get_black_pawn_moves(&position, E7);
 
         // Should have forward and two-forward moves
         assert_eq!(moves.len(), 2);
@@ -831,16 +832,6 @@ mod test_public_interface {
     }
 
     #[test]
-    fn test_get_possible_moves_non_pawn() {
-        let position = Position::default().put_piece(WHITE_KNIGHT, E4);
-
-        let moves = get_possible_moves(&position, E4, WHITE_KNIGHT);
-
-        // Should return empty vector for non-pawn pieces
-        assert_eq!(moves.len(), 0);
-    }
-
-    #[test]
     fn test_get_possible_moves_complex_position() {
         let position = Position::default()
             .put_piece(WHITE_PAWN, E5)
@@ -849,8 +840,7 @@ mod test_public_interface {
             .put_piece(BLACK_KNIGHT, E6)
             .set_en_passant(D5);
 
-        let moves = get_possible_moves(&position, E5, WHITE_PAWN);
-
+        let moves = get_white_pawn_moves(&position, E5);
         // White pawn on E5 with:
         // - Black pawns on D5 and F5 (same rank, so no normal captures)
         // - Black knight on E6 (blocks forward move)

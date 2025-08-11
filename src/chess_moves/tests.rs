@@ -6,7 +6,7 @@ use crate::{
     directions::{self, *},
     piece::*,
     position::{self, Position},
-    possible_moves::king::disallow_castle_if_necessary,
+    possible_moves::castle::disallow_castle_if_necessary,
 };
 #[test]
 fn test_progress_white_king() {

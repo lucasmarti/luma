@@ -5,56 +5,56 @@ use crate::{
         Piece, BLACK_BISHOP, BLACK_KNIGHT, BLACK_PAWN, BLACK_QUEEN, BLACK_ROOK, WHITE_BISHOP,
         WHITE_KNIGHT, WHITE_PAWN, WHITE_QUEEN, WHITE_ROOK,
     },
-    position::{self, Position},
+    position::Position,
 };
 
-pub fn get_possible_moves(position: &Position, from: u32, piece: Piece) -> Vec<Position> {
-    match piece {
-        WHITE_PAWN => get_possible_white_moves(position, from),
-        BLACK_PAWN => get_possible_black_moves(position, from),
-        _ => Vec::new(),
+const WHITE_MOVE_FUNCTIONS: [MoveFn; 6] = [
+    get_move_white_forward,
+    get_move_white_two_forward,
+    get_move_white_left_capture,
+    get_move_white_right_capture,
+    get_move_white_left_en_passant,
+    get_move_white_right_en_passant,
+];
+const BLACK_MOVE_FUNCTIONS: [MoveFn; 6] = [
+    get_move_black_forward,
+    get_move_black_two_forward,
+    get_move_black_left_capture,
+    get_move_black_right_capture,
+    get_move_black_left_en_passant,
+    get_move_black_right_en_passant,
+];
+
+pub fn get_pawn_moves(position: &Position, piece: Piece, square: u32) -> Vec<Position> {
+    match piece.color {
+        crate::piece::Color::Black => get_black_pawn_moves(position, square),
+        crate::piece::Color::White => get_white_pawn_moves(position, square),
     }
 }
 
-fn get_possible_white_moves(position: &Position, from: u32) -> Vec<Position> {
+fn get_white_pawn_moves(position: &Position, square: u32) -> Vec<Position> {
     let mut positions: Vec<Position> = Vec::new();
-    let move_functions: Vec<MoveFn> = vec![
-        get_move_white_forward,
-        get_move_white_two_forward,
-        get_move_white_left_capture,
-        get_move_white_right_capture,
-        get_move_white_left_en_passant,
-        get_move_white_right_en_passant,
-    ];
-    for move_function in move_functions {
-        if let Some(chess_move) = move_function(position, from) {
+    for move_function in WHITE_MOVE_FUNCTIONS {
+        if let Some(chess_move) = move_function(position, square) {
             positions.push(chess_move);
         }
     }
-    positions.extend(get_moves_white_promotion(position, from));
-    positions.extend(get_moves_white_promotion_left_capture(position, from));
-    positions.extend(get_moves_white_promotion_right_capture(position, from));
+    positions.extend(get_moves_white_promotion(position, square));
+    positions.extend(get_moves_white_promotion_left_capture(position, square));
+    positions.extend(get_moves_white_promotion_right_capture(position, square));
     positions
 }
 
-fn get_possible_black_moves(position: &Position, from: u32) -> Vec<Position> {
+fn get_black_pawn_moves(position: &Position, square: u32) -> Vec<Position> {
     let mut positions: Vec<Position> = Vec::new();
-    let move_functions: Vec<MoveFn> = vec![
-        get_move_black_forward,
-        get_move_black_two_forward,
-        get_move_black_left_capture,
-        get_move_black_right_capture,
-        get_move_black_left_en_passant,
-        get_move_black_right_en_passant,
-    ];
-    for move_function in move_functions {
-        if let Some(chess_move) = move_function(position, from) {
+    for move_function in BLACK_MOVE_FUNCTIONS {
+        if let Some(chess_move) = move_function(position, square) {
             positions.push(chess_move);
         }
     }
-    positions.extend(get_moves_black_promotion(position, from));
-    positions.extend(get_moves_black_promotion_left_capture(position, from));
-    positions.extend(get_moves_black_promotion_right_capture(position, from));
+    positions.extend(get_moves_black_promotion(position, square));
+    positions.extend(get_moves_black_promotion_left_capture(position, square));
+    positions.extend(get_moves_black_promotion_right_capture(position, square));
     positions
 }
 type MoveFn = fn(&Position, u32) -> Option<Position>;

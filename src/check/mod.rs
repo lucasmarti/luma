@@ -2,23 +2,8 @@ use crate::{
     directions::{self, DirectionFn},
     piece::{Color, Piece, Typ, *},
     position::Position,
-    possible_moves::{king::KING_DIRECTIONS, knight::KNIGHT_DIRECTIONS},
+    possible_moves::configurations::*,
 };
-
-const HORIZONTAL_VERTICAL_DIRECTIONS: [DirectionFn; 4] = [
-    directions::up,
-    directions::down,
-    directions::left,
-    directions::right,
-];
-
-const DIAGONAL_DIRECTIONS: [DirectionFn; 4] = [
-    directions::up_left,
-    directions::up_right,
-    directions::down_left,
-    directions::down_right,
-];
-
 /// Check if the king of the given color is in check
 pub fn is_check(position: &Position, color: Color) -> bool {
     let king_square = position.get_king_square(color);

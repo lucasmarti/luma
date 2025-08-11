@@ -1,29 +1,11 @@
+// White Castling Tests
+
 use crate::{
     directions::*,
-    piece::{BLACK_KING, BLACK_QUEEN, BLACK_ROOK, WHITE_KING, WHITE_QUEEN, WHITE_ROOK},
-    position::Position,
-    possible_moves::king::get_possible_moves,
+    piece::*,
+    position::*,
+    possible_moves::castle::{get_black_castle_moves, get_white_castle_moves},
 };
-
-#[test]
-fn test_get_possible_black_moves() {
-    let position: Position = Position::new_starting_position();
-    assert!(get_possible_moves(&position, D8, BLACK_KING).len() == 0);
-    assert!(get_possible_moves(&position, D3, BLACK_KING).len() == 8);
-    assert!(get_possible_moves(&position, F6, BLACK_KING).len() == 5);
-    assert!(get_possible_moves(&position, H6, BLACK_KING).len() == 3);
-}
-
-#[test]
-fn test_get_possible_white_moves() {
-    let position: Position = Position::new_starting_position();
-    assert!(get_possible_moves(&position, D8, WHITE_KING).len() == 5);
-    assert!(get_possible_moves(&position, D3, WHITE_KING).len() == 5);
-    assert!(get_possible_moves(&position, F2, WHITE_KING).len() == 3);
-    assert!(get_possible_moves(&position, H6, WHITE_KING).len() == 5);
-}
-
-// White Castling Tests
 
 #[test]
 fn test_white_kingside_castle_allowed() {
@@ -31,7 +13,7 @@ fn test_white_kingside_castle_allowed() {
         .put_piece(WHITE_KING, E1)
         .put_piece(WHITE_ROOK, H1);
 
-    let moves = get_possible_moves(&position, E1, WHITE_KING);
+    let moves = get_white_castle_moves(&position);
 
     // Should have normal king moves plus castling
     let castle_move = moves.iter().find(|pos| {
@@ -49,7 +31,7 @@ fn test_white_queenside_castle_allowed() {
         .put_piece(WHITE_KING, E1)
         .put_piece(WHITE_ROOK, A1);
 
-    let moves = get_possible_moves(&position, E1, WHITE_KING);
+    let moves = get_white_castle_moves(&position);
 
     let castle_move = moves.iter().find(|pos| {
         pos.is_occupied_by_piece(C1, WHITE_KING) && pos.is_occupied_by_piece(D1, WHITE_ROOK)
@@ -68,7 +50,7 @@ fn test_white_castle_blocked_by_pieces() {
         .put_piece(WHITE_ROOK, H1)
         .put_piece(WHITE_QUEEN, F1); // Blocking piece
 
-    let moves = get_possible_moves(&position, E1, WHITE_KING);
+    let moves = get_white_castle_moves(&position);
     let castle_move = moves.iter().find(|pos| {
         pos.is_occupied_by_piece(G1, WHITE_KING) && pos.is_occupied_by_piece(F1, WHITE_ROOK)
     });
@@ -83,7 +65,7 @@ fn test_white_castle_blocked_by_pieces() {
         .put_piece(WHITE_ROOK, A1)
         .put_piece(WHITE_QUEEN, D1); // Blocking piece
 
-    let moves = get_possible_moves(&position, E1, WHITE_KING);
+    let moves = get_white_castle_moves(&position);
     let castle_move = moves.iter().find(|pos| {
         pos.is_occupied_by_piece(C1, WHITE_KING) && pos.is_occupied_by_piece(D1, WHITE_ROOK)
     });
@@ -100,7 +82,7 @@ fn test_white_castle_not_allowed_when_in_check() {
         .put_piece(WHITE_ROOK, H1)
         .put_piece(BLACK_ROOK, E8); // Attacking the king
 
-    let moves = get_possible_moves(&position, E1, WHITE_KING);
+    let moves = get_white_castle_moves(&position);
     let castle_move = moves.iter().find(|pos| {
         pos.is_occupied_by_piece(G1, WHITE_KING) && pos.is_occupied_by_piece(F1, WHITE_ROOK)
     });
@@ -118,7 +100,7 @@ fn test_white_castle_not_allowed_through_check() {
         .put_piece(WHITE_ROOK, H1)
         .put_piece(BLACK_ROOK, F8); // Attacking F1
 
-    let moves = get_possible_moves(&position, E1, WHITE_KING);
+    let moves = get_white_castle_moves(&position);
     let castle_move = moves.iter().find(|pos| {
         pos.is_occupied_by_piece(G1, WHITE_KING) && pos.is_occupied_by_piece(F1, WHITE_ROOK)
     });
@@ -133,7 +115,7 @@ fn test_white_castle_not_allowed_through_check() {
         .put_piece(WHITE_ROOK, A1)
         .put_piece(BLACK_ROOK, D8); // Attacking D1
 
-    let moves = get_possible_moves(&position, E1, WHITE_KING);
+    let moves = get_white_castle_moves(&position);
     let castle_move = moves.iter().find(|pos| {
         pos.is_occupied_by_piece(C1, WHITE_KING) && pos.is_occupied_by_piece(D1, WHITE_ROOK)
     });
@@ -151,7 +133,7 @@ fn test_black_kingside_castle_allowed() {
         .put_piece(BLACK_KING, E8)
         .put_piece(BLACK_ROOK, H8);
 
-    let moves = get_possible_moves(&position, E8, BLACK_KING);
+    let moves = get_black_castle_moves(&position);
 
     let castle_move = moves.iter().find(|pos| {
         pos.is_occupied_by_piece(G8, BLACK_KING) && pos.is_occupied_by_piece(F8, BLACK_ROOK)
@@ -167,8 +149,7 @@ fn test_black_queenside_castle_allowed() {
     let mut position = Position::default()
         .put_piece(BLACK_KING, E8)
         .put_piece(BLACK_ROOK, A8);
-
-    let moves = get_possible_moves(&position, E8, BLACK_KING);
+    let moves = get_black_castle_moves(&position);
 
     let castle_move = moves.iter().find(|pos| {
         pos.is_occupied_by_piece(C8, BLACK_KING) && pos.is_occupied_by_piece(D8, BLACK_ROOK)
@@ -187,7 +168,7 @@ fn test_black_castle_blocked_by_pieces() {
         .put_piece(BLACK_ROOK, H8)
         .put_piece(BLACK_QUEEN, F8); // Blocking piece
 
-    let moves = get_possible_moves(&position, E8, BLACK_KING);
+    let moves = get_black_castle_moves(&position);
     let castle_move = moves.iter().find(|pos| {
         pos.is_occupied_by_piece(G8, BLACK_KING) && pos.is_occupied_by_piece(F8, BLACK_ROOK)
     });
@@ -202,7 +183,7 @@ fn test_black_castle_blocked_by_pieces() {
         .put_piece(BLACK_ROOK, A8)
         .put_piece(BLACK_QUEEN, B8); // Blocking piece
 
-    let moves = get_possible_moves(&position, E8, BLACK_KING);
+    let moves = get_black_castle_moves(&position);
     let castle_move = moves.iter().find(|pos| {
         pos.is_occupied_by_piece(C8, BLACK_KING) && pos.is_occupied_by_piece(D8, BLACK_ROOK)
     });
@@ -219,7 +200,7 @@ fn test_black_castle_not_allowed_when_in_check() {
         .put_piece(BLACK_ROOK, H8)
         .put_piece(WHITE_ROOK, E1); // Attacking the king
 
-    let moves = get_possible_moves(&position, E8, BLACK_KING);
+    let moves = get_black_castle_moves(&position);
     let castle_move = moves.iter().find(|pos| {
         pos.is_occupied_by_piece(G8, BLACK_KING) && pos.is_occupied_by_piece(F8, BLACK_ROOK)
     });
@@ -237,7 +218,7 @@ fn test_black_castle_not_allowed_through_check() {
         .put_piece(BLACK_ROOK, H8)
         .put_piece(WHITE_ROOK, F1); // Attacking F8
 
-    let moves = get_possible_moves(&position, E8, BLACK_KING);
+    let moves = get_black_castle_moves(&position);
     let castle_move = moves.iter().find(|pos| {
         pos.is_occupied_by_piece(G8, BLACK_KING) && pos.is_occupied_by_piece(F8, BLACK_ROOK)
     });
@@ -252,7 +233,7 @@ fn test_black_castle_not_allowed_through_check() {
         .put_piece(BLACK_ROOK, A8)
         .put_piece(WHITE_ROOK, D1); // Attacking D8
 
-    let moves = get_possible_moves(&position, E8, BLACK_KING);
+    let moves = get_black_castle_moves(&position);
     let castle_move = moves.iter().find(|pos| {
         pos.is_occupied_by_piece(C8, BLACK_KING) && pos.is_occupied_by_piece(D8, BLACK_ROOK)
     });
@@ -272,7 +253,7 @@ fn test_castle_rights_false() {
         .disallow_white_kingside_castle()
         .disallow_white_queenside_castle();
 
-    let moves = get_possible_moves(&position, E1, WHITE_KING);
+    let moves = get_white_castle_moves(&position);
     let kingside_castle = moves.iter().find(|pos| {
         pos.is_occupied_by_piece(G1, WHITE_KING) && pos.is_occupied_by_piece(F1, WHITE_ROOK)
     });
@@ -297,7 +278,7 @@ fn test_both_castles_available() {
         .put_piece(WHITE_ROOK, H1)
         .put_piece(WHITE_ROOK, A1);
 
-    let moves = get_possible_moves(&position, E1, WHITE_KING);
+    let moves = get_white_castle_moves(&position);
 
     let kingside_castle = moves.iter().find(|pos| {
         pos.is_occupied_by_piece(G1, WHITE_KING) && pos.is_occupied_by_piece(F1, WHITE_ROOK)
@@ -313,12 +294,5 @@ fn test_both_castles_available() {
     assert!(
         queenside_castle.is_some(),
         "Queenside castle should be available"
-    );
-
-    // Should have 5 normal king moves + 2 castle moves = 7 total
-    assert_eq!(
-        moves.len(),
-        7,
-        "Should have 7 total moves including castles"
     );
 }

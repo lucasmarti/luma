@@ -1,4 +1,8 @@
-use crate::{position::Position, possible_moves::get_all_moves};
+use crate::{
+    piece::{Piece, WHITE_BISHOP},
+    position::Position,
+    possible_moves::get_white_moves,
+};
 
 mod check;
 mod chess_moves;
@@ -9,7 +13,4 @@ mod piece;
 mod position;
 mod possible_moves;
 
-fn main() {
-    let position = Position::new_starting_position();
-    get_all_moves(&position, piece::Color::White);
-}
+fn main() {}

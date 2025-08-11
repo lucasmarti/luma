@@ -56,6 +56,22 @@ impl Position {
         self.black_queenside_castle_allowed
     }
 
+    pub fn disallow_castle_for_color(mut self, color: Color) -> Position {
+        match color {
+            Color::White => {
+                self = self
+                    .disallow_white_kingside_castle()
+                    .disallow_white_queenside_castle();
+            }
+            Color::Black => {
+                self = self
+                    .disallow_black_kingside_castle()
+                    .disallow_black_queenside_castle();
+            }
+        }
+        self
+    }
+
     pub fn disallow_white_kingside_castle(mut self) -> Position {
         self.white_kingside_castle_allowed = false;
         self

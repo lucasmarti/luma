@@ -2,7 +2,12 @@ use crate::{
     directions::{self, *},
     piece::{self, *},
     position::{self, Position},
-    possible_moves::common::{get_piece_moves, slide},
+    possible_moves::{
+        common::{
+            get_moves_for_king_at_square, get_moves_for_pieces, get_moves_for_rook_at_square, slide,
+        },
+        get_white_moves,
+    },
 };
 
 #[test]
@@ -36,7 +41,8 @@ fn test_get_piece_moves_king() {
     let king_directions = [
         up, down, left, right, up_left, up_right, down_left, down_right,
     ];
-    let positions = get_piece_moves(&position, D4, &king_directions, WHITE_KING, 1);
+    let positions = get_white_moves(&position);
+    //let positions = get_piece_moves(&position, D4, &king_directions, WHITE_KING, 1);
 
     assert_eq!(positions.len(), 8);
 
@@ -55,8 +61,7 @@ fn test_get_piece_moves_king_blocked_by_own_piece() {
     let king_directions = [
         up, down, left, right, up_left, up_right, down_left, down_right,
     ];
-    let positions = get_piece_moves(&position, D4, &king_directions, WHITE_KING, 1);
-
+    let positions = get_moves_for_king_at_square(&position, WHITE_KING, D4);
     assert_eq!(positions.len(), 7); // One less because D5 is blocked
 
     assert!(!contains_move(&positions, WHITE_KING, D5)); // Should be blocked
@@ -65,12 +70,11 @@ fn test_get_piece_moves_king_blocked_by_own_piece() {
 
 #[test]
 fn test_get_piece_moves_rook() {
-    let position: Position = Position::default().put_piece(WHITE_KING, A1);
+    let position: Position = Position::default().put_piece(WHITE_ROOK, D4);
 
     // Test rook directions (4 directions)
     let rook_directions = [up, down, left, right];
-    let moves = get_piece_moves(&position, D4, &rook_directions, WHITE_ROOK, u32::MAX);
-
+    let moves = get_moves_for_rook_at_square(&position, WHITE_ROOK, D4);
     // Should be able to move in all 4 directions until board edge
     // Up: D5, D6, D7, D8 (4 moves)
     // Down: D3, D2, D1 (3 moves)
@@ -88,8 +92,7 @@ fn test_get_piece_moves_rook_with_obstacles() {
         .put_piece(BLACK_PAWN, F4); // Enemy piece at F4 (can capture)
 
     let rook_directions = [up, down, left, right];
-    let positions = get_piece_moves(&position, D4, &rook_directions, WHITE_ROOK, u32::MAX);
-
+    let positions = get_moves_for_rook_at_square(&position, WHITE_ROOK, D4);
     // Up: only D5 (blocked by own pawn at D6)
     assert!(contains_move(&positions, WHITE_ROOK, D5));
     assert!(!contains_move(&positions, WHITE_ROOK, D6)); // Blocked by own piece

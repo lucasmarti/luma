@@ -3,7 +3,7 @@ use crate::{
     directions::{self, *},
     piece::*,
     position::Position,
-    possible_moves::king::disallow_castle_if_necessary,
+    possible_moves::castle::disallow_castle_if_necessary,
 };
 pub fn progess(position: &Position, piece: Piece, from: u32, to: u32) -> Position {
     let mut new_position = position
@@ -99,19 +99,8 @@ fn castle(position: &Position, castle: Castle) -> Option<Position> {
         .put_piece(castle.king, castle.king_to)
         .put_piece(castle.rook, castle.rook_to)
         .toggle_player()
-        .reset_en_passant();
-    match castle.color {
-        Color::White => {
-            new_position = new_position
-                .disallow_white_kingside_castle()
-                .disallow_white_queenside_castle();
-        }
-        Color::Black => {
-            new_position = new_position
-                .disallow_black_kingside_castle()
-                .disallow_black_queenside_castle();
-        }
-    }
+        .reset_en_passant()
+        .disallow_castle_for_color(castle.color);
     if !is_check(&new_position, castle.color) {
         return Some(new_position);
     }
