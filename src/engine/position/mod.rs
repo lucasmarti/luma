@@ -309,7 +309,7 @@ impl Default for Position {
         }
     }
 }
-mod bitboard;
+pub mod bitboard;
 pub mod print;
 
 #[cfg(test)]

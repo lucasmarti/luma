@@ -7,3 +7,11 @@ edition = "2021"
 
 [dependencies]
 intbits = "0.2.0"
+flo_canvas = "0.3.1"
+flo_curves = "0.7.2"
+flo_draw = "0.3.1"
+flo_stream = "0.7.0"
+futures = "0.3.30"
+futures-timer = "3.0.2"
+futures-util = "0.3.30"
+

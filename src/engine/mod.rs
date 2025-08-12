@@ -1,13 +1,19 @@
+use std::collections::HashMap;
+
 use crate::engine::{
-    chess_moves::{
-        configurations::{MovesFn, BLACK_MOVE_CONFIG, WHITE_MOVE_CONFIG},
-        get_black_moves, get_white_moves,
-    },
+    chess_moves::configurations::{MovesFn, BLACK_MOVE_CONFIG, WHITE_MOVE_CONFIG},
     position::Position,
 };
 
-pub fn get_valid_drop_targets(position: &Position, from: u32) -> Vec<u32> {
-    let mut targets: Vec<u32> = Vec::new();
+pub fn is_valid_drag_square(position: &Position, square: u32) -> bool {
+    match position.get_piece_at(square) {
+        Some(piece) => piece.color == position.get_player(),
+        None => false,
+    }
+}
+
+pub fn get_valid_drop_positions(position: &Position, from: u32) -> HashMap<u32, Position> {
+    let mut positions: HashMap<u32, Position> = HashMap::new();
     if let Some(piece) = position.get_piece_at(from) {
         let config = match piece.color {
             piece::Color::Black => BLACK_MOVE_CONFIG,
@@ -21,15 +27,13 @@ pub fn get_valid_drop_targets(position: &Position, from: u32) -> Vec<u32> {
             piece::Typ::Knight => config.knight_fn,
             piece::Typ::Bishop => config.bishop_fn,
         };
-        let positions = moves_fn(position, piece, from);
-        for position in positions {
-            if let Some(square) = position.get_target() {
-                targets.push(square);
+        for position in moves_fn(position, piece, from) {
+            if let Some(target) = position.get_target() {
+                positions.insert(target, position);
             }
         }
     }
-
-    targets
+    positions
 }
 pub fn get_next_positions(position: &Position) -> Vec<Position> {
     let positions: Vec<Position> = Vec::new();
@@ -45,7 +49,7 @@ mod chess_moves;
 mod directions;
 mod evaluation;
 mod minimax;
-mod piece;
+pub mod piece;
 pub mod position;
 #[cfg(test)]
 mod tests;

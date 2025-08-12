@@ -23,13 +23,15 @@ fn test_slide1() {
         Position::default()
             .put_piece(WHITE_QUEEN, G5)
             .put_piece(WHITE_PAWN, G7)
-            .toggle_player(),
+            .toggle_player()
+            .set_target(G5),
         Position::default()
             .put_piece(WHITE_QUEEN, G6)
             .put_piece(WHITE_PAWN, G7)
-            .toggle_player(),
+            .toggle_player()
+            .set_target(G6),
     ];
-    assert!(positions == result);
+    assert_eq!(positions, result);
 }
 
 #[test]
@@ -124,14 +126,17 @@ fn test_slide2() {
         Position::default()
             .put_piece(WHITE_QUEEN, G5)
             .put_piece(BLACK_PAWN, G7)
-            .toggle_player(),
+            .toggle_player()
+            .set_target(G5),
         Position::default()
             .put_piece(WHITE_QUEEN, G6)
             .put_piece(BLACK_PAWN, G7)
-            .toggle_player(),
+            .toggle_player()
+            .set_target(G6),
         Position::default()
             .put_piece(WHITE_QUEEN, G7)
-            .toggle_player(),
+            .toggle_player()
+            .set_target(G7),
     ];
     assert!(positions == result);
 }
@@ -145,16 +150,20 @@ fn test_slide3() {
     let result: Vec<Position> = vec![
         Position::default()
             .put_piece(WHITE_QUEEN, G5)
-            .toggle_player(),
+            .toggle_player()
+            .set_target(G5),
         Position::default()
             .put_piece(WHITE_QUEEN, G6)
-            .toggle_player(),
+            .toggle_player()
+            .set_target(G6),
         Position::default()
             .put_piece(WHITE_QUEEN, G7)
-            .toggle_player(),
+            .toggle_player()
+            .set_target(G7),
         Position::default()
             .put_piece(WHITE_QUEEN, G8)
-            .toggle_player(),
+            .toggle_player()
+            .set_target(G8),
     ];
     assert!(positions == result);
 }
