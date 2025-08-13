@@ -1,16 +1,27 @@
+use rand::seq::IndexedRandom;
 use std::collections::HashMap;
-
-use flo_canvas::curves::HasBoundingBox;
 
 use crate::engine::{
     check::filter_checks,
     chess_moves::{
         castle::{BLACK_KING_STARTING_POSITION, WHITE_KING_STARTING_POSITION},
         configurations::{CastleMovesFn, MovesFn, BLACK_MOVE_CONFIG, WHITE_MOVE_CONFIG},
+        get_black_moves, get_white_moves,
     },
     piece::{Piece, BLACK_KING, WHITE_KING},
     position::Position,
 };
+
+pub fn get_next_move(position: &Position) -> Option<Position> {
+    let positions = match position.get_player() {
+        piece::Color::Black => get_black_moves(position),
+        piece::Color::White => get_white_moves(position),
+    };
+    match positions.choose(&mut rand::rng()) {
+        Some(position) => Some(*position),
+        None => None,
+    }
+}
 
 pub fn is_valid_drag_square(position: &Position, square: u32) -> bool {
     match position.get_piece_at(square) {
