@@ -43,8 +43,7 @@ fn test_get_piece_moves_king() {
     let king_directions = [
         up, down, left, right, up_left, up_right, down_left, down_right,
     ];
-    let positions = get_white_moves(&position);
-    //let positions = get_piece_moves(&position, D4, &king_directions, WHITE_KING, 1);
+    let positions = get_moves_for_king_at_square(&position, WHITE_KING, D4);
 
     assert_eq!(positions.len(), 8);
 

@@ -119,6 +119,9 @@ fn is_empty_path(position: &Position, sqares: &[u32]) -> bool {
     }
     true
 }
+
+pub const WHITE_KING_STARTING_POSITION: u32 = E1;
+pub const BLACK_KING_STARTING_POSITION: u32 = E8;
 pub struct Castle {
     color: Color,
     king: Piece,

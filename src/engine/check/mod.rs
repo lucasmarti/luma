@@ -12,6 +12,13 @@ pub fn is_check(position: &Position, color: Color) -> bool {
     is_under_attack(position, king_square, color)
 }
 
+pub fn filter_checks(positions: Vec<Position>, color: Color) -> Vec<Position> {
+    positions
+        .into_iter()
+        .filter(|position| !is_check(&position, color))
+        .collect()
+}
+
 /// Check if a square is under attack by the opponent
 pub fn is_under_attack(position: &Position, square: u32, color: Color) -> bool {
     let opponent = color.get_opponent_color();

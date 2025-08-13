@@ -129,7 +129,7 @@ impl Position {
         {
             return square;
         }
-        panic!("No King found");
+        panic!("No King found {:?}", color);
     }
 
     pub fn set_en_passant(mut self, index: u32) -> Position {

@@ -1,6 +1,7 @@
+use crate::engine::check::{filter_checks, is_check};
 use crate::engine::chess_moves::configurations::*;
 use crate::engine::chess_moves::configurations::{MovesFn, BLACK_MOVE_CONFIG, WHITE_MOVE_CONFIG};
-use crate::engine::piece::Piece;
+use crate::engine::piece::{Color, Piece};
 use crate::engine::position::Position;
 
 pub(crate) mod castle;
@@ -17,17 +18,17 @@ pub fn get_black_moves(position: &Position) -> Vec<Position> {
 }
 
 fn get_moves(position: &Position, config: Config) -> Vec<Position> {
-    let mut positions: Vec<Position> = Vec::new();
-    positions.extend(get_new_positions(position, config.bishop, config.bishop_fn));
-    positions.extend(get_new_positions(position, config.king, config.king_fn));
-    positions.extend(get_new_positions(position, config.queen, config.queen_fn));
-    positions.extend(get_new_positions(position, config.rook, config.rook_fn));
-    positions.extend(get_new_positions(position, config.knight, config.knight_fn));
-    positions.extend(get_new_positions(position, config.pawn, config.pawn_fn));
-    positions.extend((config.castle_move_fn)(position));
-    positions
-}
+    let mut new_positions: Vec<Position> = Vec::new();
+    new_positions.extend(get_new_positions(position, config.bishop, config.bishop_fn));
+    new_positions.extend(get_new_positions(position, config.king, config.king_fn));
+    new_positions.extend(get_new_positions(position, config.queen, config.queen_fn));
+    new_positions.extend(get_new_positions(position, config.rook, config.rook_fn));
+    new_positions.extend(get_new_positions(position, config.knight, config.knight_fn));
+    new_positions.extend(get_new_positions(position, config.pawn, config.pawn_fn));
+    new_positions.extend((config.castle_move_fn)(position));
 
+    filter_checks(new_positions, position.get_player())
+}
 fn get_new_positions(position: &Position, piece: Piece, get_moves_fn: MovesFn) -> Vec<Position> {
     let mut new_positions: Vec<Position> = Vec::new();
     for square in position.get_squares(piece).iter() {

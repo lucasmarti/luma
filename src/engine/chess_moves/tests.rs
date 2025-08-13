@@ -6,8 +6,9 @@ use crate::engine::{
             white_kingside_castle, white_queenside_castle,
         },
         common::{
-            get_moves_for_king_at_square, get_moves_for_knight_at_square,
-            get_moves_for_queen_at_square, get_moves_for_rook_at_square, progess,
+            get_moves_for_bishop_at_square, get_moves_for_king_at_square,
+            get_moves_for_knight_at_square, get_moves_for_queen_at_square,
+            get_moves_for_rook_at_square, progess,
         },
         get_black_moves, get_white_moves,
         pawn::{en_passant, is_pawn_two_rows_forward, promote, set_en_passant_if_necessary},
@@ -364,7 +365,7 @@ fn test_position1() {
         .put_piece(WHITE_PAWN, G3)
         .put_piece(WHITE_PAWN, H2);
     let positions = get_white_moves(&white);
-    assert!(positions.len() == 35);
+    assert_eq!(positions.len(), 35);
     let black = Position::default()
         .put_piece(BLACK_PAWN, A7)
         .put_piece(BLACK_PAWN, B7)
@@ -376,11 +377,11 @@ fn test_position1() {
         .put_piece(BLACK_ROOK, E4)
         .put_piece(BLACK_BISHOP, G4)
         .put_piece(BLACK_QUEEN, G6)
-        .put_piece(BLACK_KING, G8);
+        .put_piece(BLACK_KING, G8)
+        .toggle_player();
     let positions = get_black_moves(&black);
     assert_eq!(positions.len(), 44);
-
-    let all = Position::default()
+    let mut all = Position::default()
         .put_piece(WHITE_PAWN, A2)
         .put_piece(WHITE_PAWN, C3)
         .put_piece(WHITE_PAWN, C4)
@@ -404,14 +405,15 @@ fn test_position1() {
         .put_piece(BLACK_QUEEN, G6)
         .put_piece(BLACK_KING, G8);
 
-    assert!(39 == get_black_moves(&all).len());
-    assert!(29 == get_white_moves(&all).len());
+    assert_eq!(get_white_moves(&all).len(), 29);
+    all = all.toggle_player();
+    assert_eq!(get_black_moves(&all).len(), 39);
 }
 
 #[test]
 fn test_bishop_white_moves() {
     let position = Position::default().put_piece(WHITE_BISHOP, G4);
-    let positions = get_white_moves(&position);
+    let positions = get_moves_for_bishop_at_square(&position, WHITE_BISHOP, G4);
     assert_eq!(positions.len(), 9);
     let mut left_up = false;
     let mut left_down = false;
