@@ -2,7 +2,7 @@ use crate::engine::{
     chess_moves::configurations::{
         DIAGONAL_DIRECTIONS, HORIZONTAL_VERTICAL_DIRECTIONS, KING_DIRECTIONS, KNIGHT_DIRECTIONS,
     },
-    directions::{self, DirectionFn},
+    directions::{self},
     piece::{Color, Piece, Typ, *},
     position::Position,
 };

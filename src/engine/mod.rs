@@ -6,17 +6,19 @@ use crate::engine::{
     chess_moves::{
         castle::{BLACK_KING_STARTING_POSITION, WHITE_KING_STARTING_POSITION},
         configurations::{CastleMovesFn, MovesFn, BLACK_MOVE_CONFIG, WHITE_MOVE_CONFIG},
-        get_black_moves, get_white_moves,
+        get_current_player_moves,
     },
+    minimax::chess_impl::get_best_move,
     piece::{Piece, BLACK_KING, WHITE_KING},
     position::Position,
 };
 
 pub fn get_next_move(position: &Position) -> Option<Position> {
-    let positions = match position.get_player() {
-        piece::Color::Black => get_black_moves(position),
-        piece::Color::White => get_white_moves(position),
-    };
+    get_best_move(*position)
+}
+#[allow(dead_code)]
+fn get_random_move(position: &Position) -> Option<Position> {
+    let positions = get_current_player_moves(position);
     match positions.choose(&mut rand::rng()) {
         Some(position) => Some(*position),
         None => None,
@@ -83,7 +85,7 @@ fn get_moves_fn(piece: Piece) -> MovesFn {
 mod check;
 mod chess_moves;
 mod directions;
-mod evaluation;
+mod heuristic;
 mod minimax;
 pub mod piece;
 pub mod position;

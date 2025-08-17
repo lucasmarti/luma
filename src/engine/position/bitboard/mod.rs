@@ -6,9 +6,6 @@ use std::ops::{BitAnd, BitOr};
 
 pub struct Bitboard(u64);
 impl Bitboard {
-    pub fn new() -> Bitboard {
-        Bitboard { 0: 0 }
-    }
     pub fn from(index: u32) -> Bitboard {
         if index > 63 {
             panic!("Index out of bound[0..63] found {:?}", index);
@@ -25,9 +22,6 @@ impl Bitboard {
             bitboard.set_bit(index);
         }
         bitboard
-    }
-    pub fn bit(self, index: u32) -> bool {
-        self.0.bit(index)
     }
 
     pub fn set_bit(&mut self, index: u32) {

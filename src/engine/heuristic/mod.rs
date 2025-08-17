@@ -13,23 +13,15 @@ f(p) = 200(K-K')
        + 3(B-B' + N-N')
        + 1(P-P')
 */
-pub fn evaluate(position: &Position) -> i32 {
-    let white_score = KING_SCORE
-        * position.count_pieces(Piece {
-            typ: Typ::King,
-            color: Color::Black,
-        })
+pub fn heuristic(position: &Position) -> i32 {
+    let white_score = KING_SCORE * position.count_pieces(WHITE_KING)
         + QUEEN_SCORE * position.count_pieces(WHITE_QUEEN)
         + ROOK_SCORE * position.count_pieces(WHITE_ROOK)
         + BISHOP_SCORE * position.count_pieces(WHITE_BISHOP)
         + KNIGHT_SCORE * position.count_pieces(WHITE_KNIGHT)
         + PAWN_SCORE * position.count_pieces(WHITE_PAWN);
 
-    let black_score = KING_SCORE
-        * position.count_pieces(Piece {
-            typ: Typ::King,
-            color: Color::White,
-        })
+    let black_score = KING_SCORE * position.count_pieces(BLACK_KING)
         + QUEEN_SCORE * position.count_pieces(BLACK_QUEEN)
         + ROOK_SCORE * position.count_pieces(BLACK_ROOK)
         + BISHOP_SCORE * position.count_pieces(BLACK_BISHOP)

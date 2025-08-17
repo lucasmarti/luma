@@ -1,4 +1,4 @@
-use crate::engine::position::bitboard::Bitboard;
+use crate::engine::{heuristic::heuristic, position::bitboard::Bitboard};
 
 use super::Position;
 
@@ -9,18 +9,55 @@ pub trait Print {
 
 impl Print for Position {
     fn print_board(&self) {
-        self.print("White King".to_string(), self.white_king);
-        self.print("White Queen".to_string(), self.white_queen);
-        self.print("White Rook".to_string(), self.white_rooks);
-        self.print("White Knight".to_string(), self.white_knights);
-        self.print("White Bishop".to_string(), self.white_bishops);
-        self.print("White Pawn".to_string(), self.white_pawns);
-        self.print("Black King".to_string(), self.black_king);
-        self.print("Black Queen".to_string(), self.black_queen);
-        self.print("Black Rook".to_string(), self.black_rooks);
-        self.print("Black Knight".to_string(), self.black_knights);
-        self.print("Black Bishop".to_string(), self.black_bishops);
-        self.print("Black Pawn".to_string(), self.black_pawns);
+        let mut chars: [char; 64] = ['_'; 64];
+        for index in self.black_queen.iter() {
+            chars[index as usize] = 'q';
+        }
+        for index in self.black_king.iter() {
+            chars[index as usize] = 'k';
+        }
+        for index in self.black_rooks.iter() {
+            chars[index as usize] = 'r';
+        }
+        for index in self.black_knights.iter() {
+            chars[index as usize] = 'n';
+        }
+        for index in self.black_pawns.iter() {
+            chars[index as usize] = 'p';
+        }
+        for index in self.black_bishops.iter() {
+            chars[index as usize] = 'b';
+        }
+
+        for index in self.white_queen.iter() {
+            chars[index as usize] = 'Q';
+        }
+        for index in self.white_king.iter() {
+            chars[index as usize] = 'K';
+        }
+        for index in self.white_rooks.iter() {
+            chars[index as usize] = 'R';
+        }
+        for index in self.white_knights.iter() {
+            chars[index as usize] = 'N';
+        }
+        for index in self.white_pawns.iter() {
+            chars[index as usize] = 'P';
+        }
+        for index in self.white_bishops.iter() {
+            chars[index as usize] = 'B';
+        }
+        for row in (0..8).rev() {
+            for column in 0..8 {
+                let index = row * 8 + column;
+                print!("{}", chars[index]);
+            }
+            println!();
+        }
+        println!();
+        println!("Current Player: {:?}", self.get_player());
+        println!("Heuristic Score: {:?}", heuristic(self));
+        println!();
     }
 
     fn print(&self, name: String, board: Bitboard) {

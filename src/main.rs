@@ -5,7 +5,7 @@ use flo_draw::{
 };
 use futures::{executor, StreamExt};
 
-use crate::{engine::position::Position, gui::chess_board_canvas::ChessBoardCanvas};
+use crate::gui::chess_board_canvas::ChessBoardCanvas;
 
 pub fn main() {
     with_2d_graphics(|| {

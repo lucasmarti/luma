@@ -8,6 +8,41 @@ use crate::engine::{
     position::Position,
 };
 
+struct Config {
+    players_pawn: Piece,
+    opponents_pawn: Piece,
+    next_fn: DirectionFn,
+    diagonal_fn: DirectionFn,
+}
+
+const WHITE_LEFT_EN_PASSANT: Config = Config {
+    players_pawn: WHITE_PAWN,
+    opponents_pawn: BLACK_PAWN,
+    next_fn: directions::left,
+    diagonal_fn: directions::up_left,
+};
+
+const WHITE_RIGHT_EN_PASSANT: Config = Config {
+    players_pawn: WHITE_PAWN,
+    opponents_pawn: BLACK_PAWN,
+    next_fn: directions::right,
+    diagonal_fn: directions::up_right,
+};
+
+const BLACK_LEFT_EN_PASSANT: Config = Config {
+    players_pawn: BLACK_PAWN,
+    opponents_pawn: WHITE_PAWN,
+    next_fn: directions::left,
+    diagonal_fn: directions::down_left,
+};
+
+const BLACK_RIGHT_EN_PASSANT: Config = Config {
+    players_pawn: BLACK_PAWN,
+    opponents_pawn: WHITE_PAWN,
+    next_fn: directions::right,
+    diagonal_fn: directions::down_right,
+};
+
 const WHITE_MOVE_FUNCTIONS: [MoveFn; 6] = [
     get_move_white_forward,
     get_move_white_two_forward,
@@ -107,39 +142,40 @@ fn get_move_black_right_capture(position: &Position, from: u32) -> Option<Positi
     return get_move_capture(position, from, directions::down_right, BLACK_PAWN);
 }
 
-fn get_move_white_right_en_passant(position: &Position, from: u32) -> Option<Position> {
-    if directions::right(from) == position.get_en_passant() {
-        if let (Some(to), Some(capture)) = (directions::up_right(from), directions::right(from)) {
-            return Some(en_passant(position, WHITE_PAWN, from, to, capture));
+fn get_move_en_passant(position: &Position, from: u32, config: Config) -> Option<Position> {
+    if let (Some(next_square), Some(diagonal_square), Some(en_passant_square)) = (
+        (config.next_fn)(from),
+        (config.diagonal_fn)(from),
+        position.get_en_passant(),
+    ) {
+        if next_square == en_passant_square
+            && position.is_occupied_by_piece(next_square, config.opponents_pawn)
+        {
+            return Some(en_passant(
+                position,
+                config.players_pawn,
+                from,
+                diagonal_square,
+                next_square,
+            ));
         }
     }
     None
+}
+
+fn get_move_white_right_en_passant(position: &Position, from: u32) -> Option<Position> {
+    get_move_en_passant(position, from, WHITE_RIGHT_EN_PASSANT)
 }
 
 fn get_move_white_left_en_passant(position: &Position, from: u32) -> Option<Position> {
-    if directions::left(from) == position.get_en_passant() {
-        if let (Some(to), Some(capture)) = (directions::up_left(from), directions::left(from)) {
-            return Some(en_passant(position, WHITE_PAWN, from, to, capture));
-        }
-    }
-    None
+    get_move_en_passant(position, from, WHITE_LEFT_EN_PASSANT)
 }
 
 fn get_move_black_right_en_passant(position: &Position, from: u32) -> Option<Position> {
-    if directions::right(from) == position.get_en_passant() {
-        if let (Some(to), Some(capture)) = (directions::down_right(from), directions::right(from)) {
-            return Some(en_passant(position, BLACK_PAWN, from, to, capture));
-        }
-    }
-    None
+    get_move_en_passant(position, from, BLACK_RIGHT_EN_PASSANT)
 }
 fn get_move_black_left_en_passant(position: &Position, from: u32) -> Option<Position> {
-    if directions::left(from) == position.get_en_passant() {
-        if let (Some(to), Some(capture)) = (directions::down_left(from), directions::left(from)) {
-            return Some(en_passant(position, BLACK_PAWN, from, to, capture));
-        }
-    }
-    None
+    get_move_en_passant(position, from, BLACK_LEFT_EN_PASSANT)
 }
 
 fn get_moves_white_promotion(position: &Position, from: u32) -> Vec<Position> {
@@ -148,7 +184,6 @@ fn get_moves_white_promotion(position: &Position, from: u32) -> Vec<Position> {
             position,
             from,
             directions::up,
-            WHITE_PAWN,
             WHITE_PROMOTION_PIECES.to_vec(),
         );
     }
@@ -161,7 +196,6 @@ fn get_moves_black_promotion(position: &Position, from: u32) -> Vec<Position> {
             position,
             from,
             directions::down,
-            BLACK_PAWN,
             BLACK_PROMOTION_PIECES.to_vec(),
         );
     }
@@ -193,7 +227,6 @@ fn get_moves_white_promotion_right_capture(position: &Position, from: u32) -> Ve
     }
     Vec::new()
 }
-
 fn get_moves_black_promotion_left_capture(position: &Position, from: u32) -> Vec<Position> {
     if directions::is_in_row_2(from) {
         return get_promotion_capture(
@@ -223,7 +256,6 @@ fn get_promotion(
     position: &Position,
     from: u32,
     direction: DirectionFn,
-    piece: Piece,
     promotion_set: Vec<Piece>,
 ) -> Vec<Position> {
     let mut positions: Vec<Position> = Vec::new();
@@ -367,4 +399,5 @@ pub fn is_pawn_two_rows_forward(piece: Piece, from: u32, to: u32) -> bool {
     return false;
 }
 
+#[cfg(test)]
 mod tests;

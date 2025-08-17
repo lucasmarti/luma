@@ -1,6 +1,6 @@
 use crate::engine::{
     chess_moves::pawn::*,
-    directions::*,
+    directions::squares::*,
     piece::{
         BLACK_BISHOP, BLACK_KNIGHT, BLACK_PAWN, BLACK_QUEEN, BLACK_ROOK, WHITE_BISHOP,
         WHITE_KNIGHT, WHITE_PAWN, WHITE_QUEEN, WHITE_ROOK,
@@ -744,6 +744,24 @@ mod test_aggregate_functions {
         // 4 forward promotions + 4 left capture promotions
         assert_eq!(moves.len(), 8);
     }
+    #[test]
+    fn test_en_passant_same_color() {
+        let position = Position::default()
+            .put_piece(WHITE_PAWN, E5)
+            .put_piece(WHITE_PAWN, D5)
+            .set_en_passant(D5);
+
+        let moves = get_white_pawn_moves(&position, E5);
+
+        // only forward
+        assert_eq!(moves.len(), 1);
+
+        let has_en_passant = moves
+            .iter()
+            .any(|p| p.is_occupied_by_piece(D6, WHITE_PAWN) && !p.is_occupied(D5));
+
+        assert_eq!(false, has_en_passant);
+    }
 
     #[test]
     fn test_get_possible_white_moves_en_passant() {
@@ -796,7 +814,6 @@ mod test_aggregate_functions {
 
 #[cfg(test)]
 mod test_public_interface {
-    use crate::engine::chess_moves::common::get_moves_for_pieces;
 
     use super::*;
 

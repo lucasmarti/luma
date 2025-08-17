@@ -1,7 +1,4 @@
-use crate::gui::{
-    algebraic_notation::{Column, Coordinate, Row},
-    chess_board_canvas::{self, CanvasCoordinate},
-};
+use crate::gui::chess_board_canvas::{self, CanvasCoordinate};
 
 fn get_field_from_canvas(canvas: f64) -> Option<u32> {
     let field: i64 = ((canvas / chess_board_canvas::FIELD_SIZE as f64).floor() as i64) + 1;
@@ -12,7 +9,7 @@ fn get_field_from_canvas(canvas: f64) -> Option<u32> {
     }
 }
 pub fn get_canvas_from_index(index: u32) -> CanvasCoordinate {
-    if (index < 0 || index > 63) {
+    if index > 63 {
         panic!("ungültiger Index {:?}", index);
     }
     let pos_x: f32 = (index % 8) as f32 * chess_board_canvas::FIELD_SIZE;

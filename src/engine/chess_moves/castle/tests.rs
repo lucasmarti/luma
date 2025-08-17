@@ -2,14 +2,14 @@
 
 use crate::engine::{
     chess_moves::castle::{get_black_castle_moves, get_white_castle_moves},
-    directions::*,
+    directions::squares::*,
     piece::*,
     position::*,
 };
 
 #[test]
 fn test_white_kingside_castle_allowed() {
-    let mut position = Position::default()
+    let position = Position::default()
         .put_piece(WHITE_KING, E1)
         .put_piece(WHITE_ROOK, H1);
 
@@ -27,7 +27,7 @@ fn test_white_kingside_castle_allowed() {
 
 #[test]
 fn test_white_queenside_castle_allowed() {
-    let mut position = Position::default()
+    let position = Position::default()
         .put_piece(WHITE_KING, E1)
         .put_piece(WHITE_ROOK, A1);
 
@@ -45,7 +45,7 @@ fn test_white_queenside_castle_allowed() {
 #[test]
 fn test_white_castle_blocked_by_pieces() {
     // Kingside blocked
-    let mut position = Position::default()
+    let position = Position::default()
         .put_piece(WHITE_KING, E1)
         .put_piece(WHITE_ROOK, H1)
         .put_piece(WHITE_QUEEN, F1); // Blocking piece
@@ -60,7 +60,7 @@ fn test_white_castle_blocked_by_pieces() {
     );
 
     // Queenside blocked
-    let mut position = Position::default()
+    let position = Position::default()
         .put_piece(WHITE_KING, E1)
         .put_piece(WHITE_ROOK, A1)
         .put_piece(WHITE_QUEEN, D1); // Blocking piece
@@ -77,7 +77,7 @@ fn test_white_castle_blocked_by_pieces() {
 
 #[test]
 fn test_white_castle_not_allowed_when_in_check() {
-    let mut position = Position::default()
+    let position = Position::default()
         .put_piece(WHITE_KING, E1)
         .put_piece(WHITE_ROOK, H1)
         .put_piece(BLACK_ROOK, E8); // Attacking the king
@@ -95,7 +95,7 @@ fn test_white_castle_not_allowed_when_in_check() {
 #[test]
 fn test_white_castle_not_allowed_through_check() {
     // Kingside - F1 under attack
-    let mut position = Position::default()
+    let position = Position::default()
         .put_piece(WHITE_KING, E1)
         .put_piece(WHITE_ROOK, H1)
         .put_piece(BLACK_ROOK, F8); // Attacking F1
@@ -110,7 +110,7 @@ fn test_white_castle_not_allowed_through_check() {
     );
 
     // Queenside - D1 under attack
-    let mut position = Position::default()
+    let position = Position::default()
         .put_piece(WHITE_KING, E1)
         .put_piece(WHITE_ROOK, A1)
         .put_piece(BLACK_ROOK, D8); // Attacking D1
@@ -129,7 +129,7 @@ fn test_white_castle_not_allowed_through_check() {
 
 #[test]
 fn test_black_kingside_castle_allowed() {
-    let mut position = Position::default()
+    let position = Position::default()
         .put_piece(BLACK_KING, E8)
         .put_piece(BLACK_ROOK, H8);
 
@@ -146,7 +146,7 @@ fn test_black_kingside_castle_allowed() {
 
 #[test]
 fn test_black_queenside_castle_allowed() {
-    let mut position = Position::default()
+    let position = Position::default()
         .put_piece(BLACK_KING, E8)
         .put_piece(BLACK_ROOK, A8);
     let moves = get_black_castle_moves(&position);
@@ -163,7 +163,7 @@ fn test_black_queenside_castle_allowed() {
 #[test]
 fn test_black_castle_blocked_by_pieces() {
     // Kingside blocked
-    let mut position = Position::default()
+    let position = Position::default()
         .put_piece(BLACK_KING, E8)
         .put_piece(BLACK_ROOK, H8)
         .put_piece(BLACK_QUEEN, F8); // Blocking piece
@@ -178,7 +178,7 @@ fn test_black_castle_blocked_by_pieces() {
     );
 
     // Queenside blocked
-    let mut position = Position::default()
+    let position = Position::default()
         .put_piece(BLACK_KING, E8)
         .put_piece(BLACK_ROOK, A8)
         .put_piece(BLACK_QUEEN, B8); // Blocking piece
@@ -195,7 +195,7 @@ fn test_black_castle_blocked_by_pieces() {
 
 #[test]
 fn test_black_castle_not_allowed_when_in_check() {
-    let mut position = Position::default()
+    let position = Position::default()
         .put_piece(BLACK_KING, E8)
         .put_piece(BLACK_ROOK, H8)
         .put_piece(WHITE_ROOK, E1); // Attacking the king
@@ -213,7 +213,7 @@ fn test_black_castle_not_allowed_when_in_check() {
 #[test]
 fn test_black_castle_not_allowed_through_check() {
     // Kingside - F8 under attack
-    let mut position = Position::default()
+    let position = Position::default()
         .put_piece(BLACK_KING, E8)
         .put_piece(BLACK_ROOK, H8)
         .put_piece(WHITE_ROOK, F1); // Attacking F8
@@ -228,7 +228,7 @@ fn test_black_castle_not_allowed_through_check() {
     );
 
     // Queenside - D8 under attack
-    let mut position = Position::default()
+    let position = Position::default()
         .put_piece(BLACK_KING, E8)
         .put_piece(BLACK_ROOK, A8)
         .put_piece(WHITE_ROOK, D1); // Attacking D8
@@ -273,7 +273,7 @@ fn test_castle_rights_false() {
 
 #[test]
 fn test_both_castles_available() {
-    let mut position = Position::default()
+    let position = Position::default()
         .put_piece(WHITE_KING, E1)
         .put_piece(WHITE_ROOK, H1)
         .put_piece(WHITE_ROOK, A1);

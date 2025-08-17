@@ -1,10 +1,6 @@
 use std::collections::HashMap;
 
-use crate::engine::{
-    self,
-    piece::Color,
-    position::{self, Position},
-};
+use crate::engine::{self, piece::Color, position::Position};
 
 #[derive(Clone)]
 pub struct ChessBoardModel {

@@ -9,7 +9,7 @@ use crate::engine::{
         pawn::set_en_passant_if_necessary,
     },
     directions::DirectionFn,
-    piece::{Color, Piece},
+    piece::Piece,
     position::Position,
 };
 
@@ -28,25 +28,6 @@ pub fn slide(position: &Position, from: u32, path: Vec<u32>, piece: Piece) -> Ve
             // empty field
             new_positions.push(progess(position, piece, from, field));
         }
-    }
-    new_positions
-}
-
-pub fn get_moves_for_pieces(
-    position: &Position,
-    directions: &[DirectionFn],
-    piece: Piece,
-    max_distance: u32,
-) -> Vec<Position> {
-    let mut new_positions: Vec<Position> = Vec::new();
-    for from in position.get_squares(piece).iter() {
-        new_positions.extend(get_moves_for_piece_at_square(
-            position,
-            directions,
-            piece,
-            max_distance,
-            from,
-        ));
     }
     new_positions
 }
@@ -152,5 +133,5 @@ pub fn progess(position: &Position, piece: Piece, from: u32, to: u32) -> Positio
     new_position = disallow_castle_if_necessary(new_position, from);
     new_position
 }
-
+#[cfg(test)]
 mod tests;

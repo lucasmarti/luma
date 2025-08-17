@@ -1,10 +1,8 @@
 use crate::engine::{
-    chess_moves::get_white_moves,
-    directions::*,
+    directions::squares::*,
     get_valid_drop_positions,
     piece::{BLACK_PAWN, WHITE_KING, WHITE_PAWN, WHITE_ROOK},
     position::Position,
-    tests,
 };
 
 #[test]

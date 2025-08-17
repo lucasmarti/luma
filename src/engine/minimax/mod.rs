@@ -1,8 +1,9 @@
 const MAX_VALUE: i32 = std::i32::MAX;
 const MIN_VALUE: i32 = std::i32::MIN;
-const DEPTH: u8 = 2;
+//pub const DEPTH: u8 = 2;
 
 pub enum Player {
+    #[allow(unused)]
     MIN,
     MAX,
 }
@@ -13,13 +14,10 @@ pub trait Minimax {
     where
         Self: Sized;
 }
-
-pub fn evaluate<P: Minimax>(position: &P, player: Player) -> (Option<&P>, i32) {
+pub fn evaluate<P: Minimax>(position: &P, player: Player, depth: u8) -> (Option<&P>, i32) {
     let mut best_position: Option<&P> = None;
     let mut alpha: i32 = MIN_VALUE;
     let mut beta: i32 = MAX_VALUE;
-    let depth = DEPTH;
-
     match player {
         Player::MAX => {
             let mut best_value = MIN_VALUE;
@@ -112,5 +110,6 @@ fn min(a: i32, b: i32) -> i32 {
     }
 }
 
+pub mod chess_impl;
 #[cfg(test)]
 mod tests;

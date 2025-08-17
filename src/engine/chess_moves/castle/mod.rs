@@ -1,7 +1,6 @@
 use crate::engine::{
     check::{is_check, is_under_attack},
-    chess_moves::*,
-    directions::*,
+    directions::squares::*,
     piece::{Color, Piece, BLACK_KING, BLACK_ROOK, WHITE_KING, WHITE_ROOK},
     position::Position,
 };
@@ -87,7 +86,7 @@ fn castle(position: &Position, castle: Castle) -> Option<Position> {
         return None;
     }
 
-    let mut new_position = position
+    let new_position = position
         .remove_piece(castle.king_from)
         .remove_piece(castle.rook_from)
         .put_piece(castle.king, castle.king_to)
@@ -180,5 +179,5 @@ pub const BLACK_QUEENSIDE: Castle = Castle {
     king: BLACK_KING,
     rook: BLACK_ROOK,
 };
-
+#[cfg(test)]
 mod tests;

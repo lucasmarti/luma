@@ -1,4 +1,4 @@
-use crate::engine::{chess_moves::*, directions::*, piece::*, position};
+use crate::engine::{directions::squares::*, piece::*};
 
 use super::{print::Print, Position};
 

@@ -1,5 +1,5 @@
 use super::*;
-use crate::engine::{directions::*, position::Position};
+use crate::engine::{directions::squares::*, position::Position};
 
 #[test]
 fn test_starting_position_no_check() {

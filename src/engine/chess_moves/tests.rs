@@ -1,6 +1,5 @@
 use crate::engine::{
     chess_moves::{
-        self,
         castle::{
             black_kingside_castle, black_queenside_castle, disallow_castle_if_necessary,
             white_kingside_castle, white_queenside_castle,
@@ -13,9 +12,9 @@ use crate::engine::{
         get_black_moves, get_white_moves,
         pawn::{en_passant, is_pawn_two_rows_forward, promote, set_en_passant_if_necessary},
     },
-    directions::{self, *},
+    directions::squares::*,
     piece::*,
-    position::{self, Position},
+    position::Position,
 };
 #[test]
 fn test_progress_white_king() {
