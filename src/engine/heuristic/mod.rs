@@ -1,10 +1,28 @@
-use crate::engine::{piece::*, position::Position};
-const KING_SCORE: u32 = 200;
-const QUEEN_SCORE: u32 = 9;
-const ROOK_SCORE: u32 = 5;
-const BISHOP_SCORE: u32 = 3;
-const KNIGHT_SCORE: u32 = 3;
-const PAWN_SCORE: u32 = 1;
+use crate::engine::position::Position;
+
+struct Score {
+    material: f32,
+    squares: f32,
+    mobility: f32,
+}
+
+pub fn heuristics(position: &Position) -> f32 {
+    let mut white_score: Score = Score {
+        material: 0.0,
+        squares: 0.0,
+        mobility: 0.0,
+    };
+    let mut black_score: Score = Score {
+        material: 0.0,
+        squares: 0.0,
+        mobility: 0.0,
+    };
+    white_score.material = material::count_white(position);
+    white_score.squares = squares::count_white(position);
+    //white_score.mobility = mobility::count_white(position);
+    //black_score.material = count_black(position);
+    0.0
+}
 
 /*
 f(p) = 200(K-K')
@@ -13,22 +31,13 @@ f(p) = 200(K-K')
        + 3(B-B' + N-N')
        + 1(P-P')
 */
-pub fn heuristic(position: &Position) -> i32 {
-    let white_score = KING_SCORE * position.count_pieces(WHITE_KING)
-        + QUEEN_SCORE * position.count_pieces(WHITE_QUEEN)
-        + ROOK_SCORE * position.count_pieces(WHITE_ROOK)
-        + BISHOP_SCORE * position.count_pieces(WHITE_BISHOP)
-        + KNIGHT_SCORE * position.count_pieces(WHITE_KNIGHT)
-        + PAWN_SCORE * position.count_pieces(WHITE_PAWN);
 
-    let black_score = KING_SCORE * position.count_pieces(BLACK_KING)
-        + QUEEN_SCORE * position.count_pieces(BLACK_QUEEN)
-        + ROOK_SCORE * position.count_pieces(BLACK_ROOK)
-        + BISHOP_SCORE * position.count_pieces(BLACK_BISHOP)
-        + KNIGHT_SCORE * position.count_pieces(BLACK_KNIGHT)
-        + PAWN_SCORE * position.count_pieces(BLACK_PAWN);
-    white_score as i32 - black_score as i32
+pub fn heuristic(position: &Position) -> f32 {
+    0.0 //get_score_for_pieces(position, WHITE_PIECES) - get_score_for_pieces(position, BLACK_PIECES)
 }
 
+mod material;
+mod mobility;
+mod squares;
 #[cfg(test)]
 mod tests;

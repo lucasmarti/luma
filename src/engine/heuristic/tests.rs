@@ -20,7 +20,7 @@ fn test_equal_material() {
         .put_piece(BLACK_PAWN, 1)
         .put_piece(BLACK_ROOK, 1)
         .put_piece(BLACK_QUEEN, 1);
-    assert_eq!(heuristic(&position), 0);
+    assert_eq!(heuristic(&position), 0.0);
 }
 
 #[test]
@@ -37,7 +37,7 @@ fn test_white_queen_missing() {
         .put_piece(BLACK_KNIGHT, 1)
         .put_piece(BLACK_PAWN, 1)
         .put_piece(BLACK_ROOK, 1);
-    assert_eq!(heuristic(&position), -9);
+    assert_eq!(heuristic(&position), -90.0);
 }
 
 #[test]
@@ -54,5 +54,5 @@ fn test_black_queen_missing() {
         .put_piece(BLACK_KNIGHT, 1)
         .put_piece(BLACK_PAWN, 1)
         .put_piece(BLACK_ROOK, 1);
-    assert_eq!(heuristic(&position), 9);
+    assert_eq!(heuristic(&position), 90.0);
 }

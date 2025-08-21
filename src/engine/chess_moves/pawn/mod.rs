@@ -1,6 +1,6 @@
 use crate::engine::{
     chess_moves::common::progess,
-    directions::{self, DirectionFn},
+    directions::{self, DirectionFn, RowFn},
     piece::{
         Color, Piece, Typ, BLACK_BISHOP, BLACK_KNIGHT, BLACK_PAWN, BLACK_QUEEN, BLACK_ROOK,
         WHITE_BISHOP, WHITE_KNIGHT, WHITE_PAWN, WHITE_QUEEN, WHITE_ROOK,
@@ -8,35 +8,35 @@ use crate::engine::{
     position::Position,
 };
 
-struct Config {
+struct EnPassantConfig {
     players_pawn: Piece,
     opponents_pawn: Piece,
     next_fn: DirectionFn,
     diagonal_fn: DirectionFn,
 }
 
-const WHITE_LEFT_EN_PASSANT: Config = Config {
+const WHITE_LEFT_EN_PASSANT: EnPassantConfig = EnPassantConfig {
     players_pawn: WHITE_PAWN,
     opponents_pawn: BLACK_PAWN,
     next_fn: directions::left,
     diagonal_fn: directions::up_left,
 };
 
-const WHITE_RIGHT_EN_PASSANT: Config = Config {
+const WHITE_RIGHT_EN_PASSANT: EnPassantConfig = EnPassantConfig {
     players_pawn: WHITE_PAWN,
     opponents_pawn: BLACK_PAWN,
     next_fn: directions::right,
     diagonal_fn: directions::up_right,
 };
 
-const BLACK_LEFT_EN_PASSANT: Config = Config {
+const BLACK_LEFT_EN_PASSANT: EnPassantConfig = EnPassantConfig {
     players_pawn: BLACK_PAWN,
     opponents_pawn: WHITE_PAWN,
     next_fn: directions::left,
     diagonal_fn: directions::down_left,
 };
 
-const BLACK_RIGHT_EN_PASSANT: Config = Config {
+const BLACK_RIGHT_EN_PASSANT: EnPassantConfig = EnPassantConfig {
     players_pawn: BLACK_PAWN,
     opponents_pawn: WHITE_PAWN,
     next_fn: directions::right,
@@ -59,6 +59,60 @@ const BLACK_MOVE_FUNCTIONS: [MoveFn; 6] = [
     get_move_black_left_en_passant,
     get_move_black_right_en_passant,
 ];
+
+type MoveFn = fn(&Position, u32) -> Option<Position>;
+
+const WHITE_PROMOTION_PIECES: [Piece; 4] = [WHITE_QUEEN, WHITE_ROOK, WHITE_BISHOP, WHITE_KNIGHT];
+const BLACK_PROMOTION_PIECES: [Piece; 4] = [BLACK_QUEEN, BLACK_ROOK, BLACK_BISHOP, BLACK_KNIGHT];
+
+struct PromotionConfig {
+    piece: Piece,
+    is_in_row_fn: RowFn,
+    direction_fn: DirectionFn,
+    promotion_set: [Piece; 4],
+}
+
+const WHITE_PROMOTION_CONFIG: PromotionConfig = PromotionConfig {
+    piece: WHITE_PAWN,
+    is_in_row_fn: directions::is_in_row_7,
+    direction_fn: directions::up,
+    promotion_set: WHITE_PROMOTION_PIECES,
+};
+
+const WHITE_PROMOTION_LEFT_CONFIG: PromotionConfig = PromotionConfig {
+    piece: WHITE_PAWN,
+    is_in_row_fn: directions::is_in_row_7,
+    direction_fn: directions::up_left,
+    promotion_set: WHITE_PROMOTION_PIECES,
+};
+
+const WHITE_PROMOTION_RIGHT_CONFIG: PromotionConfig = PromotionConfig {
+    piece: WHITE_PAWN,
+    is_in_row_fn: directions::is_in_row_7,
+    direction_fn: directions::up_right,
+    promotion_set: WHITE_PROMOTION_PIECES,
+};
+
+const BLACK_PROMOTION_CONFIG: PromotionConfig = PromotionConfig {
+    piece: BLACK_PAWN,
+    is_in_row_fn: directions::is_in_row_2,
+    direction_fn: directions::down,
+    promotion_set: BLACK_PROMOTION_PIECES,
+};
+
+const BLACK_PROMOTION_LEFT_CONFIG: PromotionConfig = PromotionConfig {
+    piece: BLACK_PAWN,
+    is_in_row_fn: directions::is_in_row_2,
+    direction_fn: directions::down_left,
+    promotion_set: BLACK_PROMOTION_PIECES,
+};
+
+const BLACK_PROMOTION_RIGHT_CONFIG: PromotionConfig = PromotionConfig {
+    piece: BLACK_PAWN,
+    is_in_row_fn: directions::is_in_row_2,
+    direction_fn: directions::down_right,
+    promotion_set: BLACK_PROMOTION_PIECES,
+};
 
 pub fn get_pawn_moves(position: &Position, piece: Piece, square: u32) -> Vec<Position> {
     match piece.color {
@@ -92,10 +146,6 @@ fn get_black_pawn_moves(position: &Position, square: u32) -> Vec<Position> {
     positions.extend(get_moves_black_promotion_right_capture(position, square));
     positions
 }
-type MoveFn = fn(&Position, u32) -> Option<Position>;
-
-const WHITE_PROMOTION_PIECES: [Piece; 4] = [WHITE_QUEEN, WHITE_ROOK, WHITE_BISHOP, WHITE_KNIGHT];
-const BLACK_PROMOTION_PIECES: [Piece; 4] = [BLACK_QUEEN, BLACK_ROOK, BLACK_BISHOP, BLACK_KNIGHT];
 
 fn get_move_capture(
     position: &Position,
@@ -142,7 +192,11 @@ fn get_move_black_right_capture(position: &Position, from: u32) -> Option<Positi
     return get_move_capture(position, from, directions::down_right, BLACK_PAWN);
 }
 
-fn get_move_en_passant(position: &Position, from: u32, config: Config) -> Option<Position> {
+fn get_move_en_passant(
+    position: &Position,
+    from: u32,
+    config: EnPassantConfig,
+) -> Option<Position> {
     if let (Some(next_square), Some(diagonal_square), Some(en_passant_square)) = (
         (config.next_fn)(from),
         (config.diagonal_fn)(from),
@@ -179,108 +233,50 @@ fn get_move_black_left_en_passant(position: &Position, from: u32) -> Option<Posi
 }
 
 fn get_moves_white_promotion(position: &Position, from: u32) -> Vec<Position> {
-    if directions::is_in_row_7(from) {
-        return get_promotion(
-            position,
-            from,
-            directions::up,
-            WHITE_PROMOTION_PIECES.to_vec(),
-        );
-    }
-    Vec::new()
+    get_promotion(position, from, WHITE_PROMOTION_CONFIG)
 }
 
 fn get_moves_black_promotion(position: &Position, from: u32) -> Vec<Position> {
-    if directions::is_in_row_2(from) {
-        return get_promotion(
-            position,
-            from,
-            directions::down,
-            BLACK_PROMOTION_PIECES.to_vec(),
-        );
-    }
-    Vec::new()
+    get_promotion(position, from, BLACK_PROMOTION_CONFIG)
 }
 
 fn get_moves_white_promotion_left_capture(position: &Position, from: u32) -> Vec<Position> {
-    if directions::is_in_row_7(from) {
-        return get_promotion_capture(
-            position,
-            from,
-            directions::up_left,
-            WHITE_PAWN,
-            WHITE_PROMOTION_PIECES.to_vec(),
-        );
-    }
-    Vec::new()
+    return get_promotion_capture(position, from, WHITE_PROMOTION_LEFT_CONFIG);
 }
 
 fn get_moves_white_promotion_right_capture(position: &Position, from: u32) -> Vec<Position> {
-    if directions::is_in_row_7(from) {
-        return get_promotion_capture(
-            position,
-            from,
-            directions::up_right,
-            WHITE_PAWN,
-            WHITE_PROMOTION_PIECES.to_vec(),
-        );
-    }
-    Vec::new()
+    return get_promotion_capture(position, from, WHITE_PROMOTION_RIGHT_CONFIG);
 }
 fn get_moves_black_promotion_left_capture(position: &Position, from: u32) -> Vec<Position> {
-    if directions::is_in_row_2(from) {
-        return get_promotion_capture(
-            position,
-            from,
-            directions::down_left,
-            BLACK_PAWN,
-            BLACK_PROMOTION_PIECES.to_vec(),
-        );
-    }
-    Vec::new()
+    return get_promotion_capture(position, from, BLACK_PROMOTION_LEFT_CONFIG);
 }
 
 fn get_moves_black_promotion_right_capture(position: &Position, from: u32) -> Vec<Position> {
-    if directions::is_in_row_2(from) {
-        return get_promotion_capture(
-            position,
-            from,
-            directions::down_right,
-            BLACK_PAWN,
-            BLACK_PROMOTION_PIECES.to_vec(),
-        );
-    }
-    Vec::new()
+    return get_promotion_capture(position, from, BLACK_PROMOTION_RIGHT_CONFIG);
 }
-fn get_promotion(
-    position: &Position,
-    from: u32,
-    direction: DirectionFn,
-    promotion_set: Vec<Piece>,
-) -> Vec<Position> {
+
+fn get_promotion(position: &Position, from: u32, config: PromotionConfig) -> Vec<Position> {
     let mut positions: Vec<Position> = Vec::new();
-    if let Some(to) = direction(from) {
-        if !position.is_occupied(to) {
-            for promotion_piece in promotion_set {
-                positions.push(promote(position, from, to, promotion_piece));
+    if (config.is_in_row_fn)(from) {
+        if let Some(to) = (config.direction_fn)(from) {
+            if !position.is_occupied(to) {
+                for promotion_piece in config.promotion_set {
+                    positions.push(promote(position, from, to, promotion_piece));
+                }
             }
         }
     }
     positions
 }
 
-fn get_promotion_capture(
-    position: &Position,
-    from: u32,
-    direction: DirectionFn,
-    piece: Piece,
-    promotion_set: Vec<Piece>,
-) -> Vec<Position> {
+fn get_promotion_capture(position: &Position, from: u32, config: PromotionConfig) -> Vec<Position> {
     let mut positions: Vec<Position> = Vec::new();
-    if let Some(to) = direction(from) {
-        if position.is_occupied_by_color(to, piece.color.get_opponent_color()) {
-            for promotion_piece in promotion_set {
-                positions.push(promote(position, from, to, promotion_piece));
+    if (config.is_in_row_fn)(from) {
+        if let Some(to) = (config.direction_fn)(from) {
+            if position.is_occupied_by_color(to, config.piece.color.get_opponent_color()) {
+                for promotion_piece in config.promotion_set {
+                    positions.push(promote(position, from, to, promotion_piece));
+                }
             }
         }
     }

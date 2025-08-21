@@ -48,6 +48,7 @@ const ONE_COLUMN: u32 = 1;
 const TWO_COLUMNS: u32 = 2;
 
 pub type DirectionFn = fn(u32) -> Option<u32>;
+pub type RowFn = fn(u32) -> bool;
 
 pub fn up(index: u32) -> Option<u32> {
     if !is_in_last_row(index) {

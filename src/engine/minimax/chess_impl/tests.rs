@@ -1,7 +1,7 @@
 use crate::engine::{
     directions::squares::*,
     minimax::chess_impl::get_best_move,
-    piece::{BLACK_KING, BLACK_KNIGHT, WHITE_KING, WHITE_PAWN},
+    piece::*,
     position::{print::Print, Position},
 };
 
@@ -15,5 +15,19 @@ fn test_get_best_move() {
     position.print_board();
     if let Some(best_position) = get_best_move(position) {
         assert!(best_position.is_occupied_by_piece(A7, WHITE_PAWN));
+    }
+}
+
+#[test]
+fn test_get_best_move2() {
+    let position = Position::default()
+        .put_piece(BLACK_KING, D7)
+        .put_piece(WHITE_KING, D2)
+        .put_piece(BLACK_PAWN, B7)
+        .put_piece(WHITE_KNIGHT, A6)
+        .toggle_player();
+    position.print_board();
+    if let Some(best_position) = get_best_move(position) {
+        assert!(best_position.is_occupied_by_piece(A6, BLACK_PAWN));
     }
 }

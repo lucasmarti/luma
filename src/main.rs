@@ -9,7 +9,7 @@ use crate::gui::chess_board_canvas::ChessBoardCanvas;
 
 pub fn main() {
     with_2d_graphics(|| {
-        let mut window_properties = WindowProperties::from(&"Chess");
+        let mut window_properties = WindowProperties::from(&"luma Chess");
         window_properties.mouse_pointer = BindRef::from(bind(MousePointer::SystemDefault));
         let (canvas, events) = create_drawing_window_with_events(window_properties);
         let mut chess_board_canvas: ChessBoardCanvas = ChessBoardCanvas::new(canvas);

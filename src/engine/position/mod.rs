@@ -1,4 +1,5 @@
 use crate::engine::{
+    chess_moves::ChessMove,
     directions::squares::*,
     piece::{
         Color, Piece, Typ, BLACK_BISHOP, BLACK_KING, BLACK_KNIGHT, BLACK_PAWN, BLACK_QUEEN,
@@ -28,6 +29,7 @@ pub struct Position {
     en_passant: Option<u32>,
     player: Color,
     target: Option<u32>,
+    chess_move: Option<ChessMove>,
 }
 impl Position {
     pub fn set_target(mut self, square: u32) -> Position {
@@ -306,6 +308,7 @@ impl Default for Position {
             en_passant: None,
             player: Color::White,
             target: None,
+            chess_move: None,
         }
     }
 }

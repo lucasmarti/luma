@@ -42,5 +42,20 @@ fn get_new_positions(position: &Position, piece: Piece, get_moves_fn: MovesFn) -
     }
     new_positions
 }
+#[derive(Clone, Copy, PartialEq, Debug)]
+pub enum ChessMove {
+    BlackKingsideCastle,
+    BlackQueensideCastle,
+    WhiteKingsideCastle,
+    WhiteQueensideCastle,
+    Progress(Progress),
+}
+#[derive(Clone, Copy, PartialEq, Debug)]
+pub struct Progress {
+    piece: Piece,
+    from: u32,
+    to: u32,
+}
+
 #[cfg(test)]
 mod tests;
