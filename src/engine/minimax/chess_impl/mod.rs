@@ -39,7 +39,6 @@ pub fn get_best_move(position: Position) -> Option<Position> {
     let result = evaluate(&tree, minimx_player, depth);
     if let Some(node) = result.0 {
         //node.position.print_board();
-        println!("Evaluation best Score = {:?}", result.1);
     }
     match result.0 {
         Some(node) => Some(node.position),

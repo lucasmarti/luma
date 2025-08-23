@@ -1,8 +1,11 @@
-use crate::gui::chess_board_canvas::{self, CanvasCoordinate};
+use crate::gui::{
+    chess_board_canvas::{self, CanvasCoordinate},
+    configuration,
+};
 
 fn get_field_from_canvas(canvas: f64) -> Option<u32> {
-    let field: i64 = ((canvas / chess_board_canvas::FIELD_SIZE as f64).floor() as i64) + 1;
-    if field >= 0 {
+    let field: i64 = ((canvas / configuration::FIELD_SIZE as f64).floor() as i64) + 1;
+    if field > 0 {
         Some(field as u32)
     } else {
         None
@@ -12,8 +15,8 @@ pub fn get_canvas_from_index(index: u32) -> CanvasCoordinate {
     if index > 63 {
         panic!("ungültiger Index {:?}", index);
     }
-    let pos_x: f32 = (index % 8) as f32 * chess_board_canvas::FIELD_SIZE;
-    let pos_y: f32 = ((index - (index % 8)) / 8) as f32 * chess_board_canvas::FIELD_SIZE;
+    let pos_x: f32 = (index % 8) as f32 * configuration::FIELD_SIZE;
+    let pos_y: f32 = ((index - (index % 8)) / 8) as f32 * configuration::FIELD_SIZE;
     return CanvasCoordinate { x: pos_x, y: pos_y };
 }
 

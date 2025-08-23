@@ -24,12 +24,12 @@ fn test_slide1() {
             .put_piece(WHITE_QUEEN, G5)
             .put_piece(WHITE_PAWN, G7)
             .toggle_player()
-            .set_target(G5),
+            .set_to_square(G5),
         Position::default()
             .put_piece(WHITE_QUEEN, G6)
             .put_piece(WHITE_PAWN, G7)
             .toggle_player()
-            .set_target(G6),
+            .set_to_square(G6),
     ];
     assert_eq!(positions, result);
 }
@@ -117,16 +117,16 @@ fn test_slide2() {
             .put_piece(WHITE_QUEEN, G5)
             .put_piece(BLACK_PAWN, G7)
             .toggle_player()
-            .set_target(G5),
+            .set_to_square(G5),
         Position::default()
             .put_piece(WHITE_QUEEN, G6)
             .put_piece(BLACK_PAWN, G7)
             .toggle_player()
-            .set_target(G6),
+            .set_to_square(G6),
         Position::default()
             .put_piece(WHITE_QUEEN, G7)
             .toggle_player()
-            .set_target(G7),
+            .set_to_square(G7),
     ];
     assert!(positions == result);
 }
@@ -142,19 +142,19 @@ fn test_slide3() {
         Position::default()
             .put_piece(WHITE_QUEEN, G5)
             .toggle_player()
-            .set_target(G5),
+            .set_to_square(G5),
         Position::default()
             .put_piece(WHITE_QUEEN, G6)
             .toggle_player()
-            .set_target(G6),
+            .set_to_square(G6),
         Position::default()
             .put_piece(WHITE_QUEEN, G7)
             .toggle_player()
-            .set_target(G7),
+            .set_to_square(G7),
         Position::default()
             .put_piece(WHITE_QUEEN, G8)
             .toggle_player()
-            .set_target(G8),
+            .set_to_square(G8),
     ];
     assert!(positions == result);
 }

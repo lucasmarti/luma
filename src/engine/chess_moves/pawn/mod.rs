@@ -351,7 +351,8 @@ pub fn en_passant(position: &Position, piece: Piece, from: u32, to: u32, capture
         .put_piece(piece, to)
         .toggle_player()
         .reset_en_passant()
-        .set_target(to)
+        .set_to_square(to)
+        .set_from_square(from)
 }
 
 pub fn promote(position: &Position, from: u32, to: u32, new_piece: Piece) -> Position {
@@ -361,7 +362,9 @@ pub fn promote(position: &Position, from: u32, to: u32, new_piece: Piece) -> Pos
         .put_piece(new_piece, to)
         .toggle_player()
         .reset_en_passant()
-        .set_target(to)
+        .set_to_square(to)
+        .set_from_square(from)
+        .set_promotion(true)
 }
 
 pub fn set_en_passant_if_necessary(

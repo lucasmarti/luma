@@ -94,7 +94,8 @@ fn castle(position: &Position, castle: Castle) -> Option<Position> {
         .toggle_player()
         .reset_en_passant()
         .disallow_castle_for_color(castle.color)
-        .set_target(castle.king_to);
+        .set_to_square(castle.king_to)
+        .set_from_square(castle.king_from);
     if !is_check(&new_position, castle.color) {
         return Some(new_position);
     }

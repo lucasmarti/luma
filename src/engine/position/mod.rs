@@ -28,16 +28,35 @@ pub struct Position {
     black_queenside_castle_allowed: bool,
     en_passant: Option<u32>,
     player: Color,
-    target: Option<u32>,
+    from_square: Option<u32>,
+    to_square: Option<u32>,
+    promotion: bool,
     chess_move: Option<ChessMove>,
 }
 impl Position {
-    pub fn set_target(mut self, square: u32) -> Position {
-        self.target = Some(square);
+    pub fn set_to_square(mut self, square: u32) -> Position {
+        self.to_square = Some(square);
         self
     }
-    pub fn get_target(&self) -> Option<u32> {
-        self.target
+    pub fn get_to_square(&self) -> Option<u32> {
+        self.to_square
+    }
+
+    pub fn set_promotion(mut self, promotion: bool) -> Position {
+        self.promotion = promotion;
+        self
+    }
+    pub fn get_promotion(&self) -> bool {
+        self.promotion
+    }
+
+    pub fn set_from_square(mut self, square: u32) -> Position {
+        self.from_square = Some(square);
+        self
+    }
+
+    pub fn get_from_square(&self) -> Option<u32> {
+        self.from_square
     }
     pub fn new_starting_position() -> Position {
         Position {
@@ -307,7 +326,9 @@ impl Default for Position {
             black_queenside_castle_allowed: true,
             en_passant: None,
             player: Color::White,
-            target: None,
+            from_square: None,
+            to_square: None,
+            promotion: false,
             chess_move: None,
         }
     }

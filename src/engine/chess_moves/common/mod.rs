@@ -128,7 +128,8 @@ pub fn progess(position: &Position, piece: Piece, from: u32, to: u32) -> Positio
         .remove_piece(to)
         .put_piece(piece, to)
         .toggle_player()
-        .set_target(to);
+        .set_to_square(to)
+        .set_from_square(from);
     new_position = set_en_passant_if_necessary(new_position, piece, from, to);
     new_position = disallow_castle_if_necessary(new_position, from);
     new_position

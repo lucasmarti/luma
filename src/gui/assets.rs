@@ -18,21 +18,39 @@ pub const WR_BYTES: &[u8] = include_bytes!["assets/white-rook.png"];
 pub const WP_BYTES: &[u8] = include_bytes!["assets/white-pawn.png"];
 pub const WN_BYTES: &[u8] = include_bytes!["assets/white-knight.png"];
 pub const WB_BYTES: &[u8] = include_bytes!["assets/white-bishop.png"];
+pub const NEW_WHITE_BYTES: &[u8] = include_bytes!["assets/new-white.png"];
+pub const NEW_BLACK_BYTES: &[u8] = include_bytes!["assets/new-black.png"];
+
+pub const WHITE_KING_TEXTURE_ID: TextureId = TextureId(0);
+pub const WHITE_QUEEN_TEXTURE_ID: TextureId = TextureId(1);
+pub const WHITE_ROOK_TEXTURE_ID: TextureId = TextureId(2);
+pub const WHITE_PAWN_TEXTURE_ID: TextureId = TextureId(3);
+pub const WHITE_KNIGHT_TEXTURE_ID: TextureId = TextureId(4);
+pub const WHITE_BISHOP_TEXTURE_ID: TextureId = TextureId(5);
+pub const BLACK_KING_TEXTURE_ID: TextureId = TextureId(6);
+pub const BLACK_QUEEN_TEXTURE_ID: TextureId = TextureId(7);
+pub const BLACK_ROOK_TEXTURE_ID: TextureId = TextureId(8);
+pub const BLACK_PAWN_TEXTURE_ID: TextureId = TextureId(9);
+pub const BLACK_KNIGHT_TEXTURE_ID: TextureId = TextureId(10);
+pub const BLACK_BISHOP_TEXTURE_ID: TextureId = TextureId(11);
+
+pub const NEW_WHITE_TEXTURE_ID: TextureId = TextureId(12);
+pub const NEW_BLACK_TEXTURE_ID: TextureId = TextureId(13);
 
 pub fn get_texture_id(piece: Piece) -> TextureId {
     match piece {
-        WHITE_KING => TextureId(0),
-        WHITE_QUEEN => TextureId(1),
-        WHITE_ROOK => TextureId(2),
-        WHITE_PAWN => TextureId(3),
-        WHITE_KNIGHT => TextureId(4),
-        WHITE_BISHOP => TextureId(5),
-        BLACK_KING => TextureId(6),
-        BLACK_QUEEN => TextureId(7),
-        BLACK_ROOK => TextureId(8),
-        BLACK_PAWN => TextureId(9),
-        BLACK_KNIGHT => TextureId(10),
-        BLACK_BISHOP => TextureId(11),
+        WHITE_KING => WHITE_KING_TEXTURE_ID,
+        WHITE_QUEEN => WHITE_QUEEN_TEXTURE_ID,
+        WHITE_ROOK => WHITE_ROOK_TEXTURE_ID,
+        WHITE_PAWN => WHITE_PAWN_TEXTURE_ID,
+        WHITE_KNIGHT => WHITE_KNIGHT_TEXTURE_ID,
+        WHITE_BISHOP => WHITE_BISHOP_TEXTURE_ID,
+        BLACK_KING => BLACK_KING_TEXTURE_ID,
+        BLACK_QUEEN => BLACK_QUEEN_TEXTURE_ID,
+        BLACK_ROOK => BLACK_ROOK_TEXTURE_ID,
+        BLACK_PAWN => BLACK_PAWN_TEXTURE_ID,
+        BLACK_KNIGHT => BLACK_KNIGHT_TEXTURE_ID,
+        BLACK_BISHOP => BLACK_BISHOP_TEXTURE_ID,
     }
 }
 pub fn get_bytes(piece: Piece) -> &'static [u8] {

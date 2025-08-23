@@ -2,20 +2,39 @@ use rand::seq::IndexedRandom;
 use std::collections::HashMap;
 
 use crate::engine::{
-    check::filter_checks,
+    check::{filter_checks, is_check},
     chess_moves::{
         castle::{BLACK_KING_STARTING_POSITION, WHITE_KING_STARTING_POSITION},
         configurations::{CastleMovesFn, MovesFn, BLACK_MOVE_CONFIG, WHITE_MOVE_CONFIG},
         get_current_player_moves,
+        pawn::get_pawn_moves,
     },
     minimax::chess_impl::get_best_move,
-    piece::{Piece, BLACK_KING, WHITE_KING},
+    piece::{Piece, BLACK_KING, BLACK_PAWN, WHITE_KING, WHITE_PAWN},
     position::Position,
 };
 
 pub fn get_next_move(position: &Position) -> Option<Position> {
     get_best_move(*position)
 }
+
+pub fn get_check(position: &Position) -> Option<u32> {
+    if is_check(position, position.get_player()) {
+        let king = match position.get_player() {
+            piece::Color::Black => BLACK_KING,
+            piece::Color::White => WHITE_KING,
+        };
+        return get_first_piece(position, king);
+    }
+    None
+}
+fn get_first_piece(position: &Position, piece: Piece) -> Option<u32> {
+    for square in position.get_squares(piece).iter() {
+        return Some(square);
+    }
+    None
+}
+
 #[allow(dead_code)]
 fn get_random_move(position: &Position) -> Option<Position> {
     let positions = get_current_player_moves(position);
@@ -46,10 +65,23 @@ pub fn get_valid_drop_positions(position: &Position, from: u32) -> HashMap<u32, 
     map
 }
 
+pub fn promote(position: &Position, from: u32, to: u32, piece: Piece) -> Option<Position> {
+    let possible_positions = match position.get_player() {
+        piece::Color::Black => get_pawn_moves(position, BLACK_PAWN, from),
+        piece::Color::White => get_pawn_moves(position, WHITE_PAWN, from),
+    };
+    for new_position in possible_positions {
+        if new_position.is_occupied_by_piece(to, piece) {
+            return Some(new_position);
+        }
+    }
+    return None;
+}
+
 fn to_target_positions_map(positions: Vec<Position>) -> HashMap<u32, Position> {
     let mut map: HashMap<u32, Position> = HashMap::new();
     for position in positions {
-        if let Some(target) = position.get_target() {
+        if let Some(target) = position.get_to_square() {
             map.insert(target, position);
         }
     }

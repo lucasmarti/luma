@@ -24,11 +24,6 @@ pub fn evaluate<P: Minimax>(position: &P, player: Player, depth: u8) -> (Option<
             if depth == 0 || position.is_game_over() {
                 return (None, position.evaluate());
             } else {
-                println!(
-                    "evaluate_fn Player::MAX get_children(), depth = {}, children = {}",
-                    depth,
-                    position.get_children().len()
-                );
                 for child in position.get_children() {
                     let child_value = minimise(child, depth - 1, alpha, beta);
                     if child_value >= best_value {
@@ -47,11 +42,6 @@ pub fn evaluate<P: Minimax>(position: &P, player: Player, depth: u8) -> (Option<
             if depth == 0 || position.is_game_over() {
                 return (None, position.evaluate());
             } else {
-                println!(
-                    "evaluate_fn Player::MIN get_children(), depth = {}, children = {}",
-                    depth,
-                    position.get_children().len()
-                );
                 let mut best_value = MAX_VALUE;
                 for child in position.get_children() {
                     let child_value = maximise(child, depth - 1, alpha, beta);
@@ -72,17 +62,8 @@ pub fn evaluate<P: Minimax>(position: &P, player: Player, depth: u8) -> (Option<
 
 fn minimise<P: Minimax>(position: &P, depth: u8, alpha: f32, mut beta: f32) -> f32 {
     if depth == 0 || position.is_game_over() {
-        println!(
-            "minimise_fn Depth = 0, evaluate. Score = {}",
-            position.evaluate()
-        );
         return position.evaluate();
     } else {
-        println!(
-            "minimise_fn get_children(), depth = {}, children = {} ",
-            depth,
-            position.get_children().len()
-        );
         let mut best_value = MAX_VALUE;
         for child in position.get_children() {
             let child_value = maximise(child, depth - 1, alpha, beta);
@@ -99,17 +80,8 @@ fn minimise<P: Minimax>(position: &P, depth: u8, alpha: f32, mut beta: f32) -> f
 fn maximise<P: Minimax>(position: &P, depth: u8, mut alpha: f32, beta: f32) -> f32 {
     let mut best_value = MIN_VALUE;
     if depth == 0 || position.is_game_over() {
-        println!(
-            "maximise_fn Depth = 0, evaluate. Score = {}",
-            position.evaluate()
-        );
         best_value = position.evaluate();
     } else {
-        println!(
-            "maximise_fn get_children(), depth = {}, children = {} ",
-            depth,
-            position.get_children().len()
-        );
         for child in position.get_children() {
             let child_value = minimise(child, depth - 1, alpha, beta);
             best_value = max(best_value, child_value);
