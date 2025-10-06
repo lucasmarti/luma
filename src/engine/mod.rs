@@ -4,13 +4,12 @@ use std::collections::HashMap;
 use crate::engine::{
     check::{filter_checks, is_check},
     chess_moves::{
-        castle::{BLACK_KING_STARTING_POSITION, WHITE_KING_STARTING_POSITION},
         configurations::{CastleMovesFn, MovesFn, BLACK_MOVE_CONFIG, WHITE_MOVE_CONFIG},
         get_current_player_moves,
-        pawn::get_pawn_moves,
     },
+    directions::squares::{BLACK_KING_STARTING_POSITION, WHITE_KING_STARTING_POSITION},
     minimax::chess_impl::get_best_move,
-    piece::{Piece, BLACK_KING, BLACK_PAWN, WHITE_KING, WHITE_PAWN},
+    piece::{Piece, BLACK_KING, WHITE_KING},
     position::Position,
 };
 
@@ -51,38 +50,30 @@ pub fn is_valid_drag_square(position: &Position, square: u32) -> bool {
     }
 }
 
-pub fn get_valid_drop_positions(position: &Position, from: u32) -> HashMap<u32, Position> {
-    let mut map: HashMap<u32, Position> = HashMap::new();
+pub fn get_valid_drop_positions(position: &Position, from: u32) -> Vec<Position> {
+    let mut positions: Vec<Position> = Vec::new();
     if let Some(piece) = position.get_piece_at(from) {
         let moves_fn = get_moves_fn(piece);
-        let mut positions = moves_fn(position, piece, from);
+        positions.extend(moves_fn(position, piece, from));
         if let Some(castle_moves_fn) = get_castle_moves_fn(from, piece) {
             positions.extend(castle_moves_fn(position));
         }
         positions = filter_checks(positions, position.get_player());
-        map = to_target_positions_map(positions);
     }
-    map
+    positions
+    //to_target_positions_map(positions)
 }
 
-pub fn promote(position: &Position, from: u32, to: u32, piece: Piece) -> Option<Position> {
-    let possible_positions = match position.get_player() {
-        piece::Color::Black => get_pawn_moves(position, BLACK_PAWN, from),
-        piece::Color::White => get_pawn_moves(position, WHITE_PAWN, from),
-    };
-    for new_position in possible_positions {
-        if new_position.is_occupied_by_piece(to, piece) {
-            return Some(new_position);
-        }
-    }
-    return None;
-}
-
-fn to_target_positions_map(positions: Vec<Position>) -> HashMap<u32, Position> {
-    let mut map: HashMap<u32, Position> = HashMap::new();
+fn to_target_positions_map(positions: Vec<Position>) -> HashMap<u32, Vec<Position>> {
+    let mut map: HashMap<u32, Vec<Position>> = HashMap::new();
     for position in positions {
         if let Some(target) = position.get_to_square() {
-            map.insert(target, position);
+            match map.get_mut(&target) {
+                Some(vec) => vec.push(position),
+                None => {
+                    map.insert(target, vec![position]);
+                }
+            }
         }
     }
     map

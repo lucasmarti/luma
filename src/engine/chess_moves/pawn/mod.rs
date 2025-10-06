@@ -1,5 +1,5 @@
 use crate::engine::{
-    chess_moves::common::progess,
+    chess_moves::{common::progess, ChessMove, MoveType},
     directions::{self, DirectionFn, RowFn},
     piece::{
         Color, Piece, Typ, BLACK_BISHOP, BLACK_KNIGHT, BLACK_PAWN, BLACK_QUEEN, BLACK_ROOK,
@@ -344,6 +344,14 @@ fn get_move_two_forward(
 }
 
 pub fn en_passant(position: &Position, piece: Piece, from: u32, to: u32, capture: u32) -> Position {
+    let chess_move = ChessMove {
+        move_type: MoveType::EnPassant,
+        piece,
+        from,
+        to,
+        capture: position.get_piece_at(capture),
+        pormotion: None,
+    };
     position
         .remove_piece(from)
         .remove_piece(capture)
@@ -351,20 +359,32 @@ pub fn en_passant(position: &Position, piece: Piece, from: u32, to: u32, capture
         .put_piece(piece, to)
         .toggle_player()
         .reset_en_passant()
-        .set_to_square(to)
-        .set_from_square(from)
+        .set_chess_move(chess_move)
 }
 
 pub fn promote(position: &Position, from: u32, to: u32, new_piece: Piece) -> Position {
+    let tuple = match position.get_piece_at(to) {
+        Some(piece) => (MoveType::PromotionCapture, Some(piece)),
+        None => (MoveType::Promotion, None),
+    };
+    let chess_move = ChessMove {
+        move_type: tuple.0,
+        piece: Piece {
+            typ: Typ::Pawn,
+            color: new_piece.color,
+        },
+        from,
+        to,
+        capture: tuple.1,
+        pormotion: Some(new_piece),
+    };
     position
         .remove_piece(from)
         .remove_piece(to)
         .put_piece(new_piece, to)
         .toggle_player()
         .reset_en_passant()
-        .set_to_square(to)
-        .set_from_square(from)
-        .set_promotion(true)
+        .set_chess_move(chess_move)
 }
 
 pub fn set_en_passant_if_necessary(

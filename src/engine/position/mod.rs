@@ -1,5 +1,7 @@
+use core::borrow;
+
 use crate::engine::{
-    chess_moves::ChessMove,
+    chess_moves::{self, ChessMove, MoveType},
     directions::squares::*,
     piece::{
         Color, Piece, Typ, BLACK_BISHOP, BLACK_KING, BLACK_KNIGHT, BLACK_PAWN, BLACK_QUEEN,
@@ -16,48 +18,54 @@ pub struct Position {
     white_bishops: Bitboard,
     white_knights: Bitboard,
     white_pawns: Bitboard,
-    white_kingside_castle_allowed: bool,
-    white_queenside_castle_allowed: bool,
     black_king: Bitboard,
     black_queen: Bitboard,
     black_rooks: Bitboard,
     black_bishops: Bitboard,
     black_knights: Bitboard,
     black_pawns: Bitboard,
-    black_kingside_castle_allowed: bool,
-    black_queenside_castle_allowed: bool,
+    castling_rights: [bool; 4],
     en_passant: Option<u32>,
     player: Color,
-    from_square: Option<u32>,
-    to_square: Option<u32>,
-    promotion: bool,
     chess_move: Option<ChessMove>,
 }
 impl Position {
-    pub fn set_to_square(mut self, square: u32) -> Position {
-        self.to_square = Some(square);
+    pub fn get_promotion_piece(&self) -> Option<Piece> {
+        match self.chess_move {
+            Some(chess_move) => chess_move.pormotion,
+            None => None,
+        }
+    }
+    pub fn set_chess_move(mut self, chess_move: ChessMove) -> Position {
+        self.chess_move = Some(chess_move);
         self
     }
+
     pub fn get_to_square(&self) -> Option<u32> {
-        self.to_square
-    }
-
-    pub fn set_promotion(mut self, promotion: bool) -> Position {
-        self.promotion = promotion;
-        self
-    }
-    pub fn get_promotion(&self) -> bool {
-        self.promotion
-    }
-
-    pub fn set_from_square(mut self, square: u32) -> Position {
-        self.from_square = Some(square);
-        self
+        match self.chess_move {
+            Some(chess_move) => Some(chess_move.to),
+            None => None,
+        }
     }
 
     pub fn get_from_square(&self) -> Option<u32> {
-        self.from_square
+        match self.chess_move {
+            Some(chess_move) => Some(chess_move.from),
+            None => None,
+        }
     }
+
+    pub fn is_promotion(&self) -> bool {
+        match self.chess_move {
+            Some(chess_move) => match chess_move.move_type {
+                MoveType::Promotion => true,
+                MoveType::PromotionCapture => true,
+                _ => false,
+            },
+            None => false,
+        }
+    }
+
     pub fn new_starting_position() -> Position {
         Position {
             white_king: Bitboard::from(E1),
@@ -75,51 +83,29 @@ impl Position {
             ..Default::default()
         }
     }
-    pub fn is_white_kingside_castle_allowed(&self) -> bool {
-        self.white_kingside_castle_allowed
-    }
-    pub fn is_white_queenside_castle_allowed(&self) -> bool {
-        self.white_queenside_castle_allowed
-    }
-    pub fn is_black_kingside_castle_allowed(&self) -> bool {
-        self.black_kingside_castle_allowed
-    }
-    pub fn is_black_queenside_castle_allowed(&self) -> bool {
-        self.black_queenside_castle_allowed
-    }
 
     pub fn disallow_castle_for_color(mut self, color: Color) -> Position {
         match color {
             Color::White => {
                 self = self
-                    .disallow_white_kingside_castle()
-                    .disallow_white_queenside_castle();
+                    .remove_castling_right(CastlingType::WhiteKingside)
+                    .remove_castling_right(CastlingType::WhiteQueenside);
             }
             Color::Black => {
                 self = self
-                    .disallow_black_kingside_castle()
-                    .disallow_black_queenside_castle();
+                    .remove_castling_right(CastlingType::BlackKingside)
+                    .remove_castling_right(CastlingType::BlackQueenside);
             }
         }
         self
     }
 
-    pub fn disallow_white_kingside_castle(mut self) -> Position {
-        self.white_kingside_castle_allowed = false;
-        self
+    pub fn get_castling_right(&self, castling_type: CastlingType) -> bool {
+        self.castling_rights[castling_type.as_index()]
     }
 
-    pub fn disallow_white_queenside_castle(mut self) -> Position {
-        self.white_queenside_castle_allowed = false;
-        self
-    }
-    pub fn disallow_black_kingside_castle(mut self) -> Position {
-        self.black_kingside_castle_allowed = false;
-        self
-    }
-
-    pub fn disallow_black_queenside_castle(mut self) -> Position {
-        self.black_queenside_castle_allowed = false;
+    pub fn remove_castling_right(mut self, castling_type: CastlingType) -> Position {
+        self.castling_rights[castling_type.as_index()] = false;
         self
     }
     pub fn is_occupied(&self, index: u32) -> bool {
@@ -320,17 +306,24 @@ impl Default for Position {
             black_bishops: Default::default(),
             black_knights: Default::default(),
             black_pawns: Default::default(),
-            white_kingside_castle_allowed: true,
-            white_queenside_castle_allowed: true,
-            black_kingside_castle_allowed: true,
-            black_queenside_castle_allowed: true,
+            castling_rights: [true, true, true, true],
             en_passant: None,
             player: Color::White,
-            from_square: None,
-            to_square: None,
-            promotion: false,
             chess_move: None,
         }
+    }
+}
+
+#[derive(Clone, Copy, PartialEq, Debug)]
+pub enum CastlingType {
+    BlackQueenside = 0,
+    BlackKingside = 1,
+    WhiteQueenside = 2,
+    WhiteKingside = 3,
+}
+impl CastlingType {
+    fn as_index(&self) -> usize {
+        *self as usize
     }
 }
 pub mod bitboard;

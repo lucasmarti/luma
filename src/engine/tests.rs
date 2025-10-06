@@ -9,15 +9,15 @@ use crate::engine::{
 fn test_valid_drop_targets_pawn() {
     let position = Position::new_starting_position();
     let targets = get_valid_drop_positions(&position, D2);
-    assert!(targets.contains_key(&D3));
-    assert!(targets.contains_key(&D4));
+    assert!(targets.iter().any(|p| p.is_occupied(D3)));
+    assert!(targets.iter().any(|p| p.is_occupied(D4)));
 }
 #[test]
 fn test_valid_drop_targets_knight() {
     let position = Position::new_starting_position();
     let targets = get_valid_drop_positions(&position, B8);
-    assert!(targets.contains_key(&A6));
-    assert!(targets.contains_key(&C6));
+    assert!(targets.iter().any(|p| p.is_occupied(A6)));
+    assert!(targets.iter().any(|p| p.is_occupied(C6)));
 }
 
 #[test]
@@ -26,7 +26,7 @@ fn test_valid_drop_targets_castle() {
         .put_piece(WHITE_ROOK, H1)
         .put_piece(WHITE_KING, E1);
     let targets = get_valid_drop_positions(&position, E1);
-    assert!(targets.contains_key(&G1));
+    assert!(targets.iter().any(|p| p.is_occupied(G1)));
 }
 
 #[test]
@@ -38,5 +38,5 @@ fn test_valid_drop_targets_en_passant() {
         .set_en_passant(E4);
     let targets = get_valid_drop_positions(&position, D4);
     println!("{:?}", targets);
-    assert!(targets.contains_key(&E3));
+    assert!(targets.iter().any(|p| p.is_occupied(E3)));
 }

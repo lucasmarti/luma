@@ -2,9 +2,9 @@ use crate::engine::check::filter_checks;
 use crate::engine::chess_moves::configurations::*;
 use crate::engine::chess_moves::configurations::{MovesFn, BLACK_MOVE_CONFIG, WHITE_MOVE_CONFIG};
 use crate::engine::piece::{Color, Piece};
-use crate::engine::position::Position;
+use crate::engine::position::{CastlingType, Position};
 
-pub(crate) mod castle;
+pub(crate) mod castling;
 mod common;
 pub(crate) mod configurations;
 pub mod pawn;
@@ -43,18 +43,22 @@ fn get_new_positions(position: &Position, piece: Piece, get_moves_fn: MovesFn) -
     new_positions
 }
 #[derive(Clone, Copy, PartialEq, Debug)]
-pub enum ChessMove {
-    BlackKingsideCastle,
-    BlackQueensideCastle,
-    WhiteKingsideCastle,
-    WhiteQueensideCastle,
-    Progress(Progress),
+pub struct ChessMove {
+    pub move_type: MoveType,
+    pub piece: Piece,
+    pub from: u32,
+    pub to: u32,
+    pub capture: Option<Piece>,
+    pub pormotion: Option<Piece>,
 }
 #[derive(Clone, Copy, PartialEq, Debug)]
-pub struct Progress {
-    piece: Piece,
-    from: u32,
-    to: u32,
+pub enum MoveType {
+    Quiet,
+    Capture,
+    Promotion,
+    PromotionCapture,
+    EnPassant,
+    Castling { castling_type: CastlingType },
 }
 
 #[cfg(test)]

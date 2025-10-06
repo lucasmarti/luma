@@ -70,3 +70,6 @@ pub const H5: u32 = 39;
 pub const H6: u32 = 47;
 pub const H7: u32 = 55;
 pub const H8: u32 = 63;
+
+pub const WHITE_KING_STARTING_POSITION: u32 = E1;
+pub const BLACK_KING_STARTING_POSITION: u32 = E8;

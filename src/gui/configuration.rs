@@ -1,7 +1,7 @@
 use flo_canvas::TextureId;
 
 use crate::{
-    engine::piece::BLACK_QUEEN,
+    engine::piece::*,
     gui::{
         assets::{
             self, BB_BYTES, BLACK_BISHOP_TEXTURE_ID, BLACK_KNIGHT_TEXTURE_ID,
@@ -14,6 +14,20 @@ use crate::{
     },
 };
 
+pub const ALL_PIECES_SET: [Piece; 12] = [
+    WHITE_KING,
+    WHITE_ROOK,
+    WHITE_KNIGHT,
+    WHITE_BISHOP,
+    WHITE_QUEEN,
+    WHITE_PAWN,
+    BLACK_KING,
+    BLACK_ROOK,
+    BLACK_KNIGHT,
+    BLACK_BISHOP,
+    BLACK_QUEEN,
+    BLACK_PAWN,
+];
 pub const FIELD_SIZE: f32 = 100.0;
 pub const MENU_HEIGHT: f32 = 50.0;
 pub const MENU_POS_X: f32 = 0.0;

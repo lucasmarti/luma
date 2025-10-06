@@ -1,12 +1,13 @@
 use crate::engine::{
     chess_moves::{
-        castle::disallow_castle_if_necessary,
+        castling::remove_castling_rights_if_necessary,
         configurations::{
             BISHOP_DIRECTIONS, BISHOP_MAX_DISTANCE, KING_DIRECTIONS, KING_MAX_DISTANCE,
             KNIGHT_DIRECTIONS, KNIGHT_MAX_DISTANCE, QUEEN_DIRECTIONS, QUEEN_MAX_DISTANCE,
             ROOK_DIRECTIONS, ROOK_MAX_DISTANCE,
         },
         pawn::set_en_passant_if_necessary,
+        ChessMove, MoveType,
     },
     directions::DirectionFn,
     piece::Piece,
@@ -123,15 +124,27 @@ fn generate_path_with_limit(from: u32, direction_fn: DirectionFn, max_distance: 
 }
 
 pub fn progess(position: &Position, piece: Piece, from: u32, to: u32) -> Position {
+    let tuple = match position.get_piece_at(to) {
+        Some(piece) => (MoveType::Capture, Some(piece)),
+        None => (MoveType::Quiet, None),
+    };
+    let chess_move = ChessMove {
+        move_type: tuple.0,
+        piece,
+        from,
+        to,
+        capture: tuple.1,
+        pormotion: None,
+    };
+
     let mut new_position = position
         .remove_piece(from)
         .remove_piece(to)
         .put_piece(piece, to)
         .toggle_player()
-        .set_to_square(to)
-        .set_from_square(from);
+        .set_chess_move(chess_move);
     new_position = set_en_passant_if_necessary(new_position, piece, from, to);
-    new_position = disallow_castle_if_necessary(new_position, from);
+    new_position = remove_castling_rights_if_necessary(new_position, from);
     new_position
 }
 #[cfg(test)]

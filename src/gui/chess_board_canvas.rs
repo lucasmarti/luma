@@ -4,12 +4,7 @@ use crate::engine::piece::{self, *};
 use crate::engine::position::bitboard::Bitboard;
 use crate::engine::position::Position;
 use crate::engine::{self, position};
-use crate::gui::configuration::{
-    Action, Button, FIELD_SIZE, MENU_BUTTONS, MENU_HEIGHT, NEW_GAME_BLACK_BUTTON,
-    NEW_GAME_WHITE_BUTTON, PROMOTION_BLACK_BISHOP_BUTTON, PROMOTION_BLACK_KNIGHT_BUTTON,
-    PROMOTION_BLACK_QUEEN_BUTTON, PROMOTION_BLACK_ROOK_BUTTON, PROMOTION_WHITE_BISHOP_BUTTON,
-    PROMOTION_WHITE_KNIGHT_BUTTON, PROMOTION_WHITE_QUEEN_BUTTON, PROMOTION_WHITE_ROOK_BUTTON,
-};
+use crate::gui::configuration::*;
 use crate::gui::coordinate_mapper::get_index_from_canvas;
 use crate::gui::menu;
 
@@ -26,13 +21,12 @@ pub struct CanvasCoordinate {
 pub struct ChessBoardCanvas {
     canvas: DrawingTarget,
     position: Position,
-    drop_targets: HashMap<u32, Position>,
+    drop_targets: Vec<Position>,
     selected_square: Option<u32>,
     computer: piece::Color,
     check_square: Option<u32>,
     show_white_promotion_buttons: bool,
     show_black_promotion_buttons: bool,
-    promotion_square: Option<u32>,
 }
 
 impl ChessBoardCanvas {
@@ -40,13 +34,12 @@ impl ChessBoardCanvas {
         ChessBoardCanvas {
             canvas,
             position: Position::new_starting_position(),
-            drop_targets: HashMap::new(),
+            drop_targets: Vec::new(),
             selected_square: None,
             computer: piece::Color::Black,
             check_square: None,
-            show_white_promotion_buttons: true,
-            show_black_promotion_buttons: true,
-            promotion_square: None,
+            show_white_promotion_buttons: false,
+            show_black_promotion_buttons: false,
         }
     }
 
@@ -70,21 +63,21 @@ impl ChessBoardCanvas {
         }
     }
     fn promote(&mut self, piece: Piece) {
-        if let (Some(from), Some(to)) = (self.selected_square, self.promotion_square) {
-            if let Some(new_position) = engine::promote(&self.position, from, to, piece) {
-                self.promotion_square = None;
-                self.show_black_promotion_buttons = false;
-                self.show_white_promotion_buttons = false;
-                self.selected_square = None;
-                self.drop_targets.clear();
-                self.check_square = engine::get_check(&self.position);
-                self.draw();
-                if let Some(computer_position) = engine::get_next_move(&self.position) {
-                    self.position = computer_position;
-                    self.check_square = engine::get_check(&computer_position);
-                }
+        self.drop_targets
+            .retain(|&position| position.get_promotion_piece() == Some(piece));
+
+        if let Some(position) = self.drop_targets.pop() {
+            self.position = position;
+            self.check_square = engine::get_check(&position);
+            self.disable_promotion_buttons();
+
+            self.draw();
+            if let Some(computer_position) = engine::get_next_move(&position) {
+                self.position = computer_position;
+                self.check_square = engine::get_check(&computer_position);
             }
         }
+        self.draw();
     }
 
     pub fn handle_click_event(&mut self, location_in_canvas: Option<(f64, f64)>) {
@@ -108,6 +101,7 @@ impl ChessBoardCanvas {
             }
 
             if let Some(coordinate) = get_index_from_canvas(location_in_canvas) {
+                println!("yes");
                 if let Some(position) = self.drag_n_drop(coordinate) {
                     self.position = position;
                     self.check_square = engine::get_check(&position);
@@ -122,35 +116,47 @@ impl ChessBoardCanvas {
         }
     }
 
-    pub fn drag_n_drop(&mut self, square: u32) -> Option<Position> {
+    fn drag_n_drop(&mut self, square: u32) -> Option<Position> {
         if self.position.get_player() == self.computer {
-            return None;
-        }
-        if self.promotion_square.is_some() {
+            println!("computer's turn");
             return None;
         }
         if engine::is_valid_drag_square(&self.position, square) {
+            println!("valid drag square");
             self.selected_square = Some(square);
             self.drop_targets = engine::get_valid_drop_positions(&self.position, square);
             return None;
-        } else if let Some(new_position) = self.drop_targets.get(&square).cloned() {
-            if new_position.get_promotion() {
-                match self.position.get_player() {
-                    piece::Color::Black => self.show_black_promotion_buttons = true,
-                    piece::Color::White => self.show_white_promotion_buttons = true,
-                }
-                self.promotion_square = Some(square);
+        }
+        let mut position: Option<Position> = None;
+        for target in &self.drop_targets {
+            if target.get_to_square() == Some(square) {
+                position = Some(target.clone());
+            }
+        }
+        if let Some(position) = position {
+            if position.is_promotion() {
+                self.enable_promotion_buttons();
+                self.drop_targets
+                    .retain(|&position| position.get_to_square() == Some(square));
                 return None;
             } else {
                 self.drop_targets.clear();
                 self.selected_square = None;
-                return Some(new_position);
-            };
-        } else {
-            self.drop_targets.clear();
-            self.selected_square = None;
-            return None;
+                return Some(position);
+            }
         }
+        None
+    }
+    fn enable_promotion_buttons(&mut self) {
+        match self.position.get_player() {
+            piece::Color::Black => self.show_black_promotion_buttons = true,
+            piece::Color::White => self.show_white_promotion_buttons = true,
+        }
+    }
+
+    fn disable_promotion_buttons(&mut self) {
+        self.show_black_promotion_buttons = false;
+        self.show_white_promotion_buttons = false;
     }
 
     pub fn draw(&mut self) {
@@ -181,7 +187,9 @@ impl ChessBoardCanvas {
                 gc.draw_from_to_field(coordinate_mapper::get_canvas_from_index(square));
             }
             for target in &self.drop_targets {
-                gc.draw_drop_target(coordinate_mapper::get_canvas_from_index(*target.0));
+                if let Some(square) = target.get_to_square() {
+                    gc.draw_drop_target(coordinate_mapper::get_canvas_from_index(square));
+                }
             }
 
             gc.draw_menu();
@@ -205,57 +213,9 @@ impl ChessBoardCanvas {
 
 pub fn get_all_pieces(position: &Position) -> Vec<(CanvasCoordinate, Piece)> {
     let mut vec: Vec<(CanvasCoordinate, Piece)> = Vec::new();
-
-    vec.append(&mut get_pieces(
-        position.get_squares(WHITE_BISHOP),
-        WHITE_BISHOP,
-    ));
-    vec.append(&mut get_pieces(
-        position.get_squares(WHITE_KING),
-        WHITE_KING,
-    ));
-    vec.append(&mut get_pieces(
-        position.get_squares(WHITE_QUEEN),
-        WHITE_QUEEN,
-    ));
-    vec.append(&mut get_pieces(
-        position.get_squares(WHITE_KNIGHT),
-        WHITE_KNIGHT,
-    ));
-    vec.append(&mut get_pieces(
-        position.get_squares(WHITE_PAWN),
-        WHITE_PAWN,
-    ));
-    vec.append(&mut get_pieces(
-        position.get_squares(WHITE_ROOK),
-        WHITE_ROOK,
-    ));
-
-    vec.append(&mut get_pieces(
-        position.get_squares(BLACK_BISHOP),
-        BLACK_BISHOP,
-    ));
-    vec.append(&mut get_pieces(
-        position.get_squares(BLACK_KING),
-        BLACK_KING,
-    ));
-    vec.append(&mut get_pieces(
-        position.get_squares(BLACK_QUEEN),
-        BLACK_QUEEN,
-    ));
-    vec.append(&mut get_pieces(
-        position.get_squares(BLACK_KNIGHT),
-        BLACK_KNIGHT,
-    ));
-    vec.append(&mut get_pieces(
-        position.get_squares(BLACK_PAWN),
-        BLACK_PAWN,
-    ));
-    vec.append(&mut get_pieces(
-        position.get_squares(BLACK_ROOK),
-        BLACK_ROOK,
-    ));
-
+    for piece in ALL_PIECES_SET {
+        vec.append(&mut get_pieces(position.get_squares(piece), piece));
+    }
     vec
 }
 

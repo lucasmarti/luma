@@ -1,6 +1,6 @@
 use crate::engine::{
     chess_moves::{
-        castle::{get_black_castle_moves, get_white_castle_moves},
+        castling::{get_black_castle_moves, get_white_castle_moves},
         common::{
             get_moves_for_bishop_at_square, get_moves_for_king_at_square,
             get_moves_for_knight_at_square, get_moves_for_queen_at_square,

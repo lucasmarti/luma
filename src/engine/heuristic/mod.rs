@@ -6,7 +6,7 @@ struct Score {
     mobility: f32,
 }
 
-pub fn heuristics(position: &Position) -> f32 {
+pub fn heuristic(position: &Position) -> f32 {
     let mut white_score: Score = Score {
         material: 0.0,
         squares: 0.0,
@@ -30,11 +30,11 @@ f(p) = 200(K-K')
        + 5(R-R')
        + 3(B-B' + N-N')
        + 1(P-P')
-*/
 
 pub fn heuristic(position: &Position) -> f32 {
-    0.0 //get_score_for_pieces(position, WHITE_PIECES) - get_score_for_pieces(position, BLACK_PIECES)
+    get_score_for_pieces(position, WHITE_PIECES) - get_score_for_pieces(position, BLACK_PIECES)
 }
+*/
 
 mod material;
 mod mobility;

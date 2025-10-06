@@ -1,4 +1,4 @@
-use crate::engine::{heuristic::heuristics, position::bitboard::Bitboard};
+use crate::engine::{heuristic::heuristic, position::bitboard::Bitboard};
 
 use super::Position;
 
@@ -56,7 +56,7 @@ impl Print for Position {
         }
         println!();
         println!("Current Player: {:?}", self.get_player());
-        println!("Heuristic Score: {:?}", heuristics(self));
+        //println!("Heuristic Score: {:?}", heuristics(self));
         println!();
     }
 

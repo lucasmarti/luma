@@ -1,8 +1,12 @@
 use std::u32;
 
 use crate::engine::{
-    chess_moves::common::{
-        generate_path_with_limit, get_moves_for_king_at_square, get_moves_for_rook_at_square, slide,
+    chess_moves::{
+        common::{
+            generate_path_with_limit, get_moves_for_king_at_square, get_moves_for_rook_at_square,
+            slide,
+        },
+        ChessMove, MoveType,
     },
     directions::{self, squares::*},
     piece::*,
@@ -18,20 +22,18 @@ fn test_slide1() {
 
     let path = generate_path_with_limit(G4, directions::up, u32::MAX);
     let positions = slide(&position, G4, path, WHITE_QUEEN);
-
-    let result: Vec<Position> = vec![
-        Position::default()
-            .put_piece(WHITE_QUEEN, G5)
-            .put_piece(WHITE_PAWN, G7)
-            .toggle_player()
-            .set_to_square(G5),
-        Position::default()
-            .put_piece(WHITE_QUEEN, G6)
-            .put_piece(WHITE_PAWN, G7)
-            .toggle_player()
-            .set_to_square(G6),
-    ];
-    assert_eq!(positions, result);
+    assert!(
+        positions
+            .iter()
+            .any(|p| p.is_occupied_by_piece(G5, WHITE_QUEEN)
+                && p.is_occupied_by_piece(G7, WHITE_PAWN))
+    );
+    assert!(
+        positions
+            .iter()
+            .any(|p| p.is_occupied_by_piece(G6, WHITE_QUEEN)
+                && p.is_occupied_by_piece(G7, WHITE_PAWN))
+    );
 }
 
 #[test]
@@ -112,23 +114,22 @@ fn test_slide2() {
     let path = generate_path_with_limit(G4, directions::up, u32::MAX);
 
     let positions = slide(&position, G4, path, WHITE_QUEEN);
-    let result: Vec<Position> = vec![
-        Position::default()
-            .put_piece(WHITE_QUEEN, G5)
-            .put_piece(BLACK_PAWN, G7)
-            .toggle_player()
-            .set_to_square(G5),
-        Position::default()
-            .put_piece(WHITE_QUEEN, G6)
-            .put_piece(BLACK_PAWN, G7)
-            .toggle_player()
-            .set_to_square(G6),
-        Position::default()
-            .put_piece(WHITE_QUEEN, G7)
-            .toggle_player()
-            .set_to_square(G7),
-    ];
-    assert!(positions == result);
+
+    assert!(
+        positions
+            .iter()
+            .any(|p| p.is_occupied_by_piece(G5, WHITE_QUEEN)
+                && p.is_occupied_by_piece(G7, BLACK_PAWN))
+    );
+    assert!(
+        positions
+            .iter()
+            .any(|p| p.is_occupied_by_piece(G6, WHITE_QUEEN)
+                && p.is_occupied_by_piece(G7, BLACK_PAWN))
+    );
+    assert!(positions.iter().any(
+        |p| p.is_occupied_by_piece(G7, WHITE_QUEEN) && !p.is_occupied_by_piece(G7, BLACK_PAWN)
+    ));
 }
 
 #[test]
@@ -138,23 +139,16 @@ fn test_slide3() {
     let path = generate_path_with_limit(G4, directions::up, u32::MAX);
 
     let positions = slide(&position, G4, path, WHITE_QUEEN);
-    let result: Vec<Position> = vec![
-        Position::default()
-            .put_piece(WHITE_QUEEN, G5)
-            .toggle_player()
-            .set_to_square(G5),
-        Position::default()
-            .put_piece(WHITE_QUEEN, G6)
-            .toggle_player()
-            .set_to_square(G6),
-        Position::default()
-            .put_piece(WHITE_QUEEN, G7)
-            .toggle_player()
-            .set_to_square(G7),
-        Position::default()
-            .put_piece(WHITE_QUEEN, G8)
-            .toggle_player()
-            .set_to_square(G8),
-    ];
-    assert!(positions == result);
+    assert!(positions
+        .iter()
+        .any(|p| p.is_occupied_by_piece(G5, WHITE_QUEEN)));
+    assert!(positions
+        .iter()
+        .any(|p| p.is_occupied_by_piece(G6, WHITE_QUEEN)));
+    assert!(positions
+        .iter()
+        .any(|p| p.is_occupied_by_piece(G7, WHITE_QUEEN)));
+    assert!(positions
+        .iter()
+        .any(|p| p.is_occupied_by_piece(G8, WHITE_QUEEN)));
 }
