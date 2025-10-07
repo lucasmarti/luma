@@ -41,6 +41,10 @@ impl Position {
         self
     }
 
+    pub fn get_chess_move(&self) -> Option<ChessMove> {
+        self.chess_move
+    }
+
     pub fn get_to_square(&self) -> Option<u32> {
         match self.chess_move {
             Some(chess_move) => Some(chess_move.to),

@@ -83,8 +83,6 @@ impl ChessBoardCanvas {
     pub fn handle_click_event(&mut self, location_in_canvas: Option<(f64, f64)>) {
         if let Some(location_in_canvas) = location_in_canvas {
             if let Some(action) = menu::get_action(location_in_canvas.0, location_in_canvas.1) {
-                print!("action");
-
                 match action {
                     Action::NewGameAsWhite => self.new_game_white(),
                     Action::NewGameAsBlack => self.new_game_black(),
@@ -101,7 +99,6 @@ impl ChessBoardCanvas {
             }
 
             if let Some(coordinate) = get_index_from_canvas(location_in_canvas) {
-                println!("yes");
                 if let Some(position) = self.drag_n_drop(coordinate) {
                     self.position = position;
                     self.check_square = engine::get_check(&position);
@@ -118,11 +115,9 @@ impl ChessBoardCanvas {
 
     fn drag_n_drop(&mut self, square: u32) -> Option<Position> {
         if self.position.get_player() == self.computer {
-            println!("computer's turn");
             return None;
         }
         if engine::is_valid_drag_square(&self.position, square) {
-            println!("valid drag square");
             self.selected_square = Some(square);
             self.drop_targets = engine::get_valid_drop_positions(&self.position, square);
             return None;

@@ -32,13 +32,16 @@ impl Minimax for Node {
 pub fn get_best_move(position: Position) -> Option<Position> {
     let depth = 4;
     let tree = build_tree(position, depth);
+    println!("tree built");
     let minimx_player = match tree.position.get_player() {
         crate::engine::piece::Color::Black => Player::MIN,
         crate::engine::piece::Color::White => Player::MAX,
     };
+    println!("evaluate");
     let result = evaluate(&tree, minimx_player, depth);
+    println!("done");
     if let Some(node) = result.0 {
-        //node.position.print_board();
+        node.position.print_board();
     }
     match result.0 {
         Some(node) => Some(node.position),
@@ -52,6 +55,7 @@ fn build_tree(position: Position, depth: u8) -> Node {
     };
     if depth > 0 {
         for child in get_current_player_moves(&position) {
+            
             node.children.push(build_tree(child, depth - 1));
         }
     }

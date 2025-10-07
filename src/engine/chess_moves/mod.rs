@@ -15,15 +15,24 @@ pub fn get_current_player_moves(position: &Position) -> Vec<Position> {
         Color::White => get_white_moves(position),
     }
 }
+
+pub fn get_black_mobility(position: &Position) -> Vec<Position> {
+    get_moves(position, BLACK_MOVE_CONFIG, true)
+}
+
+pub fn get_white_mobility(position: &Position) -> Vec<Position> {
+    get_moves(position, WHITE_MOVE_CONFIG, true)
+}
+
 pub fn get_white_moves(position: &Position) -> Vec<Position> {
-    get_moves(position, WHITE_MOVE_CONFIG)
+    get_moves(position, WHITE_MOVE_CONFIG, false)
 }
 
 pub fn get_black_moves(position: &Position) -> Vec<Position> {
-    get_moves(position, BLACK_MOVE_CONFIG)
+    get_moves(position, BLACK_MOVE_CONFIG, false)
 }
 
-fn get_moves(position: &Position, config: Config) -> Vec<Position> {
+fn get_moves(position: &Position, config: Config, ignore_checks: bool) -> Vec<Position> {
     let mut new_positions: Vec<Position> = Vec::new();
     new_positions.extend(get_new_positions(position, config.bishop, config.bishop_fn));
     new_positions.extend(get_new_positions(position, config.king, config.king_fn));
@@ -33,7 +42,11 @@ fn get_moves(position: &Position, config: Config) -> Vec<Position> {
     new_positions.extend(get_new_positions(position, config.pawn, config.pawn_fn));
     new_positions.extend((config.castle_move_fn)(position));
 
-    filter_checks(new_positions, position.get_player())
+    if ignore_checks {
+        new_positions
+    } else {
+        filter_checks(new_positions, position.get_player())
+    }
 }
 fn get_new_positions(position: &Position, piece: Piece, get_moves_fn: MovesFn) -> Vec<Position> {
     let mut new_positions: Vec<Position> = Vec::new();

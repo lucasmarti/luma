@@ -8,20 +8,19 @@ struct Score {
 
 pub fn heuristic(position: &Position) -> f32 {
     let mut white_score: Score = Score {
-        material: 0.0,
-        squares: 0.0,
-        mobility: 0.0,
+        material: material::count_white(position),
+        squares: squares::count_white(position),
+        mobility: mobility::count_white(position),
     };
+
     let mut black_score: Score = Score {
-        material: 0.0,
-        squares: 0.0,
-        mobility: 0.0,
+        material: material::count_black(position),
+        squares: squares::count_black(position),
+        mobility: mobility::count_black(position),
     };
-    white_score.material = material::count_white(position);
-    white_score.squares = squares::count_white(position);
-    //white_score.mobility = mobility::count_white(position);
-    //black_score.material = count_black(position);
-    0.0
+
+    white_score.material + white_score.mobility + white_score.squares
+        - (black_score.material + black_score.mobility + black_score.squares)
 }
 
 /*

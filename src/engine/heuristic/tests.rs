@@ -1,3 +1,4 @@
+use crate::engine::directions::squares::{D1, D8};
 use crate::engine::heuristic::*;
 use crate::engine::piece::{
     BLACK_BISHOP, BLACK_KING, BLACK_KNIGHT, BLACK_PAWN, BLACK_QUEEN, BLACK_ROOK, WHITE_BISHOP,
@@ -7,52 +8,30 @@ use crate::engine::position::*;
 
 #[test]
 fn test_equal_material() {
-    let position = Position::default()
-        .put_piece(WHITE_KING, 1)
-        .put_piece(WHITE_BISHOP, 1)
-        .put_piece(WHITE_PAWN, 1)
-        .put_piece(WHITE_ROOK, 1)
-        .put_piece(WHITE_KNIGHT, 1)
-        .put_piece(WHITE_QUEEN, 1)
-        .put_piece(BLACK_KING, 1)
-        .put_piece(BLACK_BISHOP, 1)
-        .put_piece(BLACK_KNIGHT, 1)
-        .put_piece(BLACK_PAWN, 1)
-        .put_piece(BLACK_ROOK, 1)
-        .put_piece(BLACK_QUEEN, 1);
+    let position = Position::new_starting_position();
     assert_eq!(heuristic(&position), 0.0);
 }
 
 #[test]
 fn test_white_queen_missing() {
-    let position = Position::default()
-        .put_piece(WHITE_KING, 1)
-        .put_piece(WHITE_BISHOP, 1)
-        .put_piece(WHITE_PAWN, 1)
-        .put_piece(WHITE_ROOK, 1)
-        .put_piece(WHITE_KNIGHT, 1)
-        .put_piece(BLACK_QUEEN, 1)
-        .put_piece(BLACK_KING, 1)
-        .put_piece(BLACK_BISHOP, 1)
-        .put_piece(BLACK_KNIGHT, 1)
-        .put_piece(BLACK_PAWN, 1)
-        .put_piece(BLACK_ROOK, 1);
-    assert_eq!(heuristic(&position), -90.0);
+    let position = Position::new_starting_position().remove_piece(D1);
+    assert_eq!(heuristic(&position), -88.0);
 }
 
 #[test]
 fn test_black_queen_missing() {
-    let position = Position::default()
-        .put_piece(WHITE_KING, 1)
-        .put_piece(WHITE_BISHOP, 1)
-        .put_piece(WHITE_PAWN, 1)
-        .put_piece(WHITE_ROOK, 1)
-        .put_piece(WHITE_KNIGHT, 1)
-        .put_piece(WHITE_QUEEN, 1)
-        .put_piece(BLACK_KING, 1)
-        .put_piece(BLACK_BISHOP, 1)
-        .put_piece(BLACK_KNIGHT, 1)
-        .put_piece(BLACK_PAWN, 1)
-        .put_piece(BLACK_ROOK, 1);
-    assert_eq!(heuristic(&position), 90.0);
+    let position = Position::new_starting_position().remove_piece(D8);
+    assert_eq!(
+        material::count_white(&position) - material::count_black(&position),
+        90.0
+    );
+    assert_eq!(
+        mobility::count_white(&position) - mobility::count_black(&position),
+        -1.5
+    );
+    assert_eq!(
+        squares::count_white(&position) - squares::count_black(&position),
+        -0.5
+    );
+    assert_eq!(heuristic(&position), 88.0);
 }

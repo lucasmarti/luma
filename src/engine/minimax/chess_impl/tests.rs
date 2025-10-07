@@ -14,6 +14,7 @@ fn test_get_best_move() {
         .put_piece(BLACK_KNIGHT, A7);
     position.print_board();
     if let Some(best_position) = get_best_move(position) {
+        best_position.print_board();
         assert!(best_position.is_occupied_by_piece(A7, WHITE_PAWN));
     }
 }

@@ -11,14 +11,14 @@ use crate::{
 type PieceSquareTable = [f32; 64];
 type PieceSquareRow = [f32; 8];
 
-const WHITE_PAWN_ROW_8: PieceSquareRow = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
-const WHITE_PAWN_ROW_7: PieceSquareRow = [0.5, 1.0, 1.0, -2.0, -2.0, 1.0, 1.0, 0.5];
-const WHITE_PAWN_ROW_6: PieceSquareRow = [0.5, -0.5, -1.0, 0.0, 0.0, -1.0, -0.5, 0.5];
-const WHITE_PAWN_ROW_5: PieceSquareRow = [0.0, 0.0, 0.0, 2.0, 2.0, 0.0, 0.0, 0.0];
-const WHITE_PAWN_ROW_4: PieceSquareRow = [0.5, 0.5, 1.0, 2.5, 2.5, 1.0, 0.5, 0.5];
-const WHITE_PAWN_ROW_3: PieceSquareRow = [1.0, 1.0, 2.0, 3.0, 3.0, 2.0, 1.0, 1.0];
-const WHITE_PAWN_ROW_2: PieceSquareRow = [5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0];
 const WHITE_PAWN_ROW_1: PieceSquareRow = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
+const WHITE_PAWN_ROW_2: PieceSquareRow = [0.5, 1.0, 1.0, -2.0, -2.0, 1.0, 1.0, 0.5];
+const WHITE_PAWN_ROW_3: PieceSquareRow = [0.5, -0.5, -1.0, 0.0, 0.0, -1.0, -0.5, 0.5];
+const WHITE_PAWN_ROW_4: PieceSquareRow = [0.0, 0.0, 0.0, 2.0, 2.0, 0.0, 0.0, 0.0];
+const WHITE_PAWN_ROW_5: PieceSquareRow = [0.5, 0.5, 1.0, 2.5, 2.5, 1.0, 0.5, 0.5];
+const WHITE_PAWN_ROW_6: PieceSquareRow = [1.0, 1.0, 2.0, 3.0, 3.0, 2.0, 1.0, 1.0];
+const WHITE_PAWN_ROW_7: PieceSquareRow = [5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0];
+const WHITE_PAWN_ROW_8: PieceSquareRow = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
 
 const KNIGHT_ROW_8: PieceSquareRow = [-5.0, -4.0, -3.0, -3.0, -3.0, -3.0, -4.0, -5.0];
 const KNIGHT_ROW_7: PieceSquareRow = [-4.0, -2.0, 0.0, 0.0, 0.0, 0.0, -2.0, -4.0];
@@ -191,13 +191,15 @@ fn get_value(piece: Piece, square: u32) -> f32 {
     get_table(piece)[square as usize]
 }
 fn get_score_for_pieces(position: &Position, pieces: [Piece; 6]) -> f32 {
-    let mut score: f32 = 0.0;
+    let mut total_score: f32 = 0.0;
     for piece in pieces {
+        let mut piece_score: f32 = 0.0;
         for square in position.get_squares(piece).iter() {
-            score = score + get_value(piece, square);
+            piece_score = piece_score + get_value(piece, square);
         }
+        total_score = total_score + piece_score;
     }
-    score
+    total_score
 }
 
 pub fn count_black(position: &Position) -> f32 {
