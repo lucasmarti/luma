@@ -1,9 +1,5 @@
 use crate::engine::directions::squares::{D1, D8};
 use crate::engine::heuristic::*;
-use crate::engine::piece::{
-    BLACK_BISHOP, BLACK_KING, BLACK_KNIGHT, BLACK_PAWN, BLACK_QUEEN, BLACK_ROOK, WHITE_BISHOP,
-    WHITE_KING, WHITE_KNIGHT, WHITE_PAWN, WHITE_QUEEN, WHITE_ROOK,
-};
 use crate::engine::position::*;
 
 #[test]

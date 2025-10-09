@@ -32,11 +32,11 @@ impl Ord for Square {
         self.0.cmp(&other.0)
     }
 }
-
+#[allow(unused_variables)]
 macro_rules! define_squares {
     ($($name:ident = $value:expr),* $(,)?) => {
-
-            $(pub const $name: Square = Square($value);)*
+            $(#[allow(dead_code)]
+                pub const $name: Square = Square($value);)*
     };
 }
 

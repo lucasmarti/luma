@@ -1,12 +1,8 @@
 use std::u32;
 
 use crate::engine::{
-    chess_moves::{
-        common::{
-            generate_path_with_limit, get_moves_for_king_at_square, get_moves_for_rook_at_square,
-            slide,
-        },
-        ChessMove, MoveType,
+    chess_moves::common::{
+        generate_path_with_limit, get_moves_for_king_at_square, get_moves_for_rook_at_square, slide,
     },
     directions::{self, squares::*},
     piece::*,
