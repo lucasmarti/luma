@@ -1,14 +1,7 @@
 use once_cell::sync::Lazy;
 
-use crate::{
-    engine::{
-        piece::*,
-        position::{self, Position},
-    },
-    main,
-};
+use crate::engine::{directions::squares::Square, piece::*, position::Position};
 
-type PieceSquareTable = [f32; 64];
 type PieceSquareRow = [f32; 8];
 
 const WHITE_PAWN_ROW_1: PieceSquareRow = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
@@ -187,8 +180,8 @@ fn get_table(piece: Piece) -> &'static once_cell::sync::Lazy<Vec<f32>> {
         },
     }
 }
-fn get_value(piece: Piece, square: u32) -> f32 {
-    get_table(piece)[square as usize]
+fn get_value(piece: Piece, square: Square) -> f32 {
+    get_table(piece)[square.as_index() as usize]
 }
 fn get_score_for_pieces(position: &Position, pieces: [Piece; 6]) -> f32 {
     let mut total_score: f32 = 0.0;

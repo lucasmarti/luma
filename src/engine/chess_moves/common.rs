@@ -9,12 +9,15 @@ use crate::engine::{
         pawn::set_en_passant_if_necessary,
         ChessMove, MoveType,
     },
-    directions::DirectionFn,
+    directions::{
+        squares::{self, Square},
+        DirectionFn,
+    },
     piece::Piece,
     position::Position,
 };
 
-pub fn slide(position: &Position, from: u32, path: Vec<u32>, piece: Piece) -> Vec<Position> {
+pub fn slide(position: &Position, from: Square, path: Vec<Square>, piece: Piece) -> Vec<Position> {
     let mut new_positions: Vec<Position> = Vec::new();
 
     for field in path {
@@ -36,7 +39,7 @@ pub fn slide(position: &Position, from: u32, path: Vec<u32>, piece: Piece) -> Ve
 pub fn get_moves_for_king_at_square(
     position: &Position,
     piece: Piece,
-    square: u32,
+    square: Square,
 ) -> Vec<Position> {
     get_moves_for_piece_at_square(position, &KING_DIRECTIONS, piece, KING_MAX_DISTANCE, square)
 }
@@ -44,7 +47,7 @@ pub fn get_moves_for_king_at_square(
 pub fn get_moves_for_queen_at_square(
     position: &Position,
     piece: Piece,
-    square: u32,
+    square: Square,
 ) -> Vec<Position> {
     get_moves_for_piece_at_square(
         position,
@@ -58,7 +61,7 @@ pub fn get_moves_for_queen_at_square(
 pub fn get_moves_for_rook_at_square(
     position: &Position,
     piece: Piece,
-    square: u32,
+    square: Square,
 ) -> Vec<Position> {
     get_moves_for_piece_at_square(position, &ROOK_DIRECTIONS, piece, ROOK_MAX_DISTANCE, square)
 }
@@ -66,7 +69,7 @@ pub fn get_moves_for_rook_at_square(
 pub fn get_moves_for_knight_at_square(
     position: &Position,
     piece: Piece,
-    square: u32,
+    square: Square,
 ) -> Vec<Position> {
     get_moves_for_piece_at_square(
         position,
@@ -80,7 +83,7 @@ pub fn get_moves_for_knight_at_square(
 pub fn get_moves_for_bishop_at_square(
     position: &Position,
     piece: Piece,
-    square: u32,
+    square: Square,
 ) -> Vec<Position> {
     get_moves_for_piece_at_square(
         position,
@@ -96,7 +99,7 @@ fn get_moves_for_piece_at_square(
     directions: &[DirectionFn],
     piece: Piece,
     max_distance: u32,
-    from: u32,
+    from: Square,
 ) -> Vec<Position> {
     let mut new_positions: Vec<Position> = Vec::new();
     for direction_fn in directions {
@@ -105,8 +108,12 @@ fn get_moves_for_piece_at_square(
     }
     new_positions
 }
-fn generate_path_with_limit(from: u32, direction_fn: DirectionFn, max_distance: u32) -> Vec<u32> {
-    let mut path: Vec<u32> = Vec::new();
+fn generate_path_with_limit(
+    from: Square,
+    direction_fn: DirectionFn,
+    max_distance: u32,
+) -> Vec<Square> {
+    let mut path: Vec<Square> = Vec::new();
     let mut current_pos = from;
     let mut distance = 0;
 
@@ -123,7 +130,7 @@ fn generate_path_with_limit(from: u32, direction_fn: DirectionFn, max_distance: 
     path
 }
 
-pub fn progess(position: &Position, piece: Piece, from: u32, to: u32) -> Position {
+pub fn progess(position: &Position, piece: Piece, from: Square, to: Square) -> Position {
     let tuple = match position.get_piece_at(to) {
         Some(piece) => (MoveType::Capture, Some(piece)),
         None => (MoveType::Quiet, None),

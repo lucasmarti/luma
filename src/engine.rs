@@ -1,5 +1,4 @@
 use rand::seq::IndexedRandom;
-use std::collections::HashMap;
 
 use crate::engine::{
     check::{filter_checks, is_check},
@@ -7,7 +6,7 @@ use crate::engine::{
         configurations::{CastleMovesFn, MovesFn, BLACK_MOVE_CONFIG, WHITE_MOVE_CONFIG},
         get_current_player_moves,
     },
-    directions::squares::{BLACK_KING_STARTING_POSITION, WHITE_KING_STARTING_POSITION},
+    directions::squares::{Square, BLACK_KING_STARTING_POSITION, WHITE_KING_STARTING_POSITION},
     minimax::chess_impl::get_best_move,
     piece::{Piece, BLACK_KING, WHITE_KING},
     position::Position,
@@ -17,7 +16,7 @@ pub fn get_next_move(position: &Position) -> Option<Position> {
     get_best_move(*position)
 }
 
-pub fn get_check(position: &Position) -> Option<u32> {
+pub fn get_check(position: &Position) -> Option<Square> {
     if is_check(position, position.get_player()) {
         let king = match position.get_player() {
             piece::Color::Black => BLACK_KING,
@@ -27,7 +26,7 @@ pub fn get_check(position: &Position) -> Option<u32> {
     }
     None
 }
-fn get_first_piece(position: &Position, piece: Piece) -> Option<u32> {
+fn get_first_piece(position: &Position, piece: Piece) -> Option<Square> {
     for square in position.get_squares(piece).iter() {
         return Some(square);
     }
@@ -43,14 +42,14 @@ fn get_random_move(position: &Position) -> Option<Position> {
     }
 }
 
-pub fn is_valid_drag_square(position: &Position, square: u32) -> bool {
+pub fn is_valid_drag_square(position: &Position, square: Square) -> bool {
     match position.get_piece_at(square) {
         Some(piece) => piece.color == position.get_player(),
         None => false,
     }
 }
 
-pub fn get_valid_drop_positions(position: &Position, from: u32) -> Vec<Position> {
+pub fn get_valid_drop_positions(position: &Position, from: Square) -> Vec<Position> {
     let mut positions: Vec<Position> = Vec::new();
     if let Some(piece) = position.get_piece_at(from) {
         let moves_fn = get_moves_fn(piece);
@@ -61,25 +60,9 @@ pub fn get_valid_drop_positions(position: &Position, from: u32) -> Vec<Position>
         positions = filter_checks(positions, position.get_player());
     }
     positions
-    //to_target_positions_map(positions)
 }
 
-fn to_target_positions_map(positions: Vec<Position>) -> HashMap<u32, Vec<Position>> {
-    let mut map: HashMap<u32, Vec<Position>> = HashMap::new();
-    for position in positions {
-        if let Some(target) = position.get_to_square() {
-            match map.get_mut(&target) {
-                Some(vec) => vec.push(position),
-                None => {
-                    map.insert(target, vec![position]);
-                }
-            }
-        }
-    }
-    map
-}
-
-fn get_castle_moves_fn(square: u32, piece: Piece) -> Option<CastleMovesFn> {
+fn get_castle_moves_fn(square: Square, piece: Piece) -> Option<CastleMovesFn> {
     if square == WHITE_KING_STARTING_POSITION && piece == WHITE_KING {
         Some(WHITE_MOVE_CONFIG.castle_move_fn)
     } else if square == BLACK_KING_STARTING_POSITION && piece == BLACK_KING {
@@ -107,7 +90,7 @@ fn get_moves_fn(piece: Piece) -> MovesFn {
 
 mod check;
 mod chess_moves;
-mod directions;
+pub mod directions;
 mod heuristic;
 mod minimax;
 pub mod piece;

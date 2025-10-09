@@ -7,11 +7,11 @@ pub struct CastlingConfiguration {
     pub(crate) color: Color,
     pub(crate) king: Piece,
     pub(crate) rook: Piece,
-    pub(crate) king_from: u32,
-    pub(crate) king_to: u32,
-    pub(crate) rook_from: u32,
-    pub(crate) rook_to: u32,
-    pub(crate) empty_path_squares: &'static [u32],
+    pub(crate) king_from: Square,
+    pub(crate) king_to: Square,
+    pub(crate) rook_from: Square,
+    pub(crate) rook_to: Square,
+    pub(crate) empty_path_squares: &'static [Square],
     pub(crate) castling_type: CastlingType,
 }
 

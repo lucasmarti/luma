@@ -1,7 +1,5 @@
-use core::borrow;
-
 use crate::engine::{
-    chess_moves::{self, ChessMove, MoveType},
+    chess_moves::{ChessMove, MoveType},
     directions::squares::*,
     piece::{
         Color, Piece, Typ, BLACK_BISHOP, BLACK_KING, BLACK_KNIGHT, BLACK_PAWN, BLACK_QUEEN,
@@ -25,7 +23,7 @@ pub struct Position {
     black_knights: Bitboard,
     black_pawns: Bitboard,
     castling_rights: [bool; 4],
-    en_passant: Option<u32>,
+    en_passant: Option<Square>,
     player: Color,
     chess_move: Option<ChessMove>,
 }
@@ -45,14 +43,14 @@ impl Position {
         self.chess_move
     }
 
-    pub fn get_to_square(&self) -> Option<u32> {
+    pub fn get_to_square(&self) -> Option<Square> {
         match self.chess_move {
             Some(chess_move) => Some(chess_move.to),
             None => None,
         }
     }
 
-    pub fn get_from_square(&self) -> Option<u32> {
+    pub fn get_from_square(&self) -> Option<Square> {
         match self.chess_move {
             Some(chess_move) => Some(chess_move.from),
             None => None,
@@ -112,25 +110,25 @@ impl Position {
         self.castling_rights[castling_type.as_index()] = false;
         self
     }
-    pub fn is_occupied(&self, index: u32) -> bool {
-        self.get_all().contains(index)
+    pub fn is_occupied(&self, square: Square) -> bool {
+        self.get_all().contains(square)
     }
 
-    pub fn is_occupied_by_color(&self, index: u32, color: Color) -> bool {
+    pub fn is_occupied_by_color(&self, square: Square, color: Color) -> bool {
         match color {
-            Color::Black => self.get_black().contains(index),
-            Color::White => self.get_white().contains(index),
+            Color::Black => self.get_black().contains(square),
+            Color::White => self.get_white().contains(square),
         }
     }
-    pub fn is_occupied_by_piece(&self, index: u32, piece: Piece) -> bool {
-        self.get_squares(piece).contains(index)
+    pub fn is_occupied_by_piece(&self, square: Square, piece: Piece) -> bool {
+        self.get_squares(piece).contains(square)
     }
 
     pub fn count_pieces(&self, piece: Piece) -> u32 {
         self.get_squares(piece).count_ones()
     }
 
-    pub fn get_king_square(&self, color: Color) -> u32 {
+    pub fn get_king_square(&self, color: Color) -> Square {
         for square in self
             .get_squares(Piece {
                 typ: Typ::King,
@@ -138,17 +136,17 @@ impl Position {
             })
             .iter()
         {
-            return square;
+            return Square::new_unchecked(square.as_index());
         }
         panic!("No King found {:?}", color);
     }
 
-    pub fn set_en_passant(mut self, index: u32) -> Position {
-        if A4 <= index && index <= H5 {
-            self.en_passant = Some(index);
+    pub fn set_en_passant(mut self, square: Square) -> Position {
+        if A4 <= square && square <= H5 {
+            self.en_passant = Some(square);
             self
         } else {
-            panic!("Invalid en passant square {:?}", index);
+            panic!("Invalid en passant square {:?}", square);
         }
     }
     pub fn reset_en_passant(mut self) -> Position {
@@ -160,7 +158,7 @@ impl Position {
         self.player
     }
 
-    pub fn get_en_passant(&self) -> Option<u32> {
+    pub fn get_en_passant(&self) -> Option<Square> {
         self.en_passant
     }
 
@@ -215,45 +213,45 @@ impl Position {
         }
     }
 
-    pub fn put_piece(mut self, piece: Piece, index: u32) -> Position {
+    pub fn put_piece(mut self, piece: Piece, square: Square) -> Position {
         match piece.color {
             Color::Black => match piece.typ {
-                Typ::King => self.black_king.set_bit(index),
-                Typ::Queen => self.black_queen.set_bit(index),
-                Typ::Rook => self.black_rooks.set_bit(index),
-                Typ::Pawn => self.black_pawns.set_bit(index),
-                Typ::Knight => self.black_knights.set_bit(index),
-                Typ::Bishop => self.black_bishops.set_bit(index),
+                Typ::King => self.black_king.set_bit(square),
+                Typ::Queen => self.black_queen.set_bit(square),
+                Typ::Rook => self.black_rooks.set_bit(square),
+                Typ::Pawn => self.black_pawns.set_bit(square),
+                Typ::Knight => self.black_knights.set_bit(square),
+                Typ::Bishop => self.black_bishops.set_bit(square),
             },
             Color::White => match piece.typ {
-                Typ::King => self.white_king.set_bit(index),
-                Typ::Queen => self.white_queen.set_bit(index),
-                Typ::Rook => self.white_rooks.set_bit(index),
-                Typ::Pawn => self.white_pawns.set_bit(index),
-                Typ::Knight => self.white_knights.set_bit(index),
-                Typ::Bishop => self.white_bishops.set_bit(index),
+                Typ::King => self.white_king.set_bit(square),
+                Typ::Queen => self.white_queen.set_bit(square),
+                Typ::Rook => self.white_rooks.set_bit(square),
+                Typ::Pawn => self.white_pawns.set_bit(square),
+                Typ::Knight => self.white_knights.set_bit(square),
+                Typ::Bishop => self.white_bishops.set_bit(square),
             },
         }
         self
     }
 
-    pub fn remove_piece(mut self, index: u32) -> Position {
-        self.black_king.remove_bit(index);
-        self.black_queen.remove_bit(index);
-        self.black_rooks.remove_bit(index);
-        self.black_pawns.remove_bit(index);
-        self.black_knights.remove_bit(index);
-        self.black_bishops.remove_bit(index);
-        self.white_king.remove_bit(index);
-        self.white_queen.remove_bit(index);
-        self.white_rooks.remove_bit(index);
-        self.white_pawns.remove_bit(index);
-        self.white_knights.remove_bit(index);
-        self.white_bishops.remove_bit(index);
+    pub fn remove_piece(mut self, square: Square) -> Position {
+        self.black_king.remove_bit(square);
+        self.black_queen.remove_bit(square);
+        self.black_rooks.remove_bit(square);
+        self.black_pawns.remove_bit(square);
+        self.black_knights.remove_bit(square);
+        self.black_bishops.remove_bit(square);
+        self.white_king.remove_bit(square);
+        self.white_queen.remove_bit(square);
+        self.white_rooks.remove_bit(square);
+        self.white_pawns.remove_bit(square);
+        self.white_knights.remove_bit(square);
+        self.white_bishops.remove_bit(square);
         self
     }
 
-    pub fn get_piece_at(self, square: u32) -> Option<Piece> {
+    pub fn get_piece_at(self, square: Square) -> Option<Piece> {
         if self.black_king.contains(square) {
             return Some(BLACK_KING);
         };

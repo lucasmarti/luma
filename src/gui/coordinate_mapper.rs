@@ -1,6 +1,6 @@
-use crate::gui::{
-    chess_board_canvas::{self, CanvasCoordinate},
-    configuration,
+use crate::{
+    engine::directions::squares::Square,
+    gui::{chess_board_canvas::CanvasCoordinate, configuration},
 };
 
 fn get_field_from_canvas(canvas: f64) -> Option<u32> {
@@ -11,7 +11,8 @@ fn get_field_from_canvas(canvas: f64) -> Option<u32> {
         None
     }
 }
-pub fn get_canvas_from_index(index: u32) -> CanvasCoordinate {
+pub fn get_canvas_from_square(square: Square) -> CanvasCoordinate {
+    let index = square.as_index();
     if index > 63 {
         panic!("ungültiger Index {:?}", index);
     }
@@ -20,13 +21,13 @@ pub fn get_canvas_from_index(index: u32) -> CanvasCoordinate {
     return CanvasCoordinate { x: pos_x, y: pos_y };
 }
 
-pub fn get_index_from_canvas(location: (f64, f64)) -> Option<u32> {
+pub fn get_square_from_canvas(location: (f64, f64)) -> Option<Square> {
     let (canvas_x, canvas_y) = location;
     if let (Some(column), Some(row)) = (
         get_field_from_canvas(canvas_x),
         get_field_from_canvas(canvas_y),
     ) {
-        return Some(((row - 1) * 8) + (column - 1));
+        return Square::new((row - 1) * 8 + (column - 1));
     }
     None
 }

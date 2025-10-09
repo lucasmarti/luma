@@ -1,11 +1,10 @@
-use std::collections::HashMap;
-
+use crate::engine::directions::squares::Square;
 use crate::engine::piece::{self, *};
 use crate::engine::position::bitboard::Bitboard;
 use crate::engine::position::Position;
-use crate::engine::{self, position};
+use crate::engine::{self};
 use crate::gui::configuration::*;
-use crate::gui::coordinate_mapper::get_index_from_canvas;
+use crate::gui::coordinate_mapper::get_square_from_canvas;
 use crate::gui::menu;
 
 use super::coordinate_mapper;
@@ -22,9 +21,9 @@ pub struct ChessBoardCanvas {
     canvas: DrawingTarget,
     position: Position,
     drop_targets: Vec<Position>,
-    selected_square: Option<u32>,
+    selected_square: Option<Square>,
     computer: piece::Color,
-    check_square: Option<u32>,
+    check_square: Option<Square>,
     show_white_promotion_buttons: bool,
     show_black_promotion_buttons: bool,
 }
@@ -44,7 +43,6 @@ impl ChessBoardCanvas {
     }
 
     fn new_game_white(&mut self) {
-        print!("New game white");
         self.computer = piece::Color::Black;
         self.drop_targets.clear();
         self.selected_square = None;
@@ -53,7 +51,6 @@ impl ChessBoardCanvas {
         self.draw();
     }
     fn new_game_black(&mut self) {
-        print!("New game black");
         self.computer = piece::Color::White;
         self.drop_targets.clear();
         self.selected_square = None;
@@ -98,7 +95,7 @@ impl ChessBoardCanvas {
                 return;
             }
 
-            if let Some(coordinate) = get_index_from_canvas(location_in_canvas) {
+            if let Some(coordinate) = get_square_from_canvas(location_in_canvas) {
                 if let Some(position) = self.drag_n_drop(coordinate) {
                     self.position = position;
                     self.check_square = engine::get_check(&position);
@@ -113,7 +110,7 @@ impl ChessBoardCanvas {
         }
     }
 
-    fn drag_n_drop(&mut self, square: u32) -> Option<Position> {
+    fn drag_n_drop(&mut self, square: Square) -> Option<Position> {
         if self.position.get_player() == self.computer {
             return None;
         }
@@ -166,24 +163,24 @@ impl ChessBoardCanvas {
             );
             gc.draw_board();
             if let Some(square) = self.selected_square {
-                gc.draw_selected_field(coordinate_mapper::get_canvas_from_index(square));
+                gc.draw_selected_field(coordinate_mapper::get_canvas_from_square(square));
             }
             if let Some(square) = self.check_square {
-                gc.draw_check_field(coordinate_mapper::get_canvas_from_index(square));
+                gc.draw_check_field(coordinate_mapper::get_canvas_from_square(square));
             }
 
             for (coordinate, piece) in self::get_all_pieces(&self.position) {
                 gc.draw_piece(coordinate, piece, FIELD_SIZE);
             }
             if let Some(square) = self.position.get_from_square() {
-                gc.draw_from_to_field(coordinate_mapper::get_canvas_from_index(square));
+                gc.draw_from_to_field(coordinate_mapper::get_canvas_from_square(square));
             }
             if let Some(square) = self.position.get_to_square() {
-                gc.draw_from_to_field(coordinate_mapper::get_canvas_from_index(square));
+                gc.draw_from_to_field(coordinate_mapper::get_canvas_from_square(square));
             }
             for target in &self.drop_targets {
                 if let Some(square) = target.get_to_square() {
-                    gc.draw_drop_target(coordinate_mapper::get_canvas_from_index(square));
+                    gc.draw_drop_target(coordinate_mapper::get_canvas_from_square(square));
                 }
             }
 
@@ -216,8 +213,8 @@ pub fn get_all_pieces(position: &Position) -> Vec<(CanvasCoordinate, Piece)> {
 
 fn get_pieces(bitboard: Bitboard, piece: Piece) -> Vec<(CanvasCoordinate, Piece)> {
     let mut vec: Vec<(CanvasCoordinate, Piece)> = Vec::new();
-    for index in bitboard.iter() {
-        let coordinate = coordinate_mapper::get_canvas_from_index(index);
+    for square in bitboard.iter() {
+        let coordinate = coordinate_mapper::get_canvas_from_square(square);
         vec.push((coordinate, piece));
     }
     vec

@@ -1,6 +1,7 @@
 use crate::engine::check::filter_checks;
 use crate::engine::chess_moves::configurations::*;
 use crate::engine::chess_moves::configurations::{MovesFn, BLACK_MOVE_CONFIG, WHITE_MOVE_CONFIG};
+use crate::engine::directions::squares::Square;
 use crate::engine::piece::{Color, Piece};
 use crate::engine::position::{CastlingType, Position};
 
@@ -59,8 +60,8 @@ fn get_new_positions(position: &Position, piece: Piece, get_moves_fn: MovesFn) -
 pub struct ChessMove {
     pub move_type: MoveType,
     pub piece: Piece,
-    pub from: u32,
-    pub to: u32,
+    pub from: Square,
+    pub to: Square,
     pub capture: Option<Piece>,
     pub pormotion: Option<Piece>,
 }

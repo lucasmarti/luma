@@ -1,14 +1,11 @@
-use flo_canvas::{CanvasFontFace, Color, FontId, GraphicsContext, GraphicsPrimitives};
-use std::{io::Cursor, sync::Arc};
+use flo_canvas::{Color, GraphicsContext, GraphicsPrimitives};
+use std::io::Cursor;
 
 use super::{assets, chess_board_canvas::CanvasCoordinate};
 use crate::gui::configuration::{Button, FIELD_SIZE};
 use crate::{
-    engine::piece::{Piece, WHITE_BISHOP, WHITE_KNIGHT, WHITE_QUEEN, WHITE_ROOK},
-    gui::configuration::{
-        MENU_HEIGHT, MENU_POS_X, MENU_POS_Y, MENU_WIDTH, NEW_GAME_BLACK_BUTTON,
-        NEW_GAME_WHITE_BUTTON,
-    },
+    engine::piece::Piece,
+    gui::configuration::{MENU_HEIGHT, MENU_POS_X, MENU_POS_Y, MENU_WIDTH},
 };
 pub const BACKGROUND_COLOR: Color = Color::Rgba(0.5, 0.5, 0.5, 1.0);
 const BLACK_FIELD_COLOR: Color = Color::Rgba(202.0 / 255.0, 207.0 / 255.0, 184.0 / 255.0, 1.0);

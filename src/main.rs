@@ -1,4 +1,3 @@
-use flo_canvas::DrawingTarget;
 use flo_draw::{
     binding::{bind, BindRef},
     create_drawing_window_with_events, with_2d_graphics, DrawEvent, MousePointer, PointerAction,
@@ -9,8 +8,6 @@ use futures::{executor, StreamExt};
 use crate::gui::chess_board_canvas::ChessBoardCanvas;
 
 pub fn main() {
-    
-    let mut drawing_target: Option<DrawingTarget> = None;
     with_2d_graphics(|| {
         let mut window_properties = WindowProperties::from(&"luma Chess");
         window_properties.mouse_pointer = BindRef::from(bind(MousePointer::SystemDefault));

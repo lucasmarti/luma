@@ -8,7 +8,7 @@ use crate::engine::{
         },
         pawn::get_pawn_moves,
     },
-    directions::{self, DirectionFn},
+    directions::{self, squares::Square, DirectionFn},
     piece::{
         Piece, BLACK_BISHOP, BLACK_KING, BLACK_KNIGHT, BLACK_PAWN, BLACK_QUEEN, BLACK_ROOK,
         WHITE_BISHOP, WHITE_KING, WHITE_KNIGHT, WHITE_PAWN, WHITE_QUEEN, WHITE_ROOK,
@@ -65,7 +65,7 @@ pub const KNIGHT_DIRECTIONS: [DirectionFn; 8] = [
 ];
 
 pub type CastleMovesFn = fn(position: &Position) -> Vec<Position>;
-pub type MovesFn = fn(position: &Position, piece: Piece, square: u32) -> Vec<Position>;
+pub type MovesFn = fn(position: &Position, piece: Piece, square: Square) -> Vec<Position>;
 pub struct Config {
     pub king: Piece,
     pub queen: Piece,

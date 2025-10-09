@@ -1,6 +1,6 @@
 use crate::engine::{
     chess_moves::{common::progess, ChessMove, MoveType},
-    directions::{self, DirectionFn, RowFn},
+    directions::{self, squares::Square, DirectionFn, RowFn},
     piece::{
         Color, Piece, Typ, BLACK_BISHOP, BLACK_KNIGHT, BLACK_PAWN, BLACK_QUEEN, BLACK_ROOK,
         WHITE_BISHOP, WHITE_KNIGHT, WHITE_PAWN, WHITE_QUEEN, WHITE_ROOK,
@@ -60,7 +60,7 @@ const BLACK_MOVE_FUNCTIONS: [MoveFn; 6] = [
     get_move_black_right_en_passant,
 ];
 
-type MoveFn = fn(&Position, u32) -> Option<Position>;
+type MoveFn = fn(&Position, Square) -> Option<Position>;
 
 const WHITE_PROMOTION_PIECES: [Piece; 4] = [WHITE_QUEEN, WHITE_ROOK, WHITE_BISHOP, WHITE_KNIGHT];
 const BLACK_PROMOTION_PIECES: [Piece; 4] = [BLACK_QUEEN, BLACK_ROOK, BLACK_BISHOP, BLACK_KNIGHT];
@@ -114,14 +114,14 @@ const BLACK_PROMOTION_RIGHT_CONFIG: PromotionConfig = PromotionConfig {
     promotion_set: BLACK_PROMOTION_PIECES,
 };
 
-pub fn get_pawn_moves(position: &Position, piece: Piece, square: u32) -> Vec<Position> {
+pub fn get_pawn_moves(position: &Position, piece: Piece, square: Square) -> Vec<Position> {
     match piece.color {
         Color::Black => get_black_pawn_moves(position, square),
         Color::White => get_white_pawn_moves(position, square),
     }
 }
 
-fn get_white_pawn_moves(position: &Position, square: u32) -> Vec<Position> {
+fn get_white_pawn_moves(position: &Position, square: Square) -> Vec<Position> {
     let mut positions: Vec<Position> = Vec::new();
     for move_function in WHITE_MOVE_FUNCTIONS {
         if let Some(chess_move) = move_function(position, square) {
@@ -134,7 +134,7 @@ fn get_white_pawn_moves(position: &Position, square: u32) -> Vec<Position> {
     positions
 }
 
-fn get_black_pawn_moves(position: &Position, square: u32) -> Vec<Position> {
+fn get_black_pawn_moves(position: &Position, square: Square) -> Vec<Position> {
     let mut positions: Vec<Position> = Vec::new();
     for move_function in BLACK_MOVE_FUNCTIONS {
         if let Some(chess_move) = move_function(position, square) {
@@ -149,7 +149,7 @@ fn get_black_pawn_moves(position: &Position, square: u32) -> Vec<Position> {
 
 fn get_move_capture(
     position: &Position,
-    from: u32,
+    from: Square,
     direction: DirectionFn,
     piece: Piece,
 ) -> Option<Position> {
@@ -160,7 +160,7 @@ fn get_move_capture(
     }
     None
 }
-fn get_move_white_left_capture(position: &Position, from: u32) -> Option<Position> {
+fn get_move_white_left_capture(position: &Position, from: Square) -> Option<Position> {
     // Exclude promotion rank captures (handled by promotion capture functions)
     if directions::is_in_row_7(from) {
         return None;
@@ -168,7 +168,7 @@ fn get_move_white_left_capture(position: &Position, from: u32) -> Option<Positio
     return get_move_capture(position, from, directions::up_left, WHITE_PAWN);
 }
 
-fn get_move_white_right_capture(position: &Position, from: u32) -> Option<Position> {
+fn get_move_white_right_capture(position: &Position, from: Square) -> Option<Position> {
     // Exclude promotion rank captures (handled by promotion capture functions)
     if directions::is_in_row_7(from) {
         return None;
@@ -176,7 +176,7 @@ fn get_move_white_right_capture(position: &Position, from: u32) -> Option<Positi
     return get_move_capture(position, from, directions::up_right, WHITE_PAWN);
 }
 
-fn get_move_black_left_capture(position: &Position, from: u32) -> Option<Position> {
+fn get_move_black_left_capture(position: &Position, from: Square) -> Option<Position> {
     // Exclude promotion rank captures (handled by promotion capture functions)
     if directions::is_in_row_2(from) {
         return None;
@@ -184,7 +184,7 @@ fn get_move_black_left_capture(position: &Position, from: u32) -> Option<Positio
     return get_move_capture(position, from, directions::down_left, BLACK_PAWN);
 }
 
-fn get_move_black_right_capture(position: &Position, from: u32) -> Option<Position> {
+fn get_move_black_right_capture(position: &Position, from: Square) -> Option<Position> {
     // Exclude promotion rank captures (handled by promotion capture functions)
     if directions::is_in_row_2(from) {
         return None;
@@ -194,7 +194,7 @@ fn get_move_black_right_capture(position: &Position, from: u32) -> Option<Positi
 
 fn get_move_en_passant(
     position: &Position,
-    from: u32,
+    from: Square,
     config: EnPassantConfig,
 ) -> Option<Position> {
     if let (Some(next_square), Some(diagonal_square), Some(en_passant_square)) = (
@@ -217,45 +217,45 @@ fn get_move_en_passant(
     None
 }
 
-fn get_move_white_right_en_passant(position: &Position, from: u32) -> Option<Position> {
+fn get_move_white_right_en_passant(position: &Position, from: Square) -> Option<Position> {
     get_move_en_passant(position, from, WHITE_RIGHT_EN_PASSANT)
 }
 
-fn get_move_white_left_en_passant(position: &Position, from: u32) -> Option<Position> {
+fn get_move_white_left_en_passant(position: &Position, from: Square) -> Option<Position> {
     get_move_en_passant(position, from, WHITE_LEFT_EN_PASSANT)
 }
 
-fn get_move_black_right_en_passant(position: &Position, from: u32) -> Option<Position> {
+fn get_move_black_right_en_passant(position: &Position, from: Square) -> Option<Position> {
     get_move_en_passant(position, from, BLACK_RIGHT_EN_PASSANT)
 }
-fn get_move_black_left_en_passant(position: &Position, from: u32) -> Option<Position> {
+fn get_move_black_left_en_passant(position: &Position, from: Square) -> Option<Position> {
     get_move_en_passant(position, from, BLACK_LEFT_EN_PASSANT)
 }
 
-fn get_moves_white_promotion(position: &Position, from: u32) -> Vec<Position> {
+fn get_moves_white_promotion(position: &Position, from: Square) -> Vec<Position> {
     get_promotion(position, from, WHITE_PROMOTION_CONFIG)
 }
 
-fn get_moves_black_promotion(position: &Position, from: u32) -> Vec<Position> {
+fn get_moves_black_promotion(position: &Position, from: Square) -> Vec<Position> {
     get_promotion(position, from, BLACK_PROMOTION_CONFIG)
 }
 
-fn get_moves_white_promotion_left_capture(position: &Position, from: u32) -> Vec<Position> {
+fn get_moves_white_promotion_left_capture(position: &Position, from: Square) -> Vec<Position> {
     return get_promotion_capture(position, from, WHITE_PROMOTION_LEFT_CONFIG);
 }
 
-fn get_moves_white_promotion_right_capture(position: &Position, from: u32) -> Vec<Position> {
+fn get_moves_white_promotion_right_capture(position: &Position, from: Square) -> Vec<Position> {
     return get_promotion_capture(position, from, WHITE_PROMOTION_RIGHT_CONFIG);
 }
-fn get_moves_black_promotion_left_capture(position: &Position, from: u32) -> Vec<Position> {
+fn get_moves_black_promotion_left_capture(position: &Position, from: Square) -> Vec<Position> {
     return get_promotion_capture(position, from, BLACK_PROMOTION_LEFT_CONFIG);
 }
 
-fn get_moves_black_promotion_right_capture(position: &Position, from: u32) -> Vec<Position> {
+fn get_moves_black_promotion_right_capture(position: &Position, from: Square) -> Vec<Position> {
     return get_promotion_capture(position, from, BLACK_PROMOTION_RIGHT_CONFIG);
 }
 
-fn get_promotion(position: &Position, from: u32, config: PromotionConfig) -> Vec<Position> {
+fn get_promotion(position: &Position, from: Square, config: PromotionConfig) -> Vec<Position> {
     let mut positions: Vec<Position> = Vec::new();
     if (config.is_in_row_fn)(from) {
         if let Some(to) = (config.direction_fn)(from) {
@@ -269,7 +269,11 @@ fn get_promotion(position: &Position, from: u32, config: PromotionConfig) -> Vec
     positions
 }
 
-fn get_promotion_capture(position: &Position, from: u32, config: PromotionConfig) -> Vec<Position> {
+fn get_promotion_capture(
+    position: &Position,
+    from: Square,
+    config: PromotionConfig,
+) -> Vec<Position> {
     let mut positions: Vec<Position> = Vec::new();
     if (config.is_in_row_fn)(from) {
         if let Some(to) = (config.direction_fn)(from) {
@@ -283,14 +287,14 @@ fn get_promotion_capture(position: &Position, from: u32, config: PromotionConfig
     positions
 }
 
-fn get_move_white_forward(position: &Position, from: u32) -> Option<Position> {
+fn get_move_white_forward(position: &Position, from: Square) -> Option<Position> {
     if !directions::is_in_last_or_second_last_row(from) {
         return get_move_forward(position, from, WHITE_PAWN, directions::up);
     }
     None
 }
 
-fn get_move_black_forward(position: &Position, from: u32) -> Option<Position> {
+fn get_move_black_forward(position: &Position, from: Square) -> Option<Position> {
     if !directions::is_in_first_or_second_row(from) {
         return get_move_forward(position, from, BLACK_PAWN, directions::down);
     }
@@ -299,7 +303,7 @@ fn get_move_black_forward(position: &Position, from: u32) -> Option<Position> {
 
 fn get_move_forward(
     position: &Position,
-    from: u32,
+    from: Square,
     piece: Piece,
     direction: DirectionFn,
 ) -> Option<Position> {
@@ -311,14 +315,14 @@ fn get_move_forward(
     None
 }
 
-fn get_move_white_two_forward(position: &Position, from: u32) -> Option<Position> {
+fn get_move_white_two_forward(position: &Position, from: Square) -> Option<Position> {
     if directions::is_in_row_2(from) {
         return get_move_two_forward(position, from, WHITE_PAWN, directions::up);
     }
     None
 }
 
-fn get_move_black_two_forward(position: &Position, from: u32) -> Option<Position> {
+fn get_move_black_two_forward(position: &Position, from: Square) -> Option<Position> {
     if directions::is_in_row_7(from) {
         return get_move_two_forward(position, from, BLACK_PAWN, directions::down);
     }
@@ -327,7 +331,7 @@ fn get_move_black_two_forward(position: &Position, from: u32) -> Option<Position
 
 fn get_move_two_forward(
     position: &Position,
-    from: u32,
+    from: Square,
     piece: Piece,
     direction: DirectionFn,
 ) -> Option<Position> {
@@ -343,7 +347,13 @@ fn get_move_two_forward(
     None
 }
 
-pub fn en_passant(position: &Position, piece: Piece, from: u32, to: u32, capture: u32) -> Position {
+pub fn en_passant(
+    position: &Position,
+    piece: Piece,
+    from: Square,
+    to: Square,
+    capture: Square,
+) -> Position {
     let chess_move = ChessMove {
         move_type: MoveType::EnPassant,
         piece,
@@ -362,7 +372,7 @@ pub fn en_passant(position: &Position, piece: Piece, from: u32, to: u32, capture
         .set_chess_move(chess_move)
 }
 
-pub fn promote(position: &Position, from: u32, to: u32, new_piece: Piece) -> Position {
+pub fn promote(position: &Position, from: Square, to: Square, new_piece: Piece) -> Position {
     let tuple = match position.get_piece_at(to) {
         Some(piece) => (MoveType::PromotionCapture, Some(piece)),
         None => (MoveType::Promotion, None),
@@ -390,8 +400,8 @@ pub fn promote(position: &Position, from: u32, to: u32, new_piece: Piece) -> Pos
 pub fn set_en_passant_if_necessary(
     position: Position,
     piece: Piece,
-    from: u32,
-    to: u32,
+    from: Square,
+    to: Square,
 ) -> Position {
     if is_pawn_two_rows_forward(piece, from, to) {
         return position.set_en_passant(to);
@@ -399,7 +409,7 @@ pub fn set_en_passant_if_necessary(
     position
 }
 
-pub fn is_pawn_two_rows_forward(piece: Piece, from: u32, to: u32) -> bool {
+pub fn is_pawn_two_rows_forward(piece: Piece, from: Square, to: Square) -> bool {
     if !(piece.typ == Typ::Pawn) {
         return false;
     }

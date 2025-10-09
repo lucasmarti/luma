@@ -1,10 +1,8 @@
 use crate::engine::{
-    check::is_check,
     chess_moves::get_current_player_moves,
-    get_next_move,
     heuristic::heuristic,
     minimax::{evaluate, Minimax, Player},
-    position::{self, print::Print, Position},
+    position::Position,
 };
 
 #[derive(Clone, PartialEq, Debug)]
@@ -30,19 +28,13 @@ impl Minimax for Node {
     }
 }
 pub fn get_best_move(position: Position) -> Option<Position> {
-    let depth = 4;
+    let depth = 3;
     let tree = build_tree(position, depth);
-    println!("tree built");
     let minimx_player = match tree.position.get_player() {
         crate::engine::piece::Color::Black => Player::MIN,
         crate::engine::piece::Color::White => Player::MAX,
     };
-    println!("evaluate");
     let result = evaluate(&tree, minimx_player, depth);
-    println!("done");
-    if let Some(node) = result.0 {
-        node.position.print_board();
-    }
     match result.0 {
         Some(node) => Some(node.position),
         None => None,
@@ -55,7 +47,6 @@ fn build_tree(position: Position, depth: u8) -> Node {
     };
     if depth > 0 {
         for child in get_current_player_moves(&position) {
-            
             node.children.push(build_tree(child, depth - 1));
         }
     }

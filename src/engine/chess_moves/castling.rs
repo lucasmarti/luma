@@ -6,6 +6,7 @@ use crate::engine::{
         },
         ChessMove, MoveType,
     },
+    directions::squares::Square,
     piece::Color,
     position::{CastlingType, Position},
 };
@@ -79,7 +80,7 @@ pub fn get_castling_move(position: &Position, castle: CastlingConfiguration) -> 
     None
 }
 
-pub fn remove_castling_rights_if_necessary(position: Position, from: u32) -> Position {
+pub fn remove_castling_rights_if_necessary(position: Position, from: Square) -> Position {
     let mut new_position = position;
     if from == WHITE_QUEENSIDE.king_from || from == WHITE_QUEENSIDE.rook_from {
         new_position = new_position.remove_castling_right(CastlingType::WhiteQueenside);
@@ -96,7 +97,7 @@ pub fn remove_castling_rights_if_necessary(position: Position, from: u32) -> Pos
     new_position
 }
 
-fn is_save_passage(position: &Position, sqares: &[u32], color: Color) -> bool {
+fn is_save_passage(position: &Position, sqares: &[Square], color: Color) -> bool {
     for square in sqares {
         if is_under_attack(position, *square, color) {
             return false;
@@ -105,7 +106,7 @@ fn is_save_passage(position: &Position, sqares: &[u32], color: Color) -> bool {
     return true;
 }
 
-fn is_empty_path(position: &Position, sqares: &[u32]) -> bool {
+fn is_empty_path(position: &Position, sqares: &[Square]) -> bool {
     for square in sqares {
         if position.is_occupied(*square) {
             return false;

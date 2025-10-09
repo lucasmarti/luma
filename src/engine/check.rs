@@ -2,7 +2,7 @@ use crate::engine::{
     chess_moves::configurations::{
         DIAGONAL_DIRECTIONS, HORIZONTAL_VERTICAL_DIRECTIONS, KING_DIRECTIONS, KNIGHT_DIRECTIONS,
     },
-    directions::{self},
+    directions::{self, squares::Square},
     piece::{Color, Piece, Typ, *},
     position::Position,
 };
@@ -20,7 +20,7 @@ pub fn filter_checks(positions: Vec<Position>, color: Color) -> Vec<Position> {
 }
 
 /// Check if a square is under attack by the opponent
-pub fn is_under_attack(position: &Position, square: u32, color: Color) -> bool {
+pub fn is_under_attack(position: &Position, square: Square, color: Color) -> bool {
     let opponent = color.get_opponent_color();
 
     // Check horizontal/vertical attacks (rook/queen)

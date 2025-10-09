@@ -96,7 +96,7 @@ fn test_get_piece_moves_rook_with_obstacles() {
     assert!(!contains_move(&positions, WHITE_ROOK, G4)); // Can't go beyond captured piece
 }
 
-fn contains_move(positions: &Vec<Position>, piece: Piece, field: u32) -> bool {
+fn contains_move(positions: &Vec<Position>, piece: Piece, field: Square) -> bool {
     for position in positions {
         if position.is_occupied_by_piece(field, piece) {
             return true;
