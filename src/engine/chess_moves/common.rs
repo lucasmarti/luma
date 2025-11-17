@@ -18,10 +18,10 @@ pub fn slide(position: &Position, from: Square, path: Vec<Square>, piece: Piece)
     let mut new_positions: Vec<Position> = Vec::new();
 
     for field in path {
-        if position.is_occupied_by_color(field, piece.color) {
+        if position.is_occupied_by_color(field, piece.get_color()) {
             // collision with own
             return new_positions;
-        } else if position.is_occupied_by_color(field, piece.color.get_opponent_color()) {
+        } else if position.is_occupied_by_color(field, piece.get_color().get_opponent_color()) {
             // capture
             new_positions.push(progess(position, piece, from, field));
             return new_positions;
@@ -146,7 +146,7 @@ pub fn progess(position: &Position, piece: Piece, from: Square, to: Square) -> P
         .remove_piece(to)
         .put_piece(piece, to)
         .toggle_player()
-        .set_chess_move(chess_move);
+        .set_last_move(chess_move);
     new_position = set_en_passant_if_necessary(new_position, piece, from, to);
     new_position = remove_castling_rights_if_necessary(new_position, from);
     new_position

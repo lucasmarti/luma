@@ -1,0 +1,24 @@
+use flo_canvas::Draw;
+
+use crate::engine::{
+    directions::squares::Square,
+    piece::{Color, Piece},
+};
+
+#[derive(Debug, Clone, Copy)]
+pub struct CanvasCoordinate {
+    pub x: f32,
+    pub y: f32,
+}
+
+#[derive(Debug, Copy, Clone)]
+pub enum UIEvent {
+    NewGameAsButtonClicked(Color),
+    PromoteToButtonClicked(Piece),
+    SquareClicked(Square),
+}
+
+pub trait UIElement {
+    fn dispatch_event(&self, canvas_coordinate: CanvasCoordinate) -> Option<UIEvent>;
+    fn draw(&self, gc: &mut Vec<Draw>);
+}

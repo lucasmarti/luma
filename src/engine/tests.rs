@@ -1,7 +1,7 @@
 use crate::engine::{
     directions::squares::*,
     get_valid_drop_positions,
-    piece::{BLACK_PAWN, WHITE_KING, WHITE_PAWN, WHITE_ROOK},
+    piece::Piece::{self, BlackPawn, WhiteKing, WhitePawn, WhiteRook},
     position::Position,
 };
 
@@ -21,10 +21,10 @@ fn test_valid_drop_targets_knight() {
 }
 
 #[test]
-fn test_valid_drop_targets_castle() {
+fn test_valid_drop_targets_castling() {
     let position = Position::default()
-        .put_piece(WHITE_ROOK, H1)
-        .put_piece(WHITE_KING, E1);
+        .put_piece(Piece::WhiteRook, H1)
+        .put_piece(Piece::WhiteKing, E1);
     let targets = get_valid_drop_positions(&position, E1);
     assert!(targets.iter().any(|p| p.is_occupied(G1)));
 }
@@ -32,9 +32,9 @@ fn test_valid_drop_targets_castle() {
 #[test]
 fn test_valid_drop_targets_en_passant() {
     let position = Position::default()
-        .put_piece(WHITE_KING, E1)
-        .put_piece(WHITE_PAWN, E4)
-        .put_piece(BLACK_PAWN, D4)
+        .put_piece(Piece::WhiteKing, E1)
+        .put_piece(Piece::WhitePawn, E4)
+        .put_piece(Piece::BlackPawn, D4)
         .set_en_passant(E4);
     let targets = get_valid_drop_positions(&position, D4);
     println!("{:?}", targets);

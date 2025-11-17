@@ -41,7 +41,7 @@ fn get_moves(position: &Position, config: Config, ignore_checks: bool) -> Vec<Po
     new_positions.extend(get_new_positions(position, config.rook, config.rook_fn));
     new_positions.extend(get_new_positions(position, config.knight, config.knight_fn));
     new_positions.extend(get_new_positions(position, config.pawn, config.pawn_fn));
-    new_positions.extend((config.castle_move_fn)(position));
+    new_positions.extend((config.castling_move_fn)(position));
 
     if ignore_checks {
         new_positions
@@ -65,6 +65,7 @@ pub struct ChessMove {
     pub capture: Option<Piece>,
     pub pormotion: Option<Piece>,
 }
+
 #[derive(Clone, Copy, PartialEq, Debug)]
 pub enum MoveType {
     Quiet,

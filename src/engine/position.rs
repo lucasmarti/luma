@@ -2,8 +2,9 @@ use crate::engine::{
     chess_moves::{ChessMove, MoveType},
     directions::squares::*,
     piece::{
-        Color, Piece, Typ, BLACK_BISHOP, BLACK_KING, BLACK_KNIGHT, BLACK_PAWN, BLACK_QUEEN,
-        BLACK_ROOK, WHITE_BISHOP, WHITE_KING, WHITE_KNIGHT, WHITE_PAWN, WHITE_QUEEN, WHITE_ROOK,
+        Color, Piece, Piece::BlackBishop, Piece::BlackKing, Piece::BlackKnight, Piece::BlackPawn,
+        Piece::BlackQueen, Piece::BlackRook, Piece::WhiteBishop, Piece::WhiteKing,
+        Piece::WhiteKnight, Piece::WhitePawn, Piece::WhiteQueen, Piece::WhiteRook, Typ,
     },
     position::bitboard::Bitboard,
 };
@@ -25,40 +26,40 @@ pub struct Position {
     castling_rights: [bool; 4],
     en_passant: Option<Square>,
     player: Color,
-    chess_move: Option<ChessMove>,
+    last_move: Option<ChessMove>,
 }
 impl Position {
     pub fn get_promotion_piece(&self) -> Option<Piece> {
-        match self.chess_move {
+        match self.last_move {
             Some(chess_move) => chess_move.pormotion,
             None => None,
         }
     }
-    pub fn set_chess_move(mut self, chess_move: ChessMove) -> Position {
-        self.chess_move = Some(chess_move);
+    pub fn set_last_move(mut self, chess_move: ChessMove) -> Position {
+        self.last_move = Some(chess_move);
         self
     }
 
-    pub fn get_chess_move(&self) -> Option<ChessMove> {
-        self.chess_move
+    pub fn get_last_move(&self) -> Option<ChessMove> {
+        self.last_move
     }
 
     pub fn get_to_square(&self) -> Option<Square> {
-        match self.chess_move {
+        match self.last_move {
             Some(chess_move) => Some(chess_move.to),
             None => None,
         }
     }
 
-    pub fn get_from_square(&self) -> Option<Square> {
-        match self.chess_move {
+    pub fn get_last_move_from_square(&self) -> Option<Square> {
+        match self.last_move {
             Some(chess_move) => Some(chess_move.from),
             None => None,
         }
     }
 
     pub fn is_promotion(&self) -> bool {
-        match self.chess_move {
+        match self.last_move {
             Some(chess_move) => match chess_move.move_type {
                 MoveType::Promotion => true,
                 MoveType::PromotionCapture => true,
@@ -86,7 +87,7 @@ impl Position {
         }
     }
 
-    pub fn disallow_castle_for_color(mut self, color: Color) -> Position {
+    pub fn disallow_castling_for_color(mut self, color: Color) -> Position {
         match color {
             Color::White => {
                 self = self
@@ -129,14 +130,12 @@ impl Position {
     }
 
     pub fn get_king_square(&self, color: Color) -> Square {
-        for square in self
-            .get_squares(Piece {
-                typ: Typ::King,
-                color: color,
-            })
-            .iter()
-        {
-            return Square::new_unchecked(square.as_index());
+        let king = match color {
+            Color::Black => Piece::BlackKing,
+            Color::White => Piece::WhiteKing,
+        };
+        for square in self.get_squares(king).iter() {
+            return square;
         }
         panic!("No King found {:?}", color);
     }
@@ -192,9 +191,19 @@ impl Position {
         self.get_black() | self.get_white()
     }
 
+    pub fn get_all_pieces(&self) -> Vec<(Square, Piece)> {
+        let mut all_pieces: Vec<(Square, Piece)> = Vec::new();
+        for square in self.get_all().iter() {
+            if let Some(piece) = self.get_piece_at(square) {
+                all_pieces.push((square, piece));
+            }
+        }
+        all_pieces
+    }
+
     pub fn get_squares(&self, piece: Piece) -> Bitboard {
-        match piece.color {
-            Color::Black => match piece.typ {
+        match piece.get_color() {
+            Color::Black => match piece.get_type() {
                 Typ::King => self.black_king,
                 Typ::Queen => self.black_queen,
                 Typ::Rook => self.black_rooks,
@@ -202,7 +211,7 @@ impl Position {
                 Typ::Knight => self.black_knights,
                 Typ::Bishop => self.black_bishops,
             },
-            Color::White => match piece.typ {
+            Color::White => match piece.get_type() {
                 Typ::King => self.white_king,
                 Typ::Queen => self.white_queen,
                 Typ::Rook => self.white_rooks,
@@ -214,8 +223,8 @@ impl Position {
     }
 
     pub fn put_piece(mut self, piece: Piece, square: Square) -> Position {
-        match piece.color {
-            Color::Black => match piece.typ {
+        match piece.get_color() {
+            Color::Black => match piece.get_type() {
                 Typ::King => self.black_king.set_bit(square),
                 Typ::Queen => self.black_queen.set_bit(square),
                 Typ::Rook => self.black_rooks.set_bit(square),
@@ -223,7 +232,7 @@ impl Position {
                 Typ::Knight => self.black_knights.set_bit(square),
                 Typ::Bishop => self.black_bishops.set_bit(square),
             },
-            Color::White => match piece.typ {
+            Color::White => match piece.get_type() {
                 Typ::King => self.white_king.set_bit(square),
                 Typ::Queen => self.white_queen.set_bit(square),
                 Typ::Rook => self.white_rooks.set_bit(square),
@@ -253,41 +262,41 @@ impl Position {
 
     pub fn get_piece_at(self, square: Square) -> Option<Piece> {
         if self.black_king.contains(square) {
-            return Some(BLACK_KING);
+            return Some(Piece::BlackKing);
         };
         if self.black_queen.contains(square) {
-            return Some(BLACK_QUEEN);
+            return Some(Piece::BlackQueen);
         }
         if self.black_rooks.contains(square) {
-            return Some(BLACK_ROOK);
+            return Some(Piece::BlackRook);
         }
         if self.black_pawns.contains(square) {
-            return Some(BLACK_PAWN);
+            return Some(Piece::BlackPawn);
         }
         if self.black_knights.contains(square) {
-            return Some(BLACK_KNIGHT);
+            return Some(Piece::BlackKnight);
         }
         if self.black_bishops.contains(square) {
-            return Some(BLACK_BISHOP);
+            return Some(Piece::BlackBishop);
         }
 
         if self.white_king.contains(square) {
-            return Some(WHITE_KING);
+            return Some(Piece::WhiteKing);
         };
         if self.white_queen.contains(square) {
-            return Some(WHITE_QUEEN);
+            return Some(Piece::WhiteQueen);
         }
         if self.white_rooks.contains(square) {
-            return Some(WHITE_ROOK);
+            return Some(Piece::WhiteRook);
         }
         if self.white_pawns.contains(square) {
-            return Some(WHITE_PAWN);
+            return Some(Piece::WhitePawn);
         }
         if self.white_knights.contains(square) {
-            return Some(WHITE_KNIGHT);
+            return Some(Piece::WhiteKnight);
         }
         if self.white_bishops.contains(square) {
-            return Some(WHITE_BISHOP);
+            return Some(Piece::WhiteBishop);
         }
         None
     }
@@ -311,7 +320,7 @@ impl Default for Position {
             castling_rights: [true, true, true, true],
             en_passant: None,
             player: Color::White,
-            chess_move: None,
+            last_move: None,
         }
     }
 }

@@ -1,6 +1,6 @@
 use crate::engine::{
     directions::squares::*,
-    piece::{Color, Piece, BLACK_KING, BLACK_ROOK, WHITE_KING, WHITE_ROOK},
+    piece::{Color, Piece},
     position::CastlingType,
 };
 pub struct CastlingConfiguration {
@@ -23,8 +23,8 @@ pub const WHITE_KINGSIDE: CastlingConfiguration = CastlingConfiguration {
     rook_from: H1,
     rook_to: F1,
     empty_path_squares: &[F1, G1],
-    king: WHITE_KING,
-    rook: WHITE_ROOK,
+    king: Piece::WhiteKing,
+    rook: Piece::WhiteRook,
     castling_type: CastlingType::WhiteKingside,
 };
 
@@ -36,8 +36,8 @@ pub const WHITE_QUEENSIDE: CastlingConfiguration = CastlingConfiguration {
     rook_from: A1,
     rook_to: D1,
     empty_path_squares: &[B1, C1, D1],
-    king: WHITE_KING,
-    rook: WHITE_ROOK,
+    king: Piece::WhiteKing,
+    rook: Piece::WhiteRook,
     castling_type: CastlingType::WhiteQueenside,
 };
 
@@ -49,8 +49,8 @@ pub const BLACK_KINGSIDE: CastlingConfiguration = CastlingConfiguration {
     rook_from: H8,
     rook_to: F8,
     empty_path_squares: &[F8, G8],
-    king: BLACK_KING,
-    rook: BLACK_ROOK,
+    king: Piece::BlackKing,
+    rook: Piece::BlackRook,
     castling_type: CastlingType::BlackKingside,
 };
 
@@ -62,7 +62,7 @@ pub const BLACK_QUEENSIDE: CastlingConfiguration = CastlingConfiguration {
     rook_from: A8,
     rook_to: D8,
     empty_path_squares: &[B8, C8, D8],
-    king: BLACK_KING,
-    rook: BLACK_ROOK,
+    king: Piece::BlackKing,
+    rook: Piece::BlackRook,
     castling_type: CastlingType::BlackQueenside,
 };

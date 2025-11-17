@@ -3,12 +3,13 @@ use crate::engine::piece::{self, *};
 use crate::engine::position::bitboard::Bitboard;
 use crate::engine::position::Position;
 use crate::engine::{self};
-use crate::gui::configuration::*;
 use crate::gui::coordinate_mapper::get_square_from_canvas;
-use crate::gui::menu;
+use crate::gui::ui_element::UIComponents;
+use crate::gui::ui_menu::{self, UIMenu};
+use crate::gui::{configuration::*, ui_board};
 
 use super::coordinate_mapper;
-use super::draw_functions::{DrawFunctions, BACKGROUND_COLOR};
+use super::draw_functions::DrawFunctions;
 use flo_canvas::*;
 
 #[derive(Debug, Clone, Copy)]
@@ -58,6 +59,7 @@ impl ChessBoardCanvas {
         if let Some(position) = engine::get_next_move(&Position::new_starting_position()) {
             self.position = position;
         }
+        self.draw();
     }
     fn promote(&mut self, piece: Piece) {
         self.drop_targets
@@ -79,18 +81,18 @@ impl ChessBoardCanvas {
 
     pub fn handle_click_event(&mut self, location_in_canvas: Option<(f64, f64)>) {
         if let Some(location_in_canvas) = location_in_canvas {
-            if let Some(action) = menu::get_action(location_in_canvas.0, location_in_canvas.1) {
+            if let Some(action) = ui_menu::get_action(location_in_canvas.0, location_in_canvas.1) {
                 match action {
                     Action::NewGameAsWhite => self.new_game_white(),
                     Action::NewGameAsBlack => self.new_game_black(),
-                    Action::PromoteWhiteQueen => self.promote(WHITE_QUEEN),
-                    Action::PromoteWhiteRook => self.promote(WHITE_ROOK),
-                    Action::PromoteWhiteBishop => self.promote(WHITE_BISHOP),
-                    Action::PromoteWhiteKnight => self.promote(WHITE_KNIGHT),
-                    Action::PromoteBlackQueen => self.promote(BLACK_QUEEN),
-                    Action::PromoteBlackRook => self.promote(BLACK_ROOK),
-                    Action::PromoteBlackBishop => self.promote(BLACK_BISHOP),
-                    Action::PromoteBlackKnight => self.promote(BLACK_KNIGHT),
+                    Action::PromoteWhiteQueen => self.promote(Piece::WhiteQueen),
+                    Action::PromoteWhiteRook => self.promote(Piece::WhiteRook),
+                    Action::PromoteWhiteBishop => self.promote(Piece::WhiteBishop),
+                    Action::PromoteWhiteKnight => self.promote(Piece::WhiteKnight),
+                    Action::PromoteBlackQueen => self.promote(Piece::BlackQueen),
+                    Action::PromoteBlackRook => self.promote(Piece::BlackRook),
+                    Action::PromoteBlackBishop => self.promote(Piece::BlackBishop),
+                    Action::PromoteBlackKnight => self.promote(Piece::BlackKnight),
                 }
                 return;
             }
@@ -152,6 +154,7 @@ impl ChessBoardCanvas {
     }
 
     pub fn draw(&mut self) {
+        let ui_components: UIComponents = UIComponents::new();
         self.canvas.draw(|mut gc| {
             gc.clear_canvas(BACKGROUND_COLOR);
             gc.canvas_height(8.0 * FIELD_SIZE + 2.0 * MENU_HEIGHT);
@@ -161,7 +164,8 @@ impl ChessBoardCanvas {
                 8.0 * FIELD_SIZE,
                 8.0 * FIELD_SIZE + 2.0 * MENU_HEIGHT,
             );
-            gc.draw_board();
+            ui_components.draw(gc);
+
             if let Some(square) = self.selected_square {
                 gc.draw_selected_field(coordinate_mapper::get_canvas_from_square(square));
             }
@@ -183,39 +187,6 @@ impl ChessBoardCanvas {
                     gc.draw_drop_target(coordinate_mapper::get_canvas_from_square(square));
                 }
             }
-
-            gc.draw_menu();
-            gc.draw_button(&NEW_GAME_WHITE_BUTTON);
-            gc.draw_button(&NEW_GAME_BLACK_BUTTON);
-            if self.show_black_promotion_buttons {
-                gc.draw_button(&PROMOTION_BLACK_QUEEN_BUTTON);
-                gc.draw_button(&PROMOTION_BLACK_ROOK_BUTTON);
-                gc.draw_button(&PROMOTION_BLACK_BISHOP_BUTTON);
-                gc.draw_button(&PROMOTION_BLACK_KNIGHT_BUTTON);
-            }
-            if self.show_white_promotion_buttons {
-                gc.draw_button(&PROMOTION_WHITE_QUEEN_BUTTON);
-                gc.draw_button(&PROMOTION_WHITE_ROOK_BUTTON);
-                gc.draw_button(&PROMOTION_WHITE_BISHOP_BUTTON);
-                gc.draw_button(&PROMOTION_WHITE_KNIGHT_BUTTON);
-            }
         });
     }
-}
-
-pub fn get_all_pieces(position: &Position) -> Vec<(CanvasCoordinate, Piece)> {
-    let mut vec: Vec<(CanvasCoordinate, Piece)> = Vec::new();
-    for piece in ALL_PIECES_SET {
-        vec.append(&mut get_pieces(position.get_squares(piece), piece));
-    }
-    vec
-}
-
-fn get_pieces(bitboard: Bitboard, piece: Piece) -> Vec<(CanvasCoordinate, Piece)> {
-    let mut vec: Vec<(CanvasCoordinate, Piece)> = Vec::new();
-    for square in bitboard.iter() {
-        let coordinate = coordinate_mapper::get_canvas_from_square(square);
-        vec.push((coordinate, piece));
-    }
-    vec
 }

@@ -3,7 +3,7 @@
 use crate::engine::{
     chess_moves::castling::{
         configurations::{BLACK_KINGSIDE, BLACK_QUEENSIDE, WHITE_KINGSIDE, WHITE_QUEENSIDE},
-        get_black_castle_moves, get_castling_move, get_white_castle_moves,
+        get_black_castling_moves, get_castling_move, get_white_castling_moves,
     },
     directions::squares::*,
     piece::*,
@@ -11,349 +11,383 @@ use crate::engine::{
 };
 
 #[test]
-fn test_white_kingside_castle_allowed() {
+fn test_white_kingside_castling_allowed() {
     let position = Position::default()
-        .put_piece(WHITE_KING, E1)
-        .put_piece(WHITE_ROOK, H1);
+        .put_piece(Piece::WhiteKing, E1)
+        .put_piece(Piece::WhiteRook, H1);
 
-    let moves = get_white_castle_moves(&position);
+    let moves = get_white_castling_moves(&position);
 
     // Should have normal king moves plus castling
-    let castle_move = moves.iter().find(|pos| {
-        pos.is_occupied_by_piece(G1, WHITE_KING) && pos.is_occupied_by_piece(F1, WHITE_ROOK)
+    let castling_move = moves.iter().find(|pos| {
+        pos.is_occupied_by_piece(G1, Piece::WhiteKing)
+            && pos.is_occupied_by_piece(F1, Piece::WhiteRook)
     });
     assert!(
-        castle_move.is_some(),
-        "White kingside castle should be possible"
+        castling_move.is_some(),
+        "White kingside castling should be possible"
     );
 }
 
 #[test]
-fn test_white_queenside_castle_allowed() {
+fn test_white_queenside_castling_allowed() {
     let position = Position::default()
-        .put_piece(WHITE_KING, E1)
-        .put_piece(WHITE_ROOK, A1);
+        .put_piece(Piece::WhiteKing, E1)
+        .put_piece(Piece::WhiteRook, A1);
 
-    let moves = get_white_castle_moves(&position);
+    let moves = get_white_castling_moves(&position);
 
-    let castle_move = moves.iter().find(|pos| {
-        pos.is_occupied_by_piece(C1, WHITE_KING) && pos.is_occupied_by_piece(D1, WHITE_ROOK)
+    let castling_move = moves.iter().find(|pos| {
+        pos.is_occupied_by_piece(C1, Piece::WhiteKing)
+            && pos.is_occupied_by_piece(D1, Piece::WhiteRook)
     });
     assert!(
-        castle_move.is_some(),
-        "White queenside castle should be possible"
+        castling_move.is_some(),
+        "White queenside castling should be possible"
     );
 }
 
 #[test]
-fn test_white_castle_blocked_by_pieces() {
+fn test_white_castling_blocked_by_pieces() {
     // Kingside blocked
     let position = Position::default()
-        .put_piece(WHITE_KING, E1)
-        .put_piece(WHITE_ROOK, H1)
-        .put_piece(WHITE_QUEEN, F1); // Blocking piece
+        .put_piece(Piece::WhiteKing, E1)
+        .put_piece(Piece::WhiteRook, H1)
+        .put_piece(Piece::WhiteQueen, F1); // Blocking piece
 
-    let moves = get_white_castle_moves(&position);
-    let castle_move = moves.iter().find(|pos| {
-        pos.is_occupied_by_piece(G1, WHITE_KING) && pos.is_occupied_by_piece(F1, WHITE_ROOK)
+    let moves = get_white_castling_moves(&position);
+    let castling_move = moves.iter().find(|pos| {
+        pos.is_occupied_by_piece(G1, Piece::WhiteKing)
+            && pos.is_occupied_by_piece(F1, Piece::WhiteRook)
     });
     assert!(
-        castle_move.is_none(),
-        "White kingside castle should be blocked"
+        castling_move.is_none(),
+        "White kingside castling should be blocked"
     );
 
     // Queenside blocked
     let position = Position::default()
-        .put_piece(WHITE_KING, E1)
-        .put_piece(WHITE_ROOK, A1)
-        .put_piece(WHITE_QUEEN, D1); // Blocking piece
+        .put_piece(Piece::WhiteKing, E1)
+        .put_piece(Piece::WhiteRook, A1)
+        .put_piece(Piece::WhiteQueen, D1); // Blocking piece
 
-    let moves = get_white_castle_moves(&position);
-    let castle_move = moves.iter().find(|pos| {
-        pos.is_occupied_by_piece(C1, WHITE_KING) && pos.is_occupied_by_piece(D1, WHITE_ROOK)
+    let moves = get_white_castling_moves(&position);
+    let castling_move = moves.iter().find(|pos| {
+        pos.is_occupied_by_piece(C1, Piece::WhiteKing)
+            && pos.is_occupied_by_piece(D1, Piece::WhiteRook)
     });
     assert!(
-        castle_move.is_none(),
-        "White queenside castle should be blocked"
+        castling_move.is_none(),
+        "White queenside castling should be blocked"
     );
 }
 
 #[test]
-fn test_white_castle_not_allowed_when_in_check() {
+fn test_white_castling_not_allowed_when_in_check() {
     let position = Position::default()
-        .put_piece(WHITE_KING, E1)
-        .put_piece(WHITE_ROOK, H1)
-        .put_piece(BLACK_ROOK, E8); // Attacking the king
+        .put_piece(Piece::WhiteKing, E1)
+        .put_piece(Piece::WhiteRook, H1)
+        .put_piece(Piece::BlackRook, E8); // Attacking the king
 
-    let moves = get_white_castle_moves(&position);
-    let castle_move = moves.iter().find(|pos| {
-        pos.is_occupied_by_piece(G1, WHITE_KING) && pos.is_occupied_by_piece(F1, WHITE_ROOK)
+    let moves = get_white_castling_moves(&position);
+    let castling_move = moves.iter().find(|pos| {
+        pos.is_occupied_by_piece(G1, Piece::WhiteKing)
+            && pos.is_occupied_by_piece(F1, Piece::WhiteRook)
     });
     assert!(
-        castle_move.is_none(),
-        "Castle should not be allowed when in check"
+        castling_move.is_none(),
+        "castling should not be allowed when in check"
     );
 }
 
 #[test]
-fn test_white_castle_not_allowed_through_check() {
+fn test_white_castling_not_allowed_through_check() {
     // Kingside - F1 under attack
     let position = Position::default()
-        .put_piece(WHITE_KING, E1)
-        .put_piece(WHITE_ROOK, H1)
-        .put_piece(BLACK_ROOK, F8); // Attacking F1
+        .put_piece(Piece::WhiteKing, E1)
+        .put_piece(Piece::WhiteRook, H1)
+        .put_piece(Piece::BlackRook, F8); // Attacking F1
 
-    let moves = get_white_castle_moves(&position);
-    let castle_move = moves.iter().find(|pos| {
-        pos.is_occupied_by_piece(G1, WHITE_KING) && pos.is_occupied_by_piece(F1, WHITE_ROOK)
+    let moves = get_white_castling_moves(&position);
+    let castling_move = moves.iter().find(|pos| {
+        pos.is_occupied_by_piece(G1, Piece::WhiteKing)
+            && pos.is_occupied_by_piece(F1, Piece::WhiteRook)
     });
     assert!(
-        castle_move.is_none(),
-        "Castle should not be allowed through check"
+        castling_move.is_none(),
+        "castling should not be allowed through check"
     );
 
     // Queenside - D1 under attack
     let position = Position::default()
-        .put_piece(WHITE_KING, E1)
-        .put_piece(WHITE_ROOK, A1)
-        .put_piece(BLACK_ROOK, D8); // Attacking D1
+        .put_piece(Piece::WhiteKing, E1)
+        .put_piece(Piece::WhiteRook, A1)
+        .put_piece(Piece::BlackRook, D8); // Attacking D1
 
-    let moves = get_white_castle_moves(&position);
-    let castle_move = moves.iter().find(|pos| {
-        pos.is_occupied_by_piece(C1, WHITE_KING) && pos.is_occupied_by_piece(D1, WHITE_ROOK)
+    let moves = get_white_castling_moves(&position);
+    let castling_move = moves.iter().find(|pos| {
+        pos.is_occupied_by_piece(C1, Piece::WhiteKing)
+            && pos.is_occupied_by_piece(D1, Piece::WhiteRook)
     });
     assert!(
-        castle_move.is_none(),
-        "Castle should not be allowed through check"
+        castling_move.is_none(),
+        "castling should not be allowed through check"
     );
 }
 
 // Black Castling Tests
 
 #[test]
-fn test_black_kingside_castle_allowed() {
+fn test_black_kingside_castling_allowed() {
     let position = Position::default()
-        .put_piece(BLACK_KING, E8)
-        .put_piece(BLACK_ROOK, H8);
+        .put_piece(Piece::BlackKing, E8)
+        .put_piece(Piece::BlackRook, H8);
 
-    let moves = get_black_castle_moves(&position);
+    let moves = get_black_castling_moves(&position);
 
-    let castle_move = moves.iter().find(|pos| {
-        pos.is_occupied_by_piece(G8, BLACK_KING) && pos.is_occupied_by_piece(F8, BLACK_ROOK)
+    let castling_move = moves.iter().find(|pos| {
+        pos.is_occupied_by_piece(G8, Piece::BlackKing)
+            && pos.is_occupied_by_piece(F8, Piece::BlackRook)
     });
     assert!(
-        castle_move.is_some(),
-        "Black kingside castle should be possible"
+        castling_move.is_some(),
+        "Black kingside castling should be possible"
     );
 }
 
 #[test]
-fn test_black_queenside_castle_allowed() {
+fn test_black_queenside_castling_allowed() {
     let position = Position::default()
-        .put_piece(BLACK_KING, E8)
-        .put_piece(BLACK_ROOK, A8);
-    let moves = get_black_castle_moves(&position);
+        .put_piece(Piece::BlackKing, E8)
+        .put_piece(Piece::BlackRook, A8);
+    let moves = get_black_castling_moves(&position);
 
-    let castle_move = moves.iter().find(|pos| {
-        pos.is_occupied_by_piece(C8, BLACK_KING) && pos.is_occupied_by_piece(D8, BLACK_ROOK)
+    let castling_move = moves.iter().find(|pos| {
+        pos.is_occupied_by_piece(C8, Piece::BlackKing)
+            && pos.is_occupied_by_piece(D8, Piece::BlackRook)
     });
     assert!(
-        castle_move.is_some(),
-        "Black queenside castle should be possible"
+        castling_move.is_some(),
+        "Black queenside castling should be possible"
     );
 }
 
 #[test]
-fn test_black_castle_blocked_by_pieces() {
+fn test_black_castling_blocked_by_pieces() {
     // Kingside blocked
     let position = Position::default()
-        .put_piece(BLACK_KING, E8)
-        .put_piece(BLACK_ROOK, H8)
-        .put_piece(BLACK_QUEEN, F8); // Blocking piece
+        .put_piece(Piece::BlackKing, E8)
+        .put_piece(Piece::BlackRook, H8)
+        .put_piece(Piece::BlackQueen, F8); // Blocking piece
 
-    let moves = get_black_castle_moves(&position);
-    let castle_move = moves.iter().find(|pos| {
-        pos.is_occupied_by_piece(G8, BLACK_KING) && pos.is_occupied_by_piece(F8, BLACK_ROOK)
+    let moves = get_black_castling_moves(&position);
+    let castling_move = moves.iter().find(|pos| {
+        pos.is_occupied_by_piece(G8, Piece::BlackKing)
+            && pos.is_occupied_by_piece(F8, Piece::BlackRook)
     });
     assert!(
-        castle_move.is_none(),
-        "Black kingside castle should be blocked"
+        castling_move.is_none(),
+        "Black kingside castling should be blocked"
     );
 
     // Queenside blocked
     let position = Position::default()
-        .put_piece(BLACK_KING, E8)
-        .put_piece(BLACK_ROOK, A8)
-        .put_piece(BLACK_QUEEN, B8); // Blocking piece
+        .put_piece(Piece::BlackKing, E8)
+        .put_piece(Piece::BlackRook, A8)
+        .put_piece(Piece::BlackQueen, B8); // Blocking piece
 
-    let moves = get_black_castle_moves(&position);
-    let castle_move = moves.iter().find(|pos| {
-        pos.is_occupied_by_piece(C8, BLACK_KING) && pos.is_occupied_by_piece(D8, BLACK_ROOK)
+    let moves = get_black_castling_moves(&position);
+    let castling_move = moves.iter().find(|pos| {
+        pos.is_occupied_by_piece(C8, Piece::BlackKing)
+            && pos.is_occupied_by_piece(D8, Piece::BlackRook)
     });
     assert!(
-        castle_move.is_none(),
-        "Black queenside castle should be blocked"
+        castling_move.is_none(),
+        "Black queenside castling should be blocked"
     );
 }
 
 #[test]
-fn test_black_castle_not_allowed_when_in_check() {
+fn test_black_castling_not_allowed_when_in_check() {
     let position = Position::default()
-        .put_piece(BLACK_KING, E8)
-        .put_piece(BLACK_ROOK, H8)
-        .put_piece(WHITE_ROOK, E1); // Attacking the king
+        .put_piece(Piece::BlackKing, E8)
+        .put_piece(Piece::BlackRook, H8)
+        .put_piece(Piece::WhiteRook, E1); // Attacking the king
 
-    let moves = get_black_castle_moves(&position);
-    let castle_move = moves.iter().find(|pos| {
-        pos.is_occupied_by_piece(G8, BLACK_KING) && pos.is_occupied_by_piece(F8, BLACK_ROOK)
+    let moves = get_black_castling_moves(&position);
+    let castling_move = moves.iter().find(|pos| {
+        pos.is_occupied_by_piece(G8, Piece::BlackKing)
+            && pos.is_occupied_by_piece(F8, Piece::BlackRook)
     });
     assert!(
-        castle_move.is_none(),
-        "Castle should not be allowed when in check"
+        castling_move.is_none(),
+        "castling should not be allowed when in check"
     );
 }
 
 #[test]
-fn test_black_castle_not_allowed_through_check() {
+fn test_black_castling_not_allowed_through_check() {
     // Kingside - F8 under attack
     let position = Position::default()
-        .put_piece(BLACK_KING, E8)
-        .put_piece(BLACK_ROOK, H8)
-        .put_piece(WHITE_ROOK, F1); // Attacking F8
+        .put_piece(Piece::BlackKing, E8)
+        .put_piece(Piece::BlackRook, H8)
+        .put_piece(Piece::WhiteRook, F1); // Attacking F8
 
-    let moves = get_black_castle_moves(&position);
-    let castle_move = moves.iter().find(|pos| {
-        pos.is_occupied_by_piece(G8, BLACK_KING) && pos.is_occupied_by_piece(F8, BLACK_ROOK)
+    let moves = get_black_castling_moves(&position);
+    let castling_move = moves.iter().find(|pos| {
+        pos.is_occupied_by_piece(G8, Piece::BlackKing)
+            && pos.is_occupied_by_piece(F8, Piece::BlackRook)
     });
     assert!(
-        castle_move.is_none(),
-        "Castle should not be allowed through check"
+        castling_move.is_none(),
+        "castling should not be allowed through check"
     );
 
     // Queenside - D8 under attack
     let position = Position::default()
-        .put_piece(BLACK_KING, E8)
-        .put_piece(BLACK_ROOK, A8)
-        .put_piece(WHITE_ROOK, D1); // Attacking D8
+        .put_piece(Piece::BlackKing, E8)
+        .put_piece(Piece::BlackRook, A8)
+        .put_piece(Piece::WhiteRook, D1); // Attacking D8
 
-    let moves = get_black_castle_moves(&position);
-    let castle_move = moves.iter().find(|pos| {
-        pos.is_occupied_by_piece(C8, BLACK_KING) && pos.is_occupied_by_piece(D8, BLACK_ROOK)
+    let moves = get_black_castling_moves(&position);
+    let castling_move = moves.iter().find(|pos| {
+        pos.is_occupied_by_piece(C8, Piece::BlackKing)
+            && pos.is_occupied_by_piece(D8, Piece::BlackRook)
     });
     assert!(
-        castle_move.is_none(),
-        "Castle should not be allowed through check"
+        castling_move.is_none(),
+        "castling should not be allowed through check"
     );
 }
 
 #[test]
-fn test_castle_rights_false() {
+fn test_castling_rights_false() {
     // White with pieces in position but no rights
     let position = Position::default()
-        .put_piece(WHITE_KING, E1)
-        .put_piece(WHITE_ROOK, H1)
-        .put_piece(WHITE_ROOK, A1)
+        .put_piece(Piece::WhiteKing, E1)
+        .put_piece(Piece::WhiteRook, H1)
+        .put_piece(Piece::WhiteRook, A1)
         .remove_castling_right(CastlingType::WhiteKingside)
         .remove_castling_right(CastlingType::WhiteQueenside);
 
-    let moves = get_white_castle_moves(&position);
-    let kingside_castle = moves.iter().find(|pos| {
-        pos.is_occupied_by_piece(G1, WHITE_KING) && pos.is_occupied_by_piece(F1, WHITE_ROOK)
+    let moves = get_white_castling_moves(&position);
+    let kingside_castling = moves.iter().find(|pos| {
+        pos.is_occupied_by_piece(G1, Piece::WhiteKing)
+            && pos.is_occupied_by_piece(F1, Piece::WhiteRook)
     });
-    let queenside_castle = moves.iter().find(|pos| {
-        pos.is_occupied_by_piece(C1, WHITE_KING) && pos.is_occupied_by_piece(D1, WHITE_ROOK)
+    let queenside_castling = moves.iter().find(|pos| {
+        pos.is_occupied_by_piece(C1, Piece::WhiteKing)
+            && pos.is_occupied_by_piece(D1, Piece::WhiteRook)
     });
 
     assert!(
-        kingside_castle.is_none(),
-        "Kingside castle should not be allowed without rights"
+        kingside_castling.is_none(),
+        "Kingside castling should not be allowed without rights"
     );
     assert!(
-        queenside_castle.is_none(),
-        "Queenside castle should not be allowed without rights"
-    );
-}
-
-#[test]
-fn test_both_castles_available() {
-    let position = Position::default()
-        .put_piece(WHITE_KING, E1)
-        .put_piece(WHITE_ROOK, H1)
-        .put_piece(WHITE_ROOK, A1);
-
-    let moves = get_white_castle_moves(&position);
-
-    let kingside_castle = moves.iter().find(|pos| {
-        pos.is_occupied_by_piece(G1, WHITE_KING) && pos.is_occupied_by_piece(F1, WHITE_ROOK)
-    });
-    let queenside_castle = moves.iter().find(|pos| {
-        pos.is_occupied_by_piece(C1, WHITE_KING) && pos.is_occupied_by_piece(D1, WHITE_ROOK)
-    });
-
-    assert!(
-        kingside_castle.is_some(),
-        "Kingside castle should be available"
-    );
-    assert!(
-        queenside_castle.is_some(),
-        "Queenside castle should be available"
+        queenside_castling.is_none(),
+        "Queenside castling should not be allowed without rights"
     );
 }
 
 #[test]
-fn test_white_kingside_castle() {
+fn test_both_castlings_available() {
     let position = Position::default()
-        .put_piece(WHITE_KING, E1)
-        .put_piece(WHITE_ROOK, H1);
+        .put_piece(Piece::WhiteKing, E1)
+        .put_piece(Piece::WhiteRook, H1)
+        .put_piece(Piece::WhiteRook, A1);
+
+    let moves = get_white_castling_moves(&position);
+
+    let kingside_castling = moves.iter().find(|pos| {
+        pos.is_occupied_by_piece(G1, Piece::WhiteKing)
+            && pos.is_occupied_by_piece(F1, Piece::WhiteRook)
+    });
+    let queenside_castling = moves.iter().find(|pos| {
+        pos.is_occupied_by_piece(C1, Piece::WhiteKing)
+            && pos.is_occupied_by_piece(D1, Piece::WhiteRook)
+    });
+
+    assert!(
+        kingside_castling.is_some(),
+        "Kingside castling should be available"
+    );
+    assert!(
+        queenside_castling.is_some(),
+        "Queenside castling should be available"
+    );
+}
+
+#[test]
+fn test_white_kingside_castling() {
+    let position = Position::default()
+        .put_piece(Piece::WhiteKing, E1)
+        .put_piece(Piece::WhiteRook, H1);
     let new_position = get_castling_move(&position, WHITE_KINGSIDE);
     assert!(new_position.is_some());
-    assert!(new_position.unwrap().is_occupied_by_piece(G1, WHITE_KING));
-    assert!(new_position.unwrap().is_occupied_by_piece(F1, WHITE_ROOK));
+    assert!(new_position
+        .unwrap()
+        .is_occupied_by_piece(G1, Piece::WhiteKing));
+    assert!(new_position
+        .unwrap()
+        .is_occupied_by_piece(F1, Piece::WhiteRook));
 }
 
 #[test]
-fn test_white_queenside_castle() {
+fn test_white_queenside_castling() {
     let position = Position::default()
-        .put_piece(WHITE_KING, E1)
-        .put_piece(WHITE_ROOK, A1);
+        .put_piece(Piece::WhiteKing, E1)
+        .put_piece(Piece::WhiteRook, A1);
     let new_position = get_castling_move(&position, WHITE_QUEENSIDE);
     assert!(new_position.is_some());
-    assert!(new_position.unwrap().is_occupied_by_piece(C1, WHITE_KING));
-    assert!(new_position.unwrap().is_occupied_by_piece(D1, WHITE_ROOK));
+    assert!(new_position
+        .unwrap()
+        .is_occupied_by_piece(C1, Piece::WhiteKing));
+    assert!(new_position
+        .unwrap()
+        .is_occupied_by_piece(D1, Piece::WhiteRook));
 }
 
 #[test]
-fn test_black_kingside_castle() {
+fn test_black_kingside_castling() {
     let position = Position::default()
-        .put_piece(BLACK_KING, E8)
-        .put_piece(BLACK_ROOK, H8);
+        .put_piece(Piece::BlackKing, E8)
+        .put_piece(Piece::BlackRook, H8);
     let new_position = get_castling_move(&position, BLACK_KINGSIDE);
     assert!(new_position.is_some());
-    assert!(new_position.unwrap().is_occupied_by_piece(G8, BLACK_KING));
-    assert!(new_position.unwrap().is_occupied_by_piece(F8, BLACK_ROOK));
+    assert!(new_position
+        .unwrap()
+        .is_occupied_by_piece(G8, Piece::BlackKing));
+    assert!(new_position
+        .unwrap()
+        .is_occupied_by_piece(F8, Piece::BlackRook));
 }
 
 #[test]
-fn test_black_queenside_castle() {
+fn test_black_queenside_castling() {
     let position = Position::default()
-        .put_piece(BLACK_KING, E8)
-        .put_piece(BLACK_ROOK, A8);
+        .put_piece(Piece::BlackKing, E8)
+        .put_piece(Piece::BlackRook, A8);
     let new_position = get_castling_move(&position, BLACK_QUEENSIDE);
     assert!(new_position.is_some());
-    assert!(new_position.unwrap().is_occupied_by_piece(C8, BLACK_KING));
-    assert!(new_position.unwrap().is_occupied_by_piece(D8, BLACK_ROOK));
+    assert!(new_position
+        .unwrap()
+        .is_occupied_by_piece(C8, Piece::BlackKing));
+    assert!(new_position
+        .unwrap()
+        .is_occupied_by_piece(D8, Piece::BlackRook));
 }
 
-// Integration tests for castle methods
+// Integration tests for castling methods
 #[test]
-fn test_castle_methods_toggle_player() {
+fn test_castling_methods_toggle_player() {
     let position = Position::default()
-        .put_piece(WHITE_ROOK, A1)
-        .put_piece(WHITE_ROOK, H1)
-        .put_piece(WHITE_KING, E1)
-        .put_piece(BLACK_ROOK, A8)
-        .put_piece(BLACK_ROOK, H8)
-        .put_piece(BLACK_KING, E8);
+        .put_piece(Piece::WhiteRook, A1)
+        .put_piece(Piece::WhiteRook, H1)
+        .put_piece(Piece::WhiteKing, E1)
+        .put_piece(Piece::BlackRook, A8)
+        .put_piece(Piece::BlackRook, H8)
+        .put_piece(Piece::BlackKing, E8);
     // White to move
 
     let white_kingside = get_castling_move(&position, WHITE_KINGSIDE);
@@ -371,14 +405,14 @@ fn test_castle_methods_toggle_player() {
 }
 
 #[test]
-fn test_castle_methods_reset_en_passant() {
+fn test_castling_methods_reset_en_passant() {
     let position = Position::default()
-        .put_piece(WHITE_ROOK, A1)
-        .put_piece(WHITE_ROOK, H1)
-        .put_piece(WHITE_KING, E1)
-        .put_piece(BLACK_ROOK, A8)
-        .put_piece(BLACK_ROOK, H8)
-        .put_piece(BLACK_KING, E8)
+        .put_piece(Piece::WhiteRook, A1)
+        .put_piece(Piece::WhiteRook, H1)
+        .put_piece(Piece::WhiteKing, E1)
+        .put_piece(Piece::BlackRook, A8)
+        .put_piece(Piece::BlackRook, H8)
+        .put_piece(Piece::BlackKing, E8)
         .set_en_passant(E4);
 
     let white_kingside = get_castling_move(&position, WHITE_KINGSIDE);
@@ -395,14 +429,14 @@ fn test_castle_methods_reset_en_passant() {
 }
 
 #[test]
-fn test_castle_methods_disable_castle_rights() {
+fn test_castling_methods_disable_castling_rights() {
     let position = Position::default()
-        .put_piece(WHITE_ROOK, A1)
-        .put_piece(WHITE_ROOK, H1)
-        .put_piece(WHITE_KING, E1)
-        .put_piece(BLACK_ROOK, A8)
-        .put_piece(BLACK_ROOK, H8)
-        .put_piece(BLACK_KING, E8);
+        .put_piece(Piece::WhiteRook, A1)
+        .put_piece(Piece::WhiteRook, H1)
+        .put_piece(Piece::WhiteKing, E1)
+        .put_piece(Piece::BlackRook, A8)
+        .put_piece(Piece::BlackRook, H8)
+        .put_piece(Piece::BlackKing, E8);
 
     let white_kingside = get_castling_move(&position, WHITE_KINGSIDE);
     assert!(!white_kingside

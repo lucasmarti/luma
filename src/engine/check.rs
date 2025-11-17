@@ -35,15 +35,15 @@ pub fn is_under_attack(position: &Position, square: Square, color: Color) -> boo
                 // Check if it's an opponent rook or queen
                 if position.is_occupied_by_piece(
                     current_square,
-                    Piece {
-                        typ: Typ::Rook,
-                        color: opponent,
+                    match opponent {
+                        Color::Black => Piece::BlackRook,
+                        Color::White => Piece::WhiteRook,
                     },
                 ) || position.is_occupied_by_piece(
                     current_square,
-                    Piece {
-                        typ: Typ::Queen,
-                        color: opponent,
+                    match opponent {
+                        Color::Black => Piece::BlackQueen,
+                        Color::White => Piece::WhiteQueen,
                     },
                 ) {
                     return true;
@@ -66,15 +66,15 @@ pub fn is_under_attack(position: &Position, square: Square, color: Color) -> boo
                 // Check if it's an opponent bishop or queen
                 if position.is_occupied_by_piece(
                     current_square,
-                    Piece {
-                        typ: Typ::Bishop,
-                        color: opponent,
+                    match opponent {
+                        Color::Black => Piece::BlackBishop,
+                        Color::White => Piece::WhiteBishop,
                     },
                 ) || position.is_occupied_by_piece(
                     current_square,
-                    Piece {
-                        typ: Typ::Queen,
-                        color: opponent,
+                    match opponent {
+                        Color::Black => Piece::BlackQueen,
+                        Color::White => Piece::WhiteQueen,
                     },
                 ) {
                     return true;
@@ -90,9 +90,9 @@ pub fn is_under_attack(position: &Position, square: Square, color: Color) -> boo
         if let Some(knight_square) = knight_direction(square) {
             if position.is_occupied_by_piece(
                 knight_square,
-                Piece {
-                    typ: Typ::Knight,
-                    color: opponent,
+                match opponent {
+                    Color::Black => Piece::BlackKnight,
+                    Color::White => Piece::WhiteKnight,
                 },
             ) {
                 return true;
@@ -105,9 +105,9 @@ pub fn is_under_attack(position: &Position, square: Square, color: Color) -> boo
         if let Some(king_square) = king_direction(square) {
             if position.is_occupied_by_piece(
                 king_square,
-                Piece {
-                    typ: Typ::King,
-                    color: opponent,
+                match opponent {
+                    Color::White => Piece::WhiteKing,
+                    Color::Black => Piece::BlackKing,
                 },
             ) {
                 return true;
@@ -119,24 +119,24 @@ pub fn is_under_attack(position: &Position, square: Square, color: Color) -> boo
     if opponent == Color::White {
         // Check for white pawns that could attack this square
         if let Some(pawn_square) = directions::down_left(square) {
-            if position.is_occupied_by_piece(pawn_square, WHITE_PAWN) {
+            if position.is_occupied_by_piece(pawn_square, Piece::WhitePawn) {
                 return true;
             }
         }
         if let Some(pawn_square) = directions::down_right(square) {
-            if position.is_occupied_by_piece(pawn_square, WHITE_PAWN) {
+            if position.is_occupied_by_piece(pawn_square, Piece::WhitePawn) {
                 return true;
             }
         }
     } else {
         // Check for black pawns that could attack this square
         if let Some(pawn_square) = directions::up_left(square) {
-            if position.is_occupied_by_piece(pawn_square, BLACK_PAWN) {
+            if position.is_occupied_by_piece(pawn_square, Piece::BlackPawn) {
                 return true;
             }
         }
         if let Some(pawn_square) = directions::up_right(square) {
-            if position.is_occupied_by_piece(pawn_square, BLACK_PAWN) {
+            if position.is_occupied_by_piece(pawn_square, Piece::BlackPawn) {
                 return true;
             }
         }

@@ -5,21 +5,24 @@ use flo_draw::{
 };
 use futures::{executor, StreamExt};
 
-use crate::gui::chess_board_canvas::ChessBoardCanvas;
+use crate::gui::{game::Game, ui_element::CanvasCoordinate};
 
 pub fn main() {
-    with_2d_graphics(|| {
-        let mut window_properties = WindowProperties::from(&"luma Chess");
-        window_properties.mouse_pointer = BindRef::from(bind(MousePointer::SystemDefault));
-        let (canvas, events) = create_drawing_window_with_events(window_properties);
-        let mut chess_board_canvas: ChessBoardCanvas = ChessBoardCanvas::new(canvas);
-        chess_board_canvas.draw();
-
+    let mut window_properties = WindowProperties::from(&"luma Chess");
+    window_properties.mouse_pointer = BindRef::from(bind(MousePointer::SystemDefault));
+    with_2d_graphics(move || {
+        let (canvas, mut events) = create_drawing_window_with_events(window_properties);
+        let mut game: Game = Game::new(canvas);
+        game.draw();
         executor::block_on(async move {
-            let mut events = events;
             while let Some(evt) = events.next().await {
                 if let DrawEvent::Pointer(PointerAction::ButtonDown, _, state) = evt {
-                    chess_board_canvas.handle_click_event(state.location_in_canvas);
+                    if let Some(coord) = state.location_in_canvas {
+                        game.handle_click_event(CanvasCoordinate {
+                            x: coord.0 as f32,
+                            y: coord.1 as f32,
+                        });
+                    }
                 }
             }
         });

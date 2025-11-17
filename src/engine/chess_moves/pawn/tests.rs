@@ -2,8 +2,8 @@ use crate::engine::{
     chess_moves::pawn::*,
     directions::squares::*,
     piece::{
-        BLACK_BISHOP, BLACK_KNIGHT, BLACK_PAWN, BLACK_QUEEN, BLACK_ROOK, WHITE_BISHOP,
-        WHITE_KNIGHT, WHITE_PAWN, WHITE_QUEEN, WHITE_ROOK,
+        Piece::BlackBishop, Piece::BlackKnight, Piece::BlackPawn, Piece::BlackQueen, Piece::BlackRook, Piece::WhiteBishop,
+        Piece::WhiteKnight, Piece::WhitePawn, Piece::WhiteQueen, Piece::WhiteRook,
     },
     position::Position,
 };
@@ -19,15 +19,15 @@ mod test_white_forward {
 
         assert!(result.is_some());
         let new_position = result.unwrap();
-        assert!(new_position.is_occupied_by_piece(E3, WHITE_PAWN));
+        assert!(new_position.is_occupied_by_piece(E3, Piece::WhitePawn));
         assert!(!new_position.is_occupied(E2));
     }
 
     #[test]
     fn test_blocked_by_own_piece() {
         let position = Position::default()
-            .put_piece(WHITE_PAWN, E2)
-            .put_piece(WHITE_PAWN, E3);
+            .put_piece(Piece::WhitePawn, E2)
+            .put_piece(Piece::WhitePawn, E3);
 
         let result = get_move_white_forward(&position, E2);
         assert!(result.is_none());
@@ -36,8 +36,8 @@ mod test_white_forward {
     #[test]
     fn test_blocked_by_opponent_piece() {
         let position = Position::default()
-            .put_piece(WHITE_PAWN, E2)
-            .put_piece(BLACK_PAWN, E3);
+            .put_piece(Piece::WhitePawn, E2)
+            .put_piece(Piece::BlackPawn, E3);
 
         let result = get_move_white_forward(&position, E2);
         assert!(result.is_none());
@@ -45,7 +45,7 @@ mod test_white_forward {
 
     #[test]
     fn test_from_row_7_returns_none() {
-        let position = Position::default().put_piece(WHITE_PAWN, E7);
+        let position = Position::default().put_piece(Piece::WhitePawn, E7);
 
         let result = get_move_white_forward(&position, E7);
         assert!(result.is_none());
@@ -53,7 +53,7 @@ mod test_white_forward {
 
     #[test]
     fn test_from_row_8_returns_none() {
-        let position = Position::default().put_piece(WHITE_PAWN, E8);
+        let position = Position::default().put_piece(Piece::WhitePawn, E8);
 
         let result = get_move_white_forward(&position, E8);
         assert!(result.is_none());
@@ -66,21 +66,21 @@ mod test_black_forward {
 
     #[test]
     fn test_valid_forward_move() {
-        let position = Position::default().put_piece(BLACK_PAWN, E7);
+        let position = Position::default().put_piece(Piece::BlackPawn, E7);
 
         let result = get_move_black_forward(&position, E7);
 
         assert!(result.is_some());
         let new_position = result.unwrap();
-        assert!(new_position.is_occupied_by_piece(E6, BLACK_PAWN));
+        assert!(new_position.is_occupied_by_piece(E6, Piece::BlackPawn));
         assert!(!new_position.is_occupied(E7));
     }
 
     #[test]
     fn test_blocked_by_own_piece() {
         let position = Position::default()
-            .put_piece(BLACK_PAWN, E7)
-            .put_piece(BLACK_PAWN, E6);
+            .put_piece(Piece::BlackPawn, E7)
+            .put_piece(Piece::BlackPawn, E6);
 
         let result = get_move_black_forward(&position, E7);
         assert!(result.is_none());
@@ -89,8 +89,8 @@ mod test_black_forward {
     #[test]
     fn test_blocked_by_opponent_piece() {
         let position = Position::default()
-            .put_piece(BLACK_PAWN, E7)
-            .put_piece(WHITE_PAWN, E6);
+            .put_piece(Piece::BlackPawn, E7)
+            .put_piece(Piece::WhitePawn, E6);
 
         let result = get_move_black_forward(&position, E7);
         assert!(result.is_none());
@@ -98,7 +98,7 @@ mod test_black_forward {
 
     #[test]
     fn test_from_row_2_returns_none() {
-        let position = Position::default().put_piece(BLACK_PAWN, E2);
+        let position = Position::default().put_piece(Piece::BlackPawn, E2);
 
         let result = get_move_black_forward(&position, E2);
         assert!(result.is_none());
@@ -106,7 +106,7 @@ mod test_black_forward {
 
     #[test]
     fn test_from_row_1_returns_none() {
-        let position = Position::default().put_piece(BLACK_PAWN, E1);
+        let position = Position::default().put_piece(Piece::BlackPawn, E1);
 
         let result = get_move_black_forward(&position, E1);
         assert!(result.is_none());
@@ -119,13 +119,13 @@ mod test_white_two_forward {
 
     #[test]
     fn test_valid_from_row_2() {
-        let position = Position::default().put_piece(WHITE_PAWN, E2);
+        let position = Position::default().put_piece(Piece::WhitePawn, E2);
 
         let result = get_move_white_two_forward(&position, E2);
 
         assert!(result.is_some());
         let new_position = result.unwrap();
-        assert!(new_position.is_occupied_by_piece(E4, WHITE_PAWN));
+        assert!(new_position.is_occupied_by_piece(E4, Piece::WhitePawn));
         assert!(!new_position.is_occupied(E2));
         assert!(!new_position.is_occupied(E3));
     }
@@ -136,7 +136,7 @@ mod test_white_two_forward {
 
         // Test from rows 3-8
         for row in [E3, E4, E5, E6, E7, E8] {
-            let pos = position.put_piece(WHITE_PAWN, row);
+            let pos = position.put_piece(Piece::WhitePawn, row);
             let result = get_move_white_two_forward(&pos, row);
             assert!(result.is_none());
         }
@@ -145,8 +145,8 @@ mod test_white_two_forward {
     #[test]
     fn test_blocked_one_square_ahead() {
         let position = Position::default()
-            .put_piece(WHITE_PAWN, E2)
-            .put_piece(BLACK_PAWN, E3);
+            .put_piece(Piece::WhitePawn, E2)
+            .put_piece(Piece::BlackPawn, E3);
 
         let result = get_move_white_two_forward(&position, E2);
         assert!(result.is_none());
@@ -155,8 +155,8 @@ mod test_white_two_forward {
     #[test]
     fn test_blocked_two_squares_ahead() {
         let position = Position::default()
-            .put_piece(WHITE_PAWN, E2)
-            .put_piece(BLACK_PAWN, E4);
+            .put_piece(Piece::WhitePawn, E2)
+            .put_piece(Piece::BlackPawn, E4);
 
         let result = get_move_white_two_forward(&position, E2);
         assert!(result.is_none());
@@ -165,8 +165,8 @@ mod test_white_two_forward {
     #[test]
     fn test_blocked_by_own_piece() {
         let position = Position::default()
-            .put_piece(WHITE_PAWN, E2)
-            .put_piece(WHITE_KNIGHT, E3);
+            .put_piece(Piece::WhitePawn, E2)
+            .put_piece(Piece::WhiteKnight, E3);
 
         let result = get_move_white_two_forward(&position, E2);
         assert!(result.is_none());
@@ -179,13 +179,13 @@ mod test_black_two_forward {
 
     #[test]
     fn test_valid_from_row_7() {
-        let position = Position::default().put_piece(BLACK_PAWN, E7);
+        let position = Position::default().put_piece(Piece::BlackPawn, E7);
 
         let result = get_move_black_two_forward(&position, E7);
 
         assert!(result.is_some());
         let new_position = result.unwrap();
-        assert!(new_position.is_occupied_by_piece(E5, BLACK_PAWN));
+        assert!(new_position.is_occupied_by_piece(E5, Piece::BlackPawn));
         assert!(!new_position.is_occupied(E7));
         assert!(!new_position.is_occupied(E6));
     }
@@ -196,7 +196,7 @@ mod test_black_two_forward {
 
         // Test from rows 1-6
         for row in [E1, E2, E3, E4, E5, E6] {
-            let pos = position.put_piece(BLACK_PAWN, row);
+            let pos = position.put_piece(Piece::BlackPawn, row);
             let result = get_move_black_two_forward(&pos, row);
             assert!(result.is_none());
         }
@@ -205,8 +205,8 @@ mod test_black_two_forward {
     #[test]
     fn test_blocked_one_square_ahead() {
         let position = Position::default()
-            .put_piece(BLACK_PAWN, E7)
-            .put_piece(WHITE_PAWN, E6);
+            .put_piece(Piece::BlackPawn, E7)
+            .put_piece(Piece::WhitePawn, E6);
 
         let result = get_move_black_two_forward(&position, E7);
         assert!(result.is_none());
@@ -215,8 +215,8 @@ mod test_black_two_forward {
     #[test]
     fn test_blocked_two_squares_ahead() {
         let position = Position::default()
-            .put_piece(BLACK_PAWN, E7)
-            .put_piece(WHITE_PAWN, E5);
+            .put_piece(Piece::BlackPawn, E7)
+            .put_piece(Piece::WhitePawn, E5);
 
         let result = get_move_black_two_forward(&position, E7);
         assert!(result.is_none());
@@ -230,35 +230,35 @@ mod test_white_captures {
     #[test]
     fn test_left_capture_opponent() {
         let position = Position::default()
-            .put_piece(WHITE_PAWN, E4)
-            .put_piece(BLACK_PAWN, D5);
+            .put_piece(Piece::WhitePawn, E4)
+            .put_piece(Piece::BlackPawn, D5);
 
         let result = get_move_white_left_capture(&position, E4);
 
         assert!(result.is_some());
         let new_position = result.unwrap();
-        assert!(new_position.is_occupied_by_piece(D5, WHITE_PAWN));
+        assert!(new_position.is_occupied_by_piece(D5, Piece::WhitePawn));
         assert!(!new_position.is_occupied(E4));
-        assert!(!new_position.is_occupied_by_piece(D5, BLACK_PAWN));
+        assert!(!new_position.is_occupied_by_piece(D5, Piece::BlackPawn));
     }
 
     #[test]
     fn test_right_capture_opponent() {
         let position = Position::default()
-            .put_piece(WHITE_PAWN, E4)
-            .put_piece(BLACK_PAWN, F5);
+            .put_piece(Piece::WhitePawn, E4)
+            .put_piece(Piece::BlackPawn, F5);
 
         let result = get_move_white_right_capture(&position, E4);
 
         assert!(result.is_some());
         let new_position = result.unwrap();
-        assert!(new_position.is_occupied_by_piece(F5, WHITE_PAWN));
+        assert!(new_position.is_occupied_by_piece(F5, Piece::WhitePawn));
         assert!(!new_position.is_occupied(E4));
     }
 
     #[test]
     fn test_no_capture_empty_square() {
-        let position = Position::default().put_piece(WHITE_PAWN, E4);
+        let position = Position::default().put_piece(Piece::WhitePawn, E4);
 
         let left_result = get_move_white_left_capture(&position, E4);
         let right_result = get_move_white_right_capture(&position, E4);
@@ -270,9 +270,9 @@ mod test_white_captures {
     #[test]
     fn test_no_capture_own_piece() {
         let position = Position::default()
-            .put_piece(WHITE_PAWN, E4)
-            .put_piece(WHITE_KNIGHT, D5)
-            .put_piece(WHITE_BISHOP, F5);
+            .put_piece(Piece::WhitePawn, E4)
+            .put_piece(Piece::WhiteKnight, D5)
+            .put_piece(Piece::WhiteBishop, F5);
 
         let left_result = get_move_white_left_capture(&position, E4);
         let right_result = get_move_white_right_capture(&position, E4);
@@ -284,9 +284,9 @@ mod test_white_captures {
     #[test]
     fn test_from_row_7_returns_none() {
         let position = Position::default()
-            .put_piece(WHITE_PAWN, E7)
-            .put_piece(BLACK_PAWN, D8)
-            .put_piece(BLACK_PAWN, F8);
+            .put_piece(Piece::WhitePawn, E7)
+            .put_piece(Piece::BlackPawn, D8)
+            .put_piece(Piece::BlackPawn, F8);
 
         let left_result = get_move_white_left_capture(&position, E7);
         let right_result = get_move_white_right_capture(&position, E7);
@@ -298,10 +298,10 @@ mod test_white_captures {
     #[test]
     fn test_edge_cases() {
         let position = Position::default()
-            .put_piece(WHITE_PAWN, A4)
-            .put_piece(WHITE_PAWN, H4)
-            .put_piece(BLACK_PAWN, B5)
-            .put_piece(BLACK_PAWN, G5);
+            .put_piece(Piece::WhitePawn, A4)
+            .put_piece(Piece::WhitePawn, H4)
+            .put_piece(Piece::BlackPawn, B5)
+            .put_piece(Piece::BlackPawn, G5);
 
         // A-file can't capture left
         let a_left = get_move_white_left_capture(&position, A4);
@@ -328,37 +328,37 @@ mod test_black_captures {
     #[test]
     fn test_left_capture_opponent() {
         let position = Position::default()
-            .put_piece(BLACK_PAWN, E5)
-            .put_piece(WHITE_PAWN, D4);
+            .put_piece(Piece::BlackPawn, E5)
+            .put_piece(Piece::WhitePawn, D4);
 
         let result = get_move_black_left_capture(&position, E5);
 
         assert!(result.is_some());
         let new_position = result.unwrap();
-        assert!(new_position.is_occupied_by_piece(D4, BLACK_PAWN));
+        assert!(new_position.is_occupied_by_piece(D4, Piece::BlackPawn));
         assert!(!new_position.is_occupied(E5));
     }
 
     #[test]
     fn test_right_capture_opponent() {
         let position = Position::default()
-            .put_piece(BLACK_PAWN, E5)
-            .put_piece(WHITE_PAWN, F4);
+            .put_piece(Piece::BlackPawn, E5)
+            .put_piece(Piece::WhitePawn, F4);
 
         let result = get_move_black_right_capture(&position, E5);
 
         assert!(result.is_some());
         let new_position = result.unwrap();
-        assert!(new_position.is_occupied_by_piece(F4, BLACK_PAWN));
+        assert!(new_position.is_occupied_by_piece(F4, Piece::BlackPawn));
         assert!(!new_position.is_occupied(E5));
     }
 
     #[test]
     fn test_from_row_2_returns_none() {
         let position = Position::default()
-            .put_piece(BLACK_PAWN, E2)
-            .put_piece(WHITE_PAWN, D1)
-            .put_piece(WHITE_PAWN, F1);
+            .put_piece(Piece::BlackPawn, E2)
+            .put_piece(Piece::WhitePawn, D1)
+            .put_piece(Piece::WhitePawn, F1);
 
         let left_result = get_move_black_left_capture(&position, E2);
         let right_result = get_move_black_right_capture(&position, E2);
@@ -375,15 +375,15 @@ mod test_white_en_passant {
     #[test]
     fn test_left_en_passant_valid() {
         let position = Position::default()
-            .put_piece(WHITE_PAWN, E5)
-            .put_piece(BLACK_PAWN, D5)
+            .put_piece(Piece::WhitePawn, E5)
+            .put_piece(Piece::BlackPawn, D5)
             .set_en_passant(D5);
 
         let result = get_move_white_left_en_passant(&position, E5);
 
         assert!(result.is_some());
         let new_position = result.unwrap();
-        assert!(new_position.is_occupied_by_piece(D6, WHITE_PAWN));
+        assert!(new_position.is_occupied_by_piece(D6, Piece::WhitePawn));
         assert!(!new_position.is_occupied(E5));
         assert!(!new_position.is_occupied(D5)); // Captured pawn removed
     }
@@ -391,15 +391,15 @@ mod test_white_en_passant {
     #[test]
     fn test_right_en_passant_valid() {
         let position = Position::default()
-            .put_piece(WHITE_PAWN, E5)
-            .put_piece(BLACK_PAWN, F5)
+            .put_piece(Piece::WhitePawn, E5)
+            .put_piece(Piece::BlackPawn, F5)
             .set_en_passant(F5);
 
         let result = get_move_white_right_en_passant(&position, E5);
 
         assert!(result.is_some());
         let new_position = result.unwrap();
-        assert!(new_position.is_occupied_by_piece(F6, WHITE_PAWN));
+        assert!(new_position.is_occupied_by_piece(F6, Piece::WhitePawn));
         assert!(!new_position.is_occupied(E5));
         assert!(!new_position.is_occupied(F5)); // Captured pawn removed
     }
@@ -407,9 +407,9 @@ mod test_white_en_passant {
     #[test]
     fn test_en_passant_none() {
         let position = Position::default()
-            .put_piece(WHITE_PAWN, E5)
-            .put_piece(BLACK_PAWN, D5)
-            .put_piece(BLACK_PAWN, F5);
+            .put_piece(Piece::WhitePawn, E5)
+            .put_piece(Piece::BlackPawn, D5)
+            .put_piece(Piece::BlackPawn, F5);
         // en_passant is None by default
 
         let left_result = get_move_white_left_en_passant(&position, E5);
@@ -422,7 +422,7 @@ mod test_white_en_passant {
     #[test]
     fn test_en_passant_not_adjacent() {
         let position = Position::default()
-            .put_piece(WHITE_PAWN, E5)
+            .put_piece(Piece::WhitePawn, E5)
             .set_en_passant(C5); // Not adjacent
 
         let left_result = get_move_white_left_en_passant(&position, E5);
@@ -436,7 +436,7 @@ mod test_white_en_passant {
     fn test_en_passant_edge_cases() {
         // A-file can't en passant left
         let position = Position::default()
-            .put_piece(WHITE_PAWN, A5)
+            .put_piece(Piece::WhitePawn, A5)
             .set_en_passant(B5);
 
         let a_left = get_move_white_left_en_passant(&position, A5);
@@ -444,7 +444,7 @@ mod test_white_en_passant {
 
         // H-file can't en passant right
         let position2 = Position::default()
-            .put_piece(WHITE_PAWN, H5)
+            .put_piece(Piece::WhitePawn, H5)
             .set_en_passant(G5);
 
         let h_right = get_move_white_right_en_passant(&position2, H5);
@@ -459,15 +459,15 @@ mod test_black_en_passant {
     #[test]
     fn test_left_en_passant_valid() {
         let position = Position::default()
-            .put_piece(BLACK_PAWN, E4)
-            .put_piece(WHITE_PAWN, D4)
+            .put_piece(Piece::BlackPawn, E4)
+            .put_piece(Piece::WhitePawn, D4)
             .set_en_passant(D4);
 
         let result = get_move_black_left_en_passant(&position, E4);
 
         assert!(result.is_some());
         let new_position = result.unwrap();
-        assert!(new_position.is_occupied_by_piece(D3, BLACK_PAWN));
+        assert!(new_position.is_occupied_by_piece(D3, Piece::BlackPawn));
         assert!(!new_position.is_occupied(E4));
         assert!(!new_position.is_occupied(D4)); // Captured pawn removed
     }
@@ -475,15 +475,15 @@ mod test_black_en_passant {
     #[test]
     fn test_right_en_passant_valid() {
         let position = Position::default()
-            .put_piece(BLACK_PAWN, E4)
-            .put_piece(WHITE_PAWN, F4)
+            .put_piece(Piece::BlackPawn, E4)
+            .put_piece(Piece::WhitePawn, F4)
             .set_en_passant(F4);
 
         let result = get_move_black_right_en_passant(&position, E4);
 
         assert!(result.is_some());
         let new_position = result.unwrap();
-        assert!(new_position.is_occupied_by_piece(F3, BLACK_PAWN));
+        assert!(new_position.is_occupied_by_piece(F3, Piece::BlackPawn));
         assert!(!new_position.is_occupied(E4));
         assert!(!new_position.is_occupied(F4)); // Captured pawn removed
     }
@@ -495,7 +495,7 @@ mod test_white_promotions {
 
     #[test]
     fn test_forward_promotion() {
-        let position = Position::default().put_piece(WHITE_PAWN, E7);
+        let position = Position::default().put_piece(Piece::WhitePawn, E7);
 
         let results = get_moves_white_promotion(&position, E7);
 
@@ -504,16 +504,16 @@ mod test_white_promotions {
         // Check each promotion piece
         let has_queen = results
             .iter()
-            .any(|p| p.is_occupied_by_piece(E8, WHITE_QUEEN));
+            .any(|p| p.is_occupied_by_piece(E8, Piece::WhiteQueen));
         let has_rook = results
             .iter()
-            .any(|p| p.is_occupied_by_piece(E8, WHITE_ROOK));
+            .any(|p| p.is_occupied_by_piece(E8, Piece::WhiteRook));
         let has_bishop = results
             .iter()
-            .any(|p| p.is_occupied_by_piece(E8, WHITE_BISHOP));
+            .any(|p| p.is_occupied_by_piece(E8, Piece::WhiteBishop));
         let has_knight = results
             .iter()
-            .any(|p| p.is_occupied_by_piece(E8, WHITE_KNIGHT));
+            .any(|p| p.is_occupied_by_piece(E8, Piece::WhiteKnight));
 
         assert!(has_queen);
         assert!(has_rook);
@@ -529,8 +529,8 @@ mod test_white_promotions {
     #[test]
     fn test_forward_promotion_blocked() {
         let position = Position::default()
-            .put_piece(WHITE_PAWN, E7)
-            .put_piece(BLACK_KNIGHT, E8);
+            .put_piece(Piece::WhitePawn, E7)
+            .put_piece(Piece::BlackKnight, E8);
 
         let results = get_moves_white_promotion(&position, E7);
         assert_eq!(results.len(), 0);
@@ -541,7 +541,7 @@ mod test_white_promotions {
         let position = Position::default();
 
         for row in [E1, E2, E3, E4, E5, E6, E8] {
-            let pos = position.put_piece(WHITE_PAWN, row);
+            let pos = position.put_piece(Piece::WhitePawn, row);
             let results = get_moves_white_promotion(&pos, row);
             assert_eq!(results.len(), 0);
         }
@@ -550,8 +550,8 @@ mod test_white_promotions {
     #[test]
     fn test_left_capture_promotion() {
         let position = Position::default()
-            .put_piece(WHITE_PAWN, E7)
-            .put_piece(BLACK_KNIGHT, D8);
+            .put_piece(Piece::WhitePawn, E7)
+            .put_piece(Piece::BlackKnight, D8);
 
         let results = get_moves_white_promotion_left_capture(&position, E7);
 
@@ -560,21 +560,21 @@ mod test_white_promotions {
         // All should capture on D8
         for position in &results {
             assert!(!position.is_occupied(E7));
-            assert!(!position.is_occupied_by_piece(D8, BLACK_KNIGHT));
+            assert!(!position.is_occupied_by_piece(D8, Piece::BlackKnight));
         }
 
         let has_queen = results
             .iter()
-            .any(|p| p.is_occupied_by_piece(D8, WHITE_QUEEN));
+            .any(|p| p.is_occupied_by_piece(D8, Piece::WhiteQueen));
         let has_rook = results
             .iter()
-            .any(|p| p.is_occupied_by_piece(D8, WHITE_ROOK));
+            .any(|p| p.is_occupied_by_piece(D8, Piece::WhiteRook));
         let has_bishop = results
             .iter()
-            .any(|p| p.is_occupied_by_piece(D8, WHITE_BISHOP));
+            .any(|p| p.is_occupied_by_piece(D8, Piece::WhiteBishop));
         let has_knight = results
             .iter()
-            .any(|p| p.is_occupied_by_piece(D8, WHITE_KNIGHT));
+            .any(|p| p.is_occupied_by_piece(D8, Piece::WhiteKnight));
 
         assert!(has_queen);
         assert!(has_rook);
@@ -585,8 +585,8 @@ mod test_white_promotions {
     #[test]
     fn test_right_capture_promotion() {
         let position = Position::default()
-            .put_piece(WHITE_PAWN, E7)
-            .put_piece(BLACK_KNIGHT, F8);
+            .put_piece(Piece::WhitePawn, E7)
+            .put_piece(Piece::BlackKnight, F8);
 
         let results = get_moves_white_promotion_right_capture(&position, E7);
 
@@ -594,13 +594,13 @@ mod test_white_promotions {
 
         for position in &results {
             assert!(!position.is_occupied(E7));
-            assert!(!position.is_occupied_by_piece(F8, BLACK_KNIGHT));
+            assert!(!position.is_occupied_by_piece(F8, Piece::BlackKnight));
         }
     }
 
     #[test]
     fn test_capture_promotion_empty_square() {
-        let position = Position::default().put_piece(WHITE_PAWN, E7);
+        let position = Position::default().put_piece(Piece::WhitePawn, E7);
 
         let left_results = get_moves_white_promotion_left_capture(&position, E7);
         let right_results = get_moves_white_promotion_right_capture(&position, E7);
@@ -612,9 +612,9 @@ mod test_white_promotions {
     #[test]
     fn test_capture_promotion_own_piece() {
         let position = Position::default()
-            .put_piece(WHITE_PAWN, E7)
-            .put_piece(WHITE_KNIGHT, D8)
-            .put_piece(WHITE_BISHOP, F8);
+            .put_piece(Piece::WhitePawn, E7)
+            .put_piece(Piece::WhiteKnight, D8)
+            .put_piece(Piece::WhiteBishop, F8);
 
         let left_results = get_moves_white_promotion_left_capture(&position, E7);
         let right_results = get_moves_white_promotion_right_capture(&position, E7);
@@ -630,7 +630,7 @@ mod test_black_promotions {
 
     #[test]
     fn test_forward_promotion() {
-        let position = Position::default().put_piece(BLACK_PAWN, E2);
+        let position = Position::default().put_piece(Piece::BlackPawn, E2);
 
         let results = get_moves_black_promotion(&position, E2);
 
@@ -638,16 +638,16 @@ mod test_black_promotions {
 
         let has_queen = results
             .iter()
-            .any(|p| p.is_occupied_by_piece(E1, BLACK_QUEEN));
+            .any(|p| p.is_occupied_by_piece(E1, Piece::BlackQueen));
         let has_rook = results
             .iter()
-            .any(|p| p.is_occupied_by_piece(E1, BLACK_ROOK));
+            .any(|p| p.is_occupied_by_piece(E1, Piece::BlackRook));
         let has_bishop = results
             .iter()
-            .any(|p| p.is_occupied_by_piece(E1, BLACK_BISHOP));
+            .any(|p| p.is_occupied_by_piece(E1, Piece::BlackBishop));
         let has_knight = results
             .iter()
-            .any(|p| p.is_occupied_by_piece(E1, BLACK_KNIGHT));
+            .any(|p| p.is_occupied_by_piece(E1, Piece::BlackKnight));
 
         assert!(has_queen);
         assert!(has_rook);
@@ -662,8 +662,8 @@ mod test_black_promotions {
     #[test]
     fn test_left_capture_promotion() {
         let position = Position::default()
-            .put_piece(BLACK_PAWN, E2)
-            .put_piece(WHITE_KNIGHT, D1);
+            .put_piece(Piece::BlackPawn, E2)
+            .put_piece(Piece::WhiteKnight, D1);
 
         let results = get_moves_black_promotion_left_capture(&position, E2);
 
@@ -671,15 +671,15 @@ mod test_black_promotions {
 
         for position in &results {
             assert!(!position.is_occupied(E2));
-            assert!(!position.is_occupied_by_piece(D1, WHITE_KNIGHT));
+            assert!(!position.is_occupied_by_piece(D1, Piece::WhiteKnight));
         }
     }
 
     #[test]
     fn test_right_capture_promotion() {
         let position = Position::default()
-            .put_piece(BLACK_PAWN, E2)
-            .put_piece(WHITE_KNIGHT, F1);
+            .put_piece(Piece::BlackPawn, E2)
+            .put_piece(Piece::WhiteKnight, F1);
 
         let results = get_moves_black_promotion_right_capture(&position, E2);
 
@@ -687,7 +687,7 @@ mod test_black_promotions {
 
         for position in &results {
             assert!(!position.is_occupied(E2));
-            assert!(!position.is_occupied_by_piece(F1, WHITE_KNIGHT));
+            assert!(!position.is_occupied_by_piece(F1, Piece::WhiteKnight));
         }
     }
 }
@@ -698,15 +698,15 @@ mod test_aggregate_functions {
 
     #[test]
     fn test_get_possible_white_moves_basic() {
-        let position = Position::default().put_piece(WHITE_PAWN, E2);
+        let position = Position::default().put_piece(Piece::WhitePawn, E2);
 
         let moves = get_white_pawn_moves(&position, E2);
 
         // Should have forward and two-forward moves
         assert_eq!(moves.len(), 2);
 
-        let has_e3 = moves.iter().any(|p| p.is_occupied_by_piece(E3, WHITE_PAWN));
-        let has_e4 = moves.iter().any(|p| p.is_occupied_by_piece(E4, WHITE_PAWN));
+        let has_e3 = moves.iter().any(|p| p.is_occupied_by_piece(E3, Piece::WhitePawn));
+        let has_e4 = moves.iter().any(|p| p.is_occupied_by_piece(E4, Piece::WhitePawn));
 
         assert!(has_e3);
         assert!(has_e4);
@@ -715,18 +715,18 @@ mod test_aggregate_functions {
     #[test]
     fn test_get_possible_white_moves_with_captures() {
         let position = Position::default()
-            .put_piece(WHITE_PAWN, E4)
-            .put_piece(BLACK_PAWN, D5)
-            .put_piece(BLACK_PAWN, F5);
+            .put_piece(Piece::WhitePawn, E4)
+            .put_piece(Piece::BlackPawn, D5)
+            .put_piece(Piece::BlackPawn, F5);
 
         let moves = get_white_pawn_moves(&position, E4);
 
         // Forward, left capture, right capture
         assert_eq!(moves.len(), 3);
 
-        let has_forward = moves.iter().any(|p| p.is_occupied_by_piece(E5, WHITE_PAWN));
-        let has_left_capture = moves.iter().any(|p| p.is_occupied_by_piece(D5, WHITE_PAWN));
-        let has_right_capture = moves.iter().any(|p| p.is_occupied_by_piece(F5, WHITE_PAWN));
+        let has_forward = moves.iter().any(|p| p.is_occupied_by_piece(E5, Piece::WhitePawn));
+        let has_left_capture = moves.iter().any(|p| p.is_occupied_by_piece(D5, Piece::WhitePawn));
+        let has_right_capture = moves.iter().any(|p| p.is_occupied_by_piece(F5, Piece::WhitePawn));
 
         assert!(has_forward);
         assert!(has_left_capture);
@@ -736,8 +736,8 @@ mod test_aggregate_functions {
     #[test]
     fn test_get_possible_white_moves_promotion() {
         let position = Position::default()
-            .put_piece(WHITE_PAWN, E7)
-            .put_piece(BLACK_KNIGHT, D8);
+            .put_piece(Piece::WhitePawn, E7)
+            .put_piece(Piece::BlackKnight, D8);
 
         let moves = get_white_pawn_moves(&position, E7);
 
@@ -747,8 +747,8 @@ mod test_aggregate_functions {
     #[test]
     fn test_en_passant_same_color() {
         let position = Position::default()
-            .put_piece(WHITE_PAWN, E5)
-            .put_piece(WHITE_PAWN, D5)
+            .put_piece(Piece::WhitePawn, E5)
+            .put_piece(Piece::WhitePawn, D5)
             .set_en_passant(D5);
 
         let moves = get_white_pawn_moves(&position, E5);
@@ -758,7 +758,7 @@ mod test_aggregate_functions {
 
         let has_en_passant = moves
             .iter()
-            .any(|p| p.is_occupied_by_piece(D6, WHITE_PAWN) && !p.is_occupied(D5));
+            .any(|p| p.is_occupied_by_piece(D6, Piece::WhitePawn) && !p.is_occupied(D5));
 
         assert_eq!(false, has_en_passant);
     }
@@ -766,8 +766,8 @@ mod test_aggregate_functions {
     #[test]
     fn test_get_possible_white_moves_en_passant() {
         let position = Position::default()
-            .put_piece(WHITE_PAWN, E5)
-            .put_piece(BLACK_PAWN, D5)
+            .put_piece(Piece::WhitePawn, E5)
+            .put_piece(Piece::BlackPawn, D5)
             .set_en_passant(D5);
 
         let moves = get_white_pawn_moves(&position, E5);
@@ -777,22 +777,22 @@ mod test_aggregate_functions {
 
         let has_en_passant = moves
             .iter()
-            .any(|p| p.is_occupied_by_piece(D6, WHITE_PAWN) && !p.is_occupied(D5));
+            .any(|p| p.is_occupied_by_piece(D6, Piece::WhitePawn) && !p.is_occupied(D5));
 
         assert!(has_en_passant);
     }
 
     #[test]
     fn test_get_possible_black_moves_basic() {
-        let position = Position::default().put_piece(BLACK_PAWN, E7);
+        let position = Position::default().put_piece(Piece::BlackPawn, E7);
 
         let moves = get_black_pawn_moves(&position, E7);
 
         // Should have forward and two-forward moves
         assert_eq!(moves.len(), 2);
 
-        let has_e6 = moves.iter().any(|p| p.is_occupied_by_piece(E6, BLACK_PAWN));
-        let has_e5 = moves.iter().any(|p| p.is_occupied_by_piece(E5, BLACK_PAWN));
+        let has_e6 = moves.iter().any(|p| p.is_occupied_by_piece(E6, Piece::BlackPawn));
+        let has_e5 = moves.iter().any(|p| p.is_occupied_by_piece(E5, Piece::BlackPawn));
 
         assert!(has_e6);
         assert!(has_e5);
@@ -801,9 +801,9 @@ mod test_aggregate_functions {
     #[test]
     fn test_get_possible_black_moves_promotion() {
         let position = Position::default()
-            .put_piece(BLACK_PAWN, E2)
-            .put_piece(WHITE_KNIGHT, D1)
-            .put_piece(WHITE_BISHOP, F1);
+            .put_piece(Piece::BlackPawn, E2)
+            .put_piece(Piece::WhiteKnight, D1)
+            .put_piece(Piece::WhiteBishop, F1);
 
         let moves = get_black_pawn_moves(&position, E2);
 
@@ -819,14 +819,14 @@ mod test_public_interface {
 
     #[test]
     fn test_get_possible_moves_white_pawn() {
-        let position = Position::default().put_piece(WHITE_PAWN, E2);
+        let position = Position::default().put_piece(Piece::WhitePawn, E2);
         let moves = get_white_pawn_moves(&position, E2);
 
         // Should have forward and two-forward moves
         assert_eq!(moves.len(), 2);
 
-        let has_e3 = moves.iter().any(|p| p.is_occupied_by_piece(E3, WHITE_PAWN));
-        let has_e4 = moves.iter().any(|p| p.is_occupied_by_piece(E4, WHITE_PAWN));
+        let has_e3 = moves.iter().any(|p| p.is_occupied_by_piece(E3, Piece::WhitePawn));
+        let has_e4 = moves.iter().any(|p| p.is_occupied_by_piece(E4, Piece::WhitePawn));
 
         assert!(has_e3);
         assert!(has_e4);
@@ -834,15 +834,15 @@ mod test_public_interface {
 
     #[test]
     fn test_get_possible_moves_black_pawn() {
-        let position = Position::default().put_piece(BLACK_PAWN, E7);
+        let position = Position::default().put_piece(Piece::BlackPawn, E7);
 
         let moves = get_black_pawn_moves(&position, E7);
 
         // Should have forward and two-forward moves
         assert_eq!(moves.len(), 2);
 
-        let has_e6 = moves.iter().any(|p| p.is_occupied_by_piece(E6, BLACK_PAWN));
-        let has_e5 = moves.iter().any(|p| p.is_occupied_by_piece(E5, BLACK_PAWN));
+        let has_e6 = moves.iter().any(|p| p.is_occupied_by_piece(E6, Piece::BlackPawn));
+        let has_e5 = moves.iter().any(|p| p.is_occupied_by_piece(E5, Piece::BlackPawn));
 
         assert!(has_e6);
         assert!(has_e5);
@@ -851,10 +851,10 @@ mod test_public_interface {
     #[test]
     fn test_get_possible_moves_complex_position() {
         let position = Position::default()
-            .put_piece(WHITE_PAWN, E5)
-            .put_piece(BLACK_PAWN, D5)
-            .put_piece(BLACK_PAWN, F5)
-            .put_piece(BLACK_KNIGHT, E6)
+            .put_piece(Piece::WhitePawn, E5)
+            .put_piece(Piece::BlackPawn, D5)
+            .put_piece(Piece::BlackPawn, F5)
+            .put_piece(Piece::BlackKnight, E6)
             .set_en_passant(D5);
 
         let moves = get_white_pawn_moves(&position, E5);
@@ -867,7 +867,7 @@ mod test_public_interface {
 
         let has_en_passant = moves
             .iter()
-            .any(|p| p.is_occupied_by_piece(D6, WHITE_PAWN) && !p.is_occupied(D5));
+            .any(|p| p.is_occupied_by_piece(D6, Piece::WhitePawn) && !p.is_occupied(D5));
 
         assert!(has_en_passant);
     }

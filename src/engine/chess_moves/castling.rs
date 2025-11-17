@@ -11,11 +11,11 @@ use crate::engine::{
     position::{CastlingType, Position},
 };
 
-pub fn get_black_castle_moves(position: &Position) -> Vec<Position> {
+pub fn get_black_castling_moves(position: &Position) -> Vec<Position> {
     get_castling_moves(position, [BLACK_KINGSIDE, BLACK_QUEENSIDE])
 }
 
-pub fn get_white_castle_moves(position: &Position) -> Vec<Position> {
+pub fn get_white_castling_moves(position: &Position) -> Vec<Position> {
     get_castling_moves(position, [WHITE_KINGSIDE, WHITE_QUEENSIDE])
 }
 
@@ -32,49 +32,49 @@ fn get_castling_moves(
     positions
 }
 
-pub fn get_castling_move(position: &Position, castle: CastlingConfiguration) -> Option<Position> {
-    if !position.get_castling_right(castle.castling_type) {
+pub fn get_castling_move(position: &Position, castling: CastlingConfiguration) -> Option<Position> {
+    if !position.get_castling_right(castling.castling_type) {
         return None;
     }
 
-    if !is_empty_path(position, castle.empty_path_squares) {
+    if !is_empty_path(position, castling.empty_path_squares) {
         return None;
     }
-    if !(position.is_occupied_by_piece(castle.rook_from, castle.rook)
-        && position.is_occupied_by_piece(castle.king_from, castle.king))
+    if !(position.is_occupied_by_piece(castling.rook_from, castling.rook)
+        && position.is_occupied_by_piece(castling.king_from, castling.king))
     {
         return None;
     }
 
-    if !is_save_passage(position, castle.empty_path_squares, castle.color) {
+    if !is_save_passage(position, castling.empty_path_squares, castling.color) {
         return None;
     }
 
-    if is_check(position, castle.color) {
+    if is_check(position, castling.color) {
         return None;
     }
 
     let chess_move: ChessMove = ChessMove {
         move_type: MoveType::Castling {
-            castling_type: castle.castling_type,
+            castling_type: castling.castling_type,
         },
-        piece: castle.king,
-        from: castle.king_from,
-        to: castle.king_to,
+        piece: castling.king,
+        from: castling.king_from,
+        to: castling.king_to,
         capture: None,
         pormotion: None,
     };
 
     let new_position = position
-        .remove_piece(castle.king_from)
-        .remove_piece(castle.rook_from)
-        .put_piece(castle.king, castle.king_to)
-        .put_piece(castle.rook, castle.rook_to)
+        .remove_piece(castling.king_from)
+        .remove_piece(castling.rook_from)
+        .put_piece(castling.king, castling.king_to)
+        .put_piece(castling.rook, castling.rook_to)
         .toggle_player()
         .reset_en_passant()
-        .disallow_castle_for_color(castle.color)
-        .set_chess_move(chess_move);
-    if !is_check(&new_position, castle.color) {
+        .disallow_castling_for_color(castling.color)
+        .set_last_move(chess_move);
+    if !is_check(&new_position, castling.color) {
         return Some(new_position);
     }
     None

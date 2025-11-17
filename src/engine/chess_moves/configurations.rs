@@ -1,6 +1,6 @@
 use crate::engine::{
     chess_moves::{
-        castling::{get_black_castle_moves, get_white_castle_moves},
+        castling::{get_black_castling_moves, get_white_castling_moves},
         common::{
             get_moves_for_bishop_at_square, get_moves_for_king_at_square,
             get_moves_for_knight_at_square, get_moves_for_queen_at_square,
@@ -10,8 +10,8 @@ use crate::engine::{
     },
     directions::{self, squares::Square, DirectionFn},
     piece::{
-        Piece, BLACK_BISHOP, BLACK_KING, BLACK_KNIGHT, BLACK_PAWN, BLACK_QUEEN, BLACK_ROOK,
-        WHITE_BISHOP, WHITE_KING, WHITE_KNIGHT, WHITE_PAWN, WHITE_QUEEN, WHITE_ROOK,
+        Piece, Piece::BlackBishop, Piece::BlackKing, Piece::BlackKnight, Piece::BlackPawn, Piece::BlackQueen, Piece::BlackRook,
+        Piece::WhiteBishop, Piece::WhiteKing, Piece::WhiteKnight, Piece::WhitePawn, Piece::WhiteQueen, Piece::WhiteRook,
     },
     position::Position,
 };
@@ -64,7 +64,7 @@ pub const KNIGHT_DIRECTIONS: [DirectionFn; 8] = [
     directions::down_down_right,
 ];
 
-pub type CastleMovesFn = fn(position: &Position) -> Vec<Position>;
+pub type CastlingMovesFn = fn(position: &Position) -> Vec<Position>;
 pub type MovesFn = fn(position: &Position, piece: Piece, square: Square) -> Vec<Position>;
 pub struct Config {
     pub king: Piece,
@@ -79,38 +79,38 @@ pub struct Config {
     pub knight_fn: MovesFn,
     pub bishop_fn: MovesFn,
     pub pawn_fn: MovesFn,
-    pub castle_move_fn: CastleMovesFn,
+    pub castling_move_fn: CastlingMovesFn,
 }
 
 pub const WHITE_MOVE_CONFIG: Config = Config {
-    king: WHITE_KING,
-    queen: WHITE_QUEEN,
-    rook: WHITE_ROOK,
-    knight: WHITE_KNIGHT,
-    bishop: WHITE_BISHOP,
-    pawn: WHITE_PAWN,
+    king: Piece::WhiteKing,
+    queen: Piece::WhiteQueen,
+    rook: Piece::WhiteRook,
+    knight: Piece::WhiteKnight,
+    bishop: Piece::WhiteBishop,
+    pawn: Piece::WhitePawn,
     king_fn: get_moves_for_king_at_square,
     queen_fn: get_moves_for_queen_at_square,
     rook_fn: get_moves_for_rook_at_square,
     knight_fn: get_moves_for_knight_at_square,
     bishop_fn: get_moves_for_bishop_at_square,
-    castle_move_fn: get_white_castle_moves,
+    castling_move_fn: get_white_castling_moves,
     pawn_fn: get_pawn_moves,
 };
 
 pub const BLACK_MOVE_CONFIG: Config = Config {
-    king: BLACK_KING,
-    queen: BLACK_QUEEN,
-    rook: BLACK_ROOK,
-    knight: BLACK_KNIGHT,
-    bishop: BLACK_BISHOP,
-    pawn: BLACK_PAWN,
+    king: Piece::BlackKing,
+    queen: Piece::BlackQueen,
+    rook: Piece::BlackRook,
+    knight: Piece::BlackKnight,
+    bishop: Piece::BlackBishop,
+    pawn: Piece::BlackPawn,
     king_fn: get_moves_for_king_at_square,
     queen_fn: get_moves_for_queen_at_square,
     rook_fn: get_moves_for_rook_at_square,
     knight_fn: get_moves_for_knight_at_square,
     bishop_fn: get_moves_for_bishop_at_square,
-    castle_move_fn: get_black_castle_moves,
+    castling_move_fn: get_black_castling_moves,
     pawn_fn: get_pawn_moves,
 };
 

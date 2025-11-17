@@ -1,19 +1,15 @@
 use flo_canvas::{Color, GraphicsContext, GraphicsPrimitives};
 use std::io::Cursor;
 
-use super::{assets, chess_board_canvas::CanvasCoordinate};
-use crate::gui::configuration::{Button, FIELD_SIZE};
+use super::{icon, chess_board_canvas::CanvasCoordinate};
+use crate::gui::configuration::{
+    BLACK_FIELD_COLOR, CHECK_COLOR, DROP_TARGET_COLOR, FIELD_SIZE, FROM_TO_COLOR,
+    SELECTED_FIELD_COLOR, WHITE_FIELD_COLOR,
+};
 use crate::{
     engine::piece::Piece,
     gui::configuration::{MENU_HEIGHT, MENU_POS_X, MENU_POS_Y, MENU_WIDTH},
 };
-pub const BACKGROUND_COLOR: Color = Color::Rgba(0.5, 0.5, 0.5, 1.0);
-const BLACK_FIELD_COLOR: Color = Color::Rgba(202.0 / 255.0, 207.0 / 255.0, 184.0 / 255.0, 1.0);
-const WHITE_FIELD_COLOR: Color = Color::Rgba(224.0 / 255.0, 218.0 / 255.0, 193.0 / 255.0, 1.0);
-const FROM_TO_COLOR: Color = Color::Rgba(100.0 / 255.0, 100.0 / 255.0, 100.0 / 255.0, 1.0);
-const DROP_TARGET_COLOR: Color = Color::Rgba(1.0, 0.0, 0.0, 5.0);
-const SELECTED_FIELD_COLOR: Color = Color::Rgba(1.0, 1.0, 1.0, 5.0);
-const CHECK_COLOR: Color = Color::Rgba(1.0, 0.0, 0.0, 5.0);
 
 pub trait DrawFunctions {
     fn draw_menu(&mut self);
@@ -24,7 +20,6 @@ pub trait DrawFunctions {
     fn draw_from_to_field(&mut self, coordinate: CanvasCoordinate);
     fn draw_check_field(&mut self, coordinate: CanvasCoordinate);
     fn draw_piece(&mut self, coordinate: CanvasCoordinate, piece: Piece, size: f32);
-    fn draw_button(&mut self, button: &Button);
 }
 impl DrawFunctions for &mut Vec<flo_canvas::Draw> {
     fn draw_menu(&mut self) {
@@ -109,20 +104,6 @@ impl DrawFunctions for &mut Vec<flo_canvas::Draw> {
         self.stroke();
     }
 
-    fn draw_button(&mut self, button: &Button) {
-        self.new_path();
-        self.rect(button.x_min, button.y_min, button.x_max, button.y_max);
-        self.load_texture(button.texture_id, Cursor::new(button.data));
-        self.fill_texture(
-            button.texture_id,
-            button.x_min,
-            button.y_max,
-            button.x_max,
-            button.y_min,
-        );
-        self.fill();
-    }
-
     fn draw_piece(&mut self, coordinate: CanvasCoordinate, piece: Piece, size: f32) {
         self.new_path();
         self.rect(
@@ -132,11 +113,11 @@ impl DrawFunctions for &mut Vec<flo_canvas::Draw> {
             coordinate.y + size,
         );
         self.load_texture(
-            assets::get_texture_id(piece),
-            Cursor::new(assets::get_bytes(piece)),
+            icon::get_texture_id(piece),
+            Cursor::new(icon::get_bytes(piece)),
         );
         self.fill_texture(
-            assets::get_texture_id(piece),
+            icon::get_texture_id(piece),
             coordinate.x,
             coordinate.y + size,
             coordinate.x + size,

@@ -35,7 +35,7 @@ fn test_remove_white_king() {
 #[test]
 fn test_put_white_king() {
     let position = Position::new_starting_position();
-    let new_position = position.put_piece(WHITE_KING, E2);
-    assert_ne!(position.is_occupied_by_piece(E2, WHITE_KING), true);
-    assert_eq!(new_position.is_occupied_by_piece(E2, WHITE_KING), true);
+    let new_position = position.put_piece(Piece::WhiteKing, E2);
+    assert_ne!(position.is_occupied_by_piece(E2, Piece::WhiteKing), true);
+    assert_eq!(new_position.is_occupied_by_piece(E2, Piece::WhiteKing), true);
 }
