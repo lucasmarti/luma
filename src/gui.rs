@@ -9,6 +9,7 @@ mod ui_board;
 mod ui_button;
 pub mod ui_element;
 mod ui_game;
+pub mod ui_layout;
 mod ui_menu;
 mod ui_piece;
 mod ui_square;

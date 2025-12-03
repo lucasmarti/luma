@@ -2,7 +2,10 @@ use flo_canvas::{Draw, GraphicsContext};
 
 use crate::{
     engine::{
-        self, directions::squares::Square, piece::Piece, position::{self, Position}
+        self,
+        directions::squares::Square,
+        piece::Piece,
+        position::{self, Position},
     },
     gui::{
         configuration::{BACKGROUND_COLOR, FIELD_SIZE, MENU_HEIGHT},
@@ -56,9 +59,9 @@ impl UIGame {
             },
             _ => {}
         }
-        if let Some(square) = engine::get_check_square(position){
-            self.ui_board.
-        }
+        //        if let Some(square) = engine::get_check_square(position){
+        //            self.ui_board.
+        //        }
     }
 
     pub fn reset_squares(&mut self) {

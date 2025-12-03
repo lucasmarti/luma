@@ -5,32 +5,22 @@ use crate::gui::{
     configuration::{MENU_ICON_HEIGHT, MENU_ICON_WIDTH},
     icon::Icon,
     ui_element::{CanvasCoordinate, UIElement, UIEvent},
+    ui_layout::Container,
 };
 
 pub struct UIButton {
+    container: Container,
     icon: Icon,
     event: UIEvent,
-    x_min: f32,
-    x_max: f32,
-    y_min: f32,
-    y_max: f32,
     disabled: bool,
 }
 
 impl UIButton {
-    pub fn new(
-        canvas_coordinate: CanvasCoordinate,
-        icon: Icon,
-        event: UIEvent,
-        disabled: bool,
-    ) -> Self {
+    pub fn new(container: Container, icon: Icon, event: UIEvent, disabled: bool) -> Self {
         UIButton {
+            container,
             icon,
             event,
-            x_min: canvas_coordinate.x,
-            x_max: canvas_coordinate.x + MENU_ICON_WIDTH,
-            y_min: canvas_coordinate.y,
-            y_max: canvas_coordinate.y + MENU_ICON_HEIGHT,
             disabled,
         }
     }
@@ -43,10 +33,10 @@ impl UIElement for UIButton {
         if self.disabled {
             return None;
         }
-        if canvas_coordinate.x >= self.x_min
-            && canvas_coordinate.x <= self.x_max
-            && canvas_coordinate.y >= self.y_min
-            && canvas_coordinate.y <= self.y_max
+        if canvas_coordinate.x >= self.container.x_horizontal_min
+            && canvas_coordinate.x <= self.container.x_horizontal_max
+            && canvas_coordinate.y >= self.container.y_vertical_min
+            && canvas_coordinate.y <= self.container.y_vertical_max
         {
             Some(self.event)
         } else {
@@ -58,15 +48,21 @@ impl UIElement for UIButton {
         if self.disabled {
             return;
         }
+        println!("{:?}", self.container);
         gc.new_path();
-        gc.rect(self.x_min, self.y_min, self.x_max, self.y_max);
+        gc.rect(
+            self.container.x_horizontal_min,
+            self.container.y_vertical_min,
+            self.container.x_horizontal_max,
+            self.container.y_vertical_max,
+        );
         gc.load_texture(self.icon.texture_id, Cursor::new(self.icon.bytes));
         gc.fill_texture(
             self.icon.texture_id,
-            self.x_min,
-            self.y_max,
-            self.x_max,
-            self.y_min,
+            self.container.x_horizontal_min,
+            self.container.y_vertical_max,
+            self.container.x_horizontal_max,
+            self.container.y_vertical_min,
         );
         gc.fill();
     }
