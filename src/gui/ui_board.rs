@@ -7,23 +7,30 @@ use crate::{
     gui::{
         configuration::{BLACK_FIELD_COLOR, FIELD_SIZE, WHITE_FIELD_COLOR},
         ui_element::{CanvasCoordinate, UIElement, UIEvent},
+        ui_layout::{BoardLayout, Container},
         ui_piece::get_icon,
         ui_square::UISquare,
     },
 };
-enum Orientation {
+#[derive(Debug)]
+pub enum Orientation {
     WhiteUp,
     WhiteDown,
 }
 pub struct UIBoard {
     squares: HashMap<u32, UISquare>,
     orientation: Orientation,
+    layout: BoardLayout,
 }
 impl UIBoard {
     pub fn reset_squares(&mut self) {
         for square in self.squares.values_mut() {
             square.reset();
         }
+    }
+    pub fn set_orientation(&mut self, orientation: Orientation) {
+        self.orientation = orientation;
+        self.layout_squares();
     }
     pub fn turn_board(&mut self) {
         match self.orientation {
@@ -56,15 +63,16 @@ impl UIBoard {
                     Orientation::WhiteDown => 63 - (x + 8 * y),
                 };
                 if let Some(square) = self.squares.get_mut(&index) {
-                    square.set_position(x as f32 * FIELD_SIZE, y as f32 * FIELD_SIZE);
+                    square.set_container(self.layout.get(y + 1, x + 1));
                 }
             }
         }
     }
-    pub fn new() -> Self {
+    pub fn new(container: Container) -> Self {
         let mut board = UIBoard {
             squares: HashMap::new(),
             orientation: Orientation::WhiteUp,
+            layout: BoardLayout::new(container),
         };
         for x in 0..8 {
             for y in 0..8 {

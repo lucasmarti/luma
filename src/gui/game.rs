@@ -12,8 +12,10 @@ use crate::{
             self, FromSquareSelectedData, GameState, PlayerUIState, PromoteData,
             PromotionSquareSelectedData, SelectToSquareData, StateFunction,
         },
+        ui_board::Orientation,
         ui_element::{CanvasCoordinate, UIElement},
         ui_game::UIGame,
+        ui_menu,
     },
 };
 
@@ -52,6 +54,7 @@ impl Game {
                     StateFunction::SelectFromSquare(square) => self.select_from_square(square),
                     StateFunction::SelectToSquare(data) => self.select_to_square(data),
                     StateFunction::Promote(data) => self.promote(data),
+                    StateFunction::TurnBoard => self.turn_board(),
                 }
             }
         }
@@ -59,6 +62,13 @@ impl Game {
 
     fn new_game_as(&mut self, color: engine::piece::Color) {
         self.position = Position::new_starting_position();
+
+        let orientation = match color {
+            engine::piece::Color::Black => Orientation::WhiteDown,
+            engine::piece::Color::White => Orientation::WhiteUp,
+        };
+        println!("set orientation {:?}", orientation);
+        self.ui.set_orientation(orientation);
         self.update_ui();
 
         match color {
@@ -70,6 +80,10 @@ impl Game {
                 self.state = GameState::Player(PlayerUIState::NoSquareSelected);
             }
         }
+    }
+    fn turn_board(&mut self) {
+        self.ui.turn_board();
+        self.update_ui();
     }
     fn select_from_square(&mut self, square: Square) {
         if engine::is_valid_drag_square(&self.position, square) {
@@ -100,6 +114,7 @@ impl Game {
     }
 
     fn promote(&mut self, data: PromoteData) {
+        self.ui.disabled_promotion_buttons();
         match data.get_chess_move_for_selected_promotion_piece() {
             Some(chess_move) => self.execute_player_move(chess_move),
             None => panic!("Irgendwas ist nicht sauber implementiert"),
@@ -128,7 +143,6 @@ impl Game {
         if let Some(position) = engine::execute_move(&self.position, chess_move) {
             self.position = position;
         }
-        self.ui.set_black_promotion_buttons_disabled(false);
         self.update_ui();
         self.state = GameState::Computer;
         self.execute_computer_move();

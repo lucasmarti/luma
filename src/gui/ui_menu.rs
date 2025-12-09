@@ -12,18 +12,15 @@ use crate::{
 };
 
 pub struct UIMenu {
+    container: Container,
     buttons: Vec<UIButton>,
 }
 
 impl UIMenu {
-    pub fn new() -> Self {
-        let layout = MenuLayout::new(Container {
-            x_horizontal_min: 0.0,
-            x_horizontal_max: 8.0 * FIELD_SIZE,
-            y_vertical_min: MENU_POS_Y,
-            y_vertical_max: MENU_POS_Y + MENU_HEIGHT,
-        });
+    pub fn new(container: Container) -> Self {
+        let layout = MenuLayout::new(container);
         let menu = UIMenu {
+            container,
             buttons: vec![
                 UIButton::new(
                     layout.get(Column::Id_1),
@@ -132,7 +129,12 @@ impl UIElement for UIMenu {
     fn draw(&self, gc: &mut Vec<Draw>) {
         gc.new_path();
         gc.fill_color(WHITE_FIELD_COLOR);
-        gc.rect(MENU_POS_X, MENU_POS_Y, MENU_WIDTH, MENU_POS_Y + MENU_HEIGHT);
+        gc.rect(
+            self.container.x_horizontal_min,
+            self.container.y_vertical_min,
+            self.container.x_horizontal_max,
+            self.container.y_vertical_max,
+        );
         gc.fill();
         for button in self.buttons.iter().clone() {
             button.draw(gc);

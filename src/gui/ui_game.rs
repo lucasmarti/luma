@@ -8,10 +8,11 @@ use crate::{
         position::{self, Position},
     },
     gui::{
-        configuration::{BACKGROUND_COLOR, FIELD_SIZE, MENU_HEIGHT},
+        configuration::{BACKGROUND_COLOR, FIELD_SIZE, MENU_HEIGHT, MENU_POS_Y},
         state_machine::GameState,
-        ui_board::UIBoard,
+        ui_board::{Orientation, UIBoard},
         ui_element::{CanvasCoordinate, UIElement, UIEvent},
+        ui_layout::Container,
         ui_menu::UIMenu,
     },
 };
@@ -23,8 +24,18 @@ pub struct UIGame {
 impl UIGame {
     pub fn new() -> Self {
         UIGame {
-            ui_menu: UIMenu::new(),
-            ui_board: UIBoard::new(),
+            ui_menu: UIMenu::new(Container {
+                x_horizontal_min: 0.0,
+                x_horizontal_max: 8.0 * FIELD_SIZE,
+                y_vertical_min: MENU_POS_Y,
+                y_vertical_max: MENU_POS_Y + MENU_HEIGHT,
+            }),
+            ui_board: UIBoard::new(Container {
+                x_horizontal_min: 0.0,
+                x_horizontal_max: 8.0 * FIELD_SIZE,
+                y_vertical_min: 0.0,
+                y_vertical_max: 8.0 * FIELD_SIZE,
+            }),
         }
     }
 
@@ -71,6 +82,9 @@ impl UIGame {
     pub fn turn_board(&mut self) {
         self.ui_board.turn_board();
     }
+    pub fn set_orientation(&mut self, orientation: Orientation) {
+        self.ui_board.set_orientation(orientation);
+    }
     pub fn set_piece(&mut self, square: Square, piece: Piece) {
         self.ui_board.set_piece(square, piece);
     }
@@ -83,6 +97,10 @@ impl UIGame {
     }
     pub fn set_last_move_square(&mut self, square: Square) {
         self.ui_board.set_last_move_square(square);
+    }
+    pub fn disabled_promotion_buttons(&mut self) {
+        self.set_black_promotion_buttons_disabled(true);
+        self.set_white_promotion_buttons_disabled(true);
     }
     pub fn set_black_promotion_buttons_disabled(&mut self, disabled: bool) {
         self.ui_menu.set_black_promotion_buttons_disabled(disabled);

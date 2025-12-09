@@ -13,6 +13,22 @@ impl MenuLayout {
         }
     }
 }
+
+pub struct BoardLayout {
+    layout: Layout,
+}
+
+impl BoardLayout {
+    pub fn new(container: Container) -> Self {
+        BoardLayout {
+            layout: Layout::new(container, 8, 8),
+        }
+    }
+    pub fn get(&self, row: u32, column: u32) -> Container {
+        self.layout.cell(row as u8, column as u8).unwrap()
+    }
+}
+
 pub enum Column {
     Id_1,
     Id_2,
@@ -55,7 +71,7 @@ impl Column {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Default, Debug, Clone, Copy, PartialEq)]
 pub struct Container {
     pub x_horizontal_min: f32,
     pub x_horizontal_max: f32,
