@@ -1,5 +1,5 @@
 use flo_canvas::TextureId;
-#[derive(Clone)]
+#[derive(Clone, Copy, PartialEq, Debug)]
 pub struct Icon {
     pub texture_id: TextureId,
     pub bytes: &'static [u8],
@@ -61,5 +61,9 @@ impl Icon {
     pub const NEW_GAME_BLACK: Icon = Icon {
         texture_id: TextureId(13),
         bytes: include_bytes!["icons/new-black.png"],
+    };
+    pub const TURN_BOARD: Icon = Icon {
+        texture_id: TextureId(14),
+        bytes: include_bytes!["icons/turn-board.png"],
     };
 }

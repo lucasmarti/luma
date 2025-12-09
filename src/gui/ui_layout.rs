@@ -1,16 +1,57 @@
 #[derive(Debug, Clone, Copy)]
-pub struct RowLayout {
+pub struct MenuLayout {
     layout: Layout,
 }
 
-impl RowLayout {
-    pub fn new(container: Container, cells: u8) -> Self {
-        RowLayout {
-            layout: Layout::new(container, 1, cells),
+impl MenuLayout {
+    pub fn get(&self, column: Column) -> Container {
+        self.layout.cell(1, column.as_index()).unwrap()
+    }
+    pub fn new(container: Container) -> Self {
+        MenuLayout {
+            layout: Layout::new(container, 1, 16),
         }
     }
-    pub fn cell(&self, cell: u8) -> Option<Container> {
-        self.layout.cell(1, cell)
+}
+pub enum Column {
+    Id_1,
+    Id_2,
+    Id_3,
+    Id_4,
+    Id_5,
+    Id_6,
+    Id_7,
+    Id_8,
+    Id_9,
+    Id_10,
+    Id_11,
+    Id_12,
+    Id_13,
+    Id_14,
+    Id_15,
+    Id_16,
+}
+
+impl Column {
+    fn as_index(&self) -> u8 {
+        match self {
+            Column::Id_1 => 1,
+            Column::Id_2 => 2,
+            Column::Id_3 => 3,
+            Column::Id_4 => 4,
+            Column::Id_5 => 5,
+            Column::Id_6 => 6,
+            Column::Id_7 => 7,
+            Column::Id_8 => 8,
+            Column::Id_9 => 9,
+            Column::Id_10 => 10,
+            Column::Id_11 => 11,
+            Column::Id_12 => 12,
+            Column::Id_13 => 13,
+            Column::Id_14 => 14,
+            Column::Id_15 => 15,
+            Column::Id_16 => 16,
+        }
     }
 }
 
@@ -22,7 +63,7 @@ pub struct Container {
     pub y_vertical_max: f32,
 }
 #[derive(Debug, Clone, Copy)]
-pub struct Layout {
+struct Layout {
     container: Container,
     cell_width: f32,
     cell_height: f32,
@@ -30,7 +71,7 @@ pub struct Layout {
     columns: u8,
 }
 impl Layout {
-    pub fn new(container: Container, rows: u8, columns: u8) -> Self {
+    fn new(container: Container, rows: u8, columns: u8) -> Self {
         let cell_height = (container.y_vertical_max - container.y_vertical_min) / rows as f32;
         let cell_width = (container.x_horizontal_max - container.x_horizontal_min) / columns as f32;
 
@@ -43,7 +84,7 @@ impl Layout {
         }
     }
 
-    pub fn cell(&self, row: u8, column: u8) -> Option<Container> {
+    fn cell(&self, row: u8, column: u8) -> Option<Container> {
         if (row < 1) || (row > self.rows) || (column < 1) || (column > self.columns) {
             return None;
         }

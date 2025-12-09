@@ -5,148 +5,137 @@ use crate::{
     gui::{
         configuration::*,
         icon::*,
-        ui_button::UIButton,
+        ui_button::{Group, UIButton},
         ui_element::{CanvasCoordinate, UIElement, UIEvent},
         ui_layout::*,
     },
 };
 
 pub struct UIMenu {
-    layout: RowLayout,
-    white_promotion_buttons: [UIButton; 4],
-    black_promotion_buttons: [UIButton; 4],
-    new_game_white_button: UIButton,
-    new_game_black_button: UIButton,
+    buttons: Vec<UIButton>,
 }
 
 impl UIMenu {
     pub fn new() -> Self {
-        let layout = RowLayout::new(
-            Container {
-                x_horizontal_min: 0.0,
-                x_horizontal_max: 8.0 * FIELD_SIZE,
-                y_vertical_min: MENU_POS_Y,
-                y_vertical_max: MENU_POS_Y + MENU_HEIGHT,
-            },
-            16,
-        );
-        let mut menu = UIMenu {
-            layout: layout,
-            white_promotion_buttons: [
+        let layout = MenuLayout::new(Container {
+            x_horizontal_min: 0.0,
+            x_horizontal_max: 8.0 * FIELD_SIZE,
+            y_vertical_min: MENU_POS_Y,
+            y_vertical_max: MENU_POS_Y + MENU_HEIGHT,
+        });
+        let menu = UIMenu {
+            buttons: vec![
                 UIButton::new(
-                    layout.cell(13).unwrap(),
+                    layout.get(Column::Id_1),
+                    Icon::NEW_GAME_BLACK,
+                    UIEvent::NewGameAsButtonClicked(Color::Black),
+                ),
+                UIButton::new(
+                    layout.get(Column::Id_2),
+                    Icon::NEW_GAME_WHITE,
+                    UIEvent::NewGameAsButtonClicked(Color::White),
+                ),
+                UIButton::new(
+                    layout.get(Column::Id_3),
+                    Icon::TURN_BOARD,
+                    UIEvent::TurnBoardClicked,
+                ),
+                UIButton::new(
+                    layout.get(Column::Id_13),
                     Icon::WHITE_BISHOP,
                     UIEvent::PromoteToButtonClicked(Piece::WhiteBishop),
-                    true,
-                ),
+                )
+                .disabled(true)
+                .group(Group::WhitePromotionButtons),
                 UIButton::new(
-                    layout.cell(14).unwrap(),
+                    layout.get(Column::Id_14),
                     Icon::WHITE_KNIGHT,
                     UIEvent::PromoteToButtonClicked(Piece::WhiteKnight),
-                    true,
-                ),
+                )
+                .disabled(true)
+                .group(Group::WhitePromotionButtons),
                 UIButton::new(
-                    layout.cell(15).unwrap(),
+                    layout.get(Column::Id_15),
                     Icon::WHITE_QUEEN,
                     UIEvent::PromoteToButtonClicked(Piece::WhiteQueen),
-                    true,
-                ),
+                )
+                .disabled(true)
+                .group(Group::WhitePromotionButtons),
                 UIButton::new(
-                    layout.cell(16).unwrap(),
+                    layout.get(Column::Id_16),
                     Icon::WHITE_ROOK,
                     UIEvent::PromoteToButtonClicked(Piece::WhiteRook),
-                    true,
-                ),
-            ],
-            black_promotion_buttons: [
+                )
+                .disabled(true)
+                .group(Group::WhitePromotionButtons),
                 UIButton::new(
-                    layout.cell(13).unwrap(),
+                    layout.get(Column::Id_13),
                     Icon::BLACK_BISHOP,
                     UIEvent::PromoteToButtonClicked(Piece::BlackBishop),
-                    true,
-                ),
+                )
+                .group(Group::BlackPromotionButtons)
+                .disabled(true),
                 UIButton::new(
-                    layout.cell(14).unwrap(),
+                    layout.get(Column::Id_14),
                     Icon::BLACK_KNIGHT,
                     UIEvent::PromoteToButtonClicked(Piece::BlackKnight),
-                    true,
-                ),
+                )
+                .disabled(true)
+                .group(Group::BlackPromotionButtons),
                 UIButton::new(
-                    layout.cell(15).unwrap(),
+                    layout.get(Column::Id_15),
                     Icon::BLACK_QUEEN,
                     UIEvent::PromoteToButtonClicked(Piece::BlackQueen),
-                    true,
-                ),
+                )
+                .disabled(true)
+                .group(Group::BlackPromotionButtons),
                 UIButton::new(
-                    layout.cell(16).unwrap(),
+                    layout.get(Column::Id_16),
                     Icon::BLACK_ROOK,
                     UIEvent::PromoteToButtonClicked(Piece::BlackRook),
-                    true,
-                ),
+                )
+                .disabled(true)
+                .group(Group::BlackPromotionButtons),
             ],
-
-            new_game_black_button: UIButton::new(
-                layout.cell(1).unwrap(),
-                Icon::NEW_GAME_BLACK,
-                UIEvent::NewGameAsButtonClicked(Color::Black),
-                false,
-            ),
-            new_game_white_button: UIButton::new(
-                layout.cell(5).unwrap(),
-                Icon::NEW_GAME_WHITE,
-                UIEvent::NewGameAsButtonClicked(Color::White),
-                false,
-            ),
         };
         menu
     }
 
-    pub fn set_black_promotion_buttons_disabled(&mut self, disabled: bool) {
-        for button in self.black_promotion_buttons.iter_mut() {
+    fn set_group_disabled(&mut self, disabled: bool, group: Group) {
+        for button in self
+            .buttons
+            .iter_mut()
+            .filter(|button| button.get_group() == group)
+        {
             button.set_disabled(disabled);
         }
     }
+    pub fn set_black_promotion_buttons_disabled(&mut self, disabled: bool) {
+        self.set_group_disabled(disabled, Group::BlackPromotionButtons);
+    }
+
     pub fn set_white_promotion_buttons_disabled(&mut self, disabled: bool) {
-        for button in self.white_promotion_buttons.iter_mut() {
-            button.set_disabled(disabled);
-        }
+        self.set_group_disabled(disabled, Group::WhitePromotionButtons);
     }
 }
 
 impl UIElement for UIMenu {
     fn dispatch_event(&self, canvas_coordinate: CanvasCoordinate) -> Option<UIEvent> {
-        for button in self.white_promotion_buttons.iter().clone() {
+        for button in self.buttons.iter().clone() {
             if let Some(event) = button.dispatch_event(canvas_coordinate) {
                 return Some(event);
             }
-        }
-        for button in self.black_promotion_buttons.iter().clone() {
-            if let Some(event) = button.dispatch_event(canvas_coordinate) {
-                return Some(event);
-            }
-        }
-        if let Some(event) = self.new_game_white_button.dispatch_event(canvas_coordinate) {
-            return Some(event);
-        }
-        if let Some(event) = self.new_game_black_button.dispatch_event(canvas_coordinate) {
-            return Some(event);
         }
         None
     }
 
     fn draw(&self, gc: &mut Vec<Draw>) {
-        println!("draw menu");
         gc.new_path();
         gc.fill_color(WHITE_FIELD_COLOR);
         gc.rect(MENU_POS_X, MENU_POS_Y, MENU_WIDTH, MENU_POS_Y + MENU_HEIGHT);
         gc.fill();
-        for button in self.black_promotion_buttons.iter().clone() {
+        for button in self.buttons.iter().clone() {
             button.draw(gc);
         }
-        for button in self.white_promotion_buttons.iter().clone() {
-            button.draw(gc);
-        }
-        self.new_game_black_button.draw(gc);
-        self.new_game_white_button.draw(gc);
     }
 }

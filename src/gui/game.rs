@@ -128,6 +128,7 @@ impl Game {
         if let Some(position) = engine::execute_move(&self.position, chess_move) {
             self.position = position;
         }
+        self.ui.set_black_promotion_buttons_disabled(false);
         self.update_ui();
         self.state = GameState::Computer;
         self.execute_computer_move();

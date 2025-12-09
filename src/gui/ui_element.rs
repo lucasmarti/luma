@@ -11,11 +11,12 @@ pub struct CanvasCoordinate {
     pub y: f32,
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Clone, Copy, PartialEq, Debug)]
 pub enum UIEvent {
     NewGameAsButtonClicked(Color),
     PromoteToButtonClicked(Piece),
     SquareClicked(Square),
+    TurnBoardClicked,
 }
 
 pub trait UIElement {

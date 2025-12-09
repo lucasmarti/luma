@@ -8,24 +8,47 @@ use crate::gui::{
     ui_layout::Container,
 };
 
+#[derive(Clone, Copy, PartialEq, Debug)]
+pub enum Group {
+    Default,
+    BlackPromotionButtons,
+    WhitePromotionButtons,
+}
+
+#[derive(Clone, Copy, PartialEq, Debug)]
+
 pub struct UIButton {
     container: Container,
     icon: Icon,
     event: UIEvent,
     disabled: bool,
+    group: Group,
 }
 
 impl UIButton {
-    pub fn new(container: Container, icon: Icon, event: UIEvent, disabled: bool) -> Self {
+    pub fn new(container: Container, icon: Icon, event: UIEvent) -> Self {
         UIButton {
             container,
             icon,
             event,
-            disabled,
+            disabled: false,
+            group: Group::Default,
         }
+    }
+    pub fn disabled(mut self, disabled: bool) -> Self {
+        self.disabled = disabled;
+        self
     }
     pub fn set_disabled(&mut self, disabled: bool) {
         self.disabled = disabled;
+    }
+
+    pub fn group(mut self, group: Group) -> Self {
+        self.group = group;
+        self
+    }
+    pub fn get_group(&self) -> Group {
+        self.group
     }
 }
 impl UIElement for UIButton {
@@ -48,7 +71,6 @@ impl UIElement for UIButton {
         if self.disabled {
             return;
         }
-        println!("{:?}", self.container);
         gc.new_path();
         gc.rect(
             self.container.x_horizontal_min,

@@ -88,6 +88,7 @@ pub enum StateFunction {
 
 pub fn get_function(event: UIEvent, state: &GameState) -> Option<StateFunction> {
     match event {
+        UIEvent::TurnBoardClicked => None,
         UIEvent::NewGameAsButtonClicked(color) => Some(StateFunction::NewGameAs(color)),
         UIEvent::PromoteToButtonClicked(piece) => match state {
             GameState::Player(player_uistate) => match player_uistate {
