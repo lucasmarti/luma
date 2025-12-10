@@ -6,8 +6,9 @@ use crate::{
     engine::{directions::squares::Square, piece::Piece},
     gui::{
         configuration::{BLACK_FIELD_COLOR, FIELD_SIZE, WHITE_FIELD_COLOR},
+        ui_container::Container,
         ui_element::{CanvasCoordinate, UIElement, UIEvent},
-        ui_layout::{BoardLayout, Container},
+        ui_layout::BoardLayout,
         ui_piece::get_icon,
         ui_square::UISquare,
     },

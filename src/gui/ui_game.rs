@@ -11,8 +11,9 @@ use crate::{
         configuration::{BACKGROUND_COLOR, FIELD_SIZE, MENU_HEIGHT, MENU_POS_Y},
         state_machine::GameState,
         ui_board::{Orientation, UIBoard},
+        ui_container::Container,
         ui_element::{CanvasCoordinate, UIElement, UIEvent},
-        ui_layout::Container,
+        ui_layout::GameLayout,
         ui_menu::UIMenu,
     },
 };
@@ -20,22 +21,21 @@ use crate::{
 pub struct UIGame {
     ui_menu: UIMenu,
     ui_board: UIBoard,
+    container: Container,
 }
 impl UIGame {
     pub fn new() -> Self {
+        let container = Container::new(
+            0.0,
+            0.0,
+            8.0 * FIELD_SIZE + 3.0 * MENU_HEIGHT,
+            8.0 * FIELD_SIZE,
+        );
+        let layout: GameLayout = GameLayout::new(container);
         UIGame {
-            ui_menu: UIMenu::new(Container {
-                x_horizontal_min: 0.0,
-                x_horizontal_max: 8.0 * FIELD_SIZE,
-                y_vertical_min: MENU_POS_Y,
-                y_vertical_max: MENU_POS_Y + MENU_HEIGHT,
-            }),
-            ui_board: UIBoard::new(Container {
-                x_horizontal_min: 0.0,
-                x_horizontal_max: 8.0 * FIELD_SIZE,
-                y_vertical_min: 0.0,
-                y_vertical_max: 8.0 * FIELD_SIZE,
-            }),
+            container,
+            ui_menu: UIMenu::new(layout.get_menu()),
+            ui_board: UIBoard::new(layout.get_board()),
         }
     }
 
@@ -122,12 +122,12 @@ impl UIElement for UIGame {
 
     fn draw(&self, gc: &mut Vec<Draw>) {
         gc.clear_canvas(BACKGROUND_COLOR);
-        gc.canvas_height(8.0 * FIELD_SIZE + 2.0 * MENU_HEIGHT);
+        gc.canvas_height(self.container.get_height());
         gc.center_region(
-            0.0,
-            0.0,
-            8.0 * FIELD_SIZE,
-            8.0 * FIELD_SIZE + 2.0 * MENU_HEIGHT,
+            self.container.x_horizontal_min,
+            self.container.y_vertical_min,
+            self.container.x_horizontal_max,
+            self.container.y_vertical_max,
         );
         self.ui_menu.draw(gc);
         self.ui_board.draw(gc);

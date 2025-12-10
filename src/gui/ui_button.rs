@@ -4,8 +4,8 @@ use std::io::Cursor;
 use crate::gui::{
     configuration::{MENU_ICON_HEIGHT, MENU_ICON_WIDTH},
     icon::Icon,
+    ui_container::Container,
     ui_element::{CanvasCoordinate, UIElement, UIEvent},
-    ui_layout::Container,
 };
 
 #[derive(Clone, Copy, PartialEq, Debug)]

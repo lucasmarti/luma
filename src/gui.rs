@@ -7,6 +7,7 @@ pub mod game;
 mod state_machine;
 mod ui_board;
 mod ui_button;
+mod ui_container;
 pub mod ui_element;
 mod ui_game;
 pub mod ui_layout;

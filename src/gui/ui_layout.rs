@@ -1,3 +1,40 @@
+use crate::gui::ui_container::Container;
+
+pub struct GameLayout {
+    layout: Layout,
+}
+
+impl GameLayout {
+    pub fn new(container: Container) -> Self {
+        GameLayout {
+            layout: Layout::new(container, 20, 8),
+        }
+    }
+    pub fn get_menu(&self) -> Container {
+        self.span(2, 1, 1, 8).unwrap()
+    }
+
+    pub fn get_board(&self) -> Container {
+        self.span(4, 1, 16, 8).unwrap()
+    }
+
+    fn span(&self, row: u8, column: u8, row_span: u8, col_span: u8) -> Option<Container> {
+        if let (Some(from), Some(to)) = (
+            self.layout.cell(row, column),
+            self.layout.cell(row + row_span - 1, column + col_span - 1),
+        ) {
+            return Some(Container {
+                x_horizontal_min: from.x_horizontal_min,
+                x_horizontal_max: to.x_horizontal_max,
+                y_vertical_min: from.y_vertical_min,
+                y_vertical_max: to.y_vertical_max,
+            });
+        }
+        eprint!("Ungültiger Span");
+        None
+    }
+}
+
 #[derive(Debug, Clone, Copy)]
 pub struct MenuLayout {
     layout: Layout,
@@ -71,13 +108,6 @@ impl Column {
     }
 }
 
-#[derive(Default, Debug, Clone, Copy, PartialEq)]
-pub struct Container {
-    pub x_horizontal_min: f32,
-    pub x_horizontal_max: f32,
-    pub y_vertical_min: f32,
-    pub y_vertical_max: f32,
-}
 #[derive(Debug, Clone, Copy)]
 struct Layout {
     container: Container,

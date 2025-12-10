@@ -5,10 +5,10 @@ use flo_canvas::{Color, Draw, DrawingTarget, GraphicsContext, GraphicsPrimitives
 use crate::{
     engine::directions::squares::Square,
     gui::{
-        configuration::{DROP_TARGET_COLOR, FIELD_SIZE, FROM_TO_COLOR, SELECTED_FIELD_COLOR},
+        configuration::{DROP_TARGET_COLOR, FROM_TO_COLOR, SELECTED_FIELD_COLOR},
         icon::Icon,
+        ui_container::Container,
         ui_element::{CanvasCoordinate, UIElement, UIEvent},
-        ui_layout::Container,
     },
 };
 
@@ -80,7 +80,11 @@ impl UISquare {
     fn draw_drop_target(&self, gc: &mut Vec<Draw>) {
         if self.drop_target {
             gc.new_path();
-            gc.circle(self.get_center_x(), self.get_center_y(), FIELD_SIZE / 10.0);
+            gc.circle(
+                self.container.get_center_x(),
+                self.container.get_center_y(),
+                self.container.get_height() / 10.0,
+            );
             gc.line_width(2.0);
             gc.stroke_color(DROP_TARGET_COLOR);
             gc.stroke();
@@ -104,18 +108,15 @@ impl UISquare {
     fn draw_last_move_field(&self, gc: &mut Vec<Draw>) {
         if self.last_move {
             gc.new_path();
-            gc.circle(self.get_center_x(), self.get_center_y(), FIELD_SIZE / 10.0);
+            gc.circle(
+                self.container.get_center_x(),
+                self.container.get_center_y(),
+                self.container.get_height() / 10.0,
+            );
             gc.line_width(2.0);
             gc.stroke_color(FROM_TO_COLOR);
             gc.stroke();
         }
-    }
-
-    fn get_center_x(&self) -> f32 {
-        (self.container.x_horizontal_min + self.container.x_horizontal_max) / 2.0
-    }
-    fn get_center_y(&self) -> f32 {
-        (self.container.y_vertical_min + self.container.y_vertical_max) / 2.0
     }
 }
 
