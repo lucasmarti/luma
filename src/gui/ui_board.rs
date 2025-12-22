@@ -56,6 +56,12 @@ impl UIBoard {
         }
     }
 
+    pub fn set_check_square(&mut self, square: Square) {
+        if let Some(ui_square) = self.squares.get_mut(&square.as_index()) {
+            ui_square.set_check(true);
+        }
+    }
+
     fn layout_squares(&mut self) {
         for x in 0..8 {
             for y in 0..8 {

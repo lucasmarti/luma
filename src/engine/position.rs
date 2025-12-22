@@ -44,7 +44,7 @@ impl Position {
         self.last_move.map(|chess_move| chess_move.to)
     }
 
-    pub fn get_last_move_from_square(&self) -> Option<Square> {
+    pub fn get_from_square(&self) -> Option<Square> {
         self.last_move.map(|chess_move| chess_move.from)
     }
 

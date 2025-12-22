@@ -5,7 +5,7 @@ use flo_canvas::{Color, Draw, GraphicsContext, GraphicsPrimitives};
 use crate::{
     engine::directions::squares::Square,
     gui::{
-        configuration::{DROP_TARGET_COLOR, FROM_TO_COLOR, SELECTED_FIELD_COLOR},
+        configuration::{CHECK_COLOR, DROP_TARGET_COLOR, FROM_TO_COLOR, SELECTED_FIELD_COLOR},
         icon::Icon,
         ui_container::Container,
         ui_element::{CanvasCoordinate, UIElement, UIEvent},
@@ -47,6 +47,9 @@ impl UISquare {
     }
     pub fn set_selected(&mut self, selected: bool) {
         self.selected = selected;
+    }
+    pub fn set_check(&mut self, check: bool) {
+        self.check = check;
     }
 
     pub fn set_drop_target(&mut self, drop_target: bool) {
@@ -91,7 +94,22 @@ impl UISquare {
         }
     }
 
-    fn draw_selected_field(&self, gc: &mut Vec<Draw>) {
+    fn draw_check_square(&self, gc: &mut Vec<Draw>) {
+        if self.check {
+            gc.new_path();
+            gc.rect(
+                self.container.x_horizontal_min,
+                self.container.y_vertical_max,
+                self.container.x_horizontal_max,
+                self.container.y_vertical_min,
+            );
+            gc.line_width(2.0);
+            gc.stroke_color(CHECK_COLOR);
+            gc.stroke();
+        }
+    }
+
+    fn draw_selected_square(&self, gc: &mut Vec<Draw>) {
         if self.selected {
             gc.new_path();
             gc.rect(
@@ -105,7 +123,7 @@ impl UISquare {
             gc.stroke();
         }
     }
-    fn draw_last_move_field(&self, gc: &mut Vec<Draw>) {
+    fn draw_last_move_square(&self, gc: &mut Vec<Draw>) {
         if self.last_move {
             gc.new_path();
             gc.circle(
@@ -144,7 +162,9 @@ impl UIElement for UISquare {
         gc.fill_color(self.color);
         gc.fill();
         self.draw_icon(gc);
-        self.draw_selected_field(gc);
+        self.draw_last_move_square(gc);
+        self.draw_selected_square(gc);
+        self.draw_check_square(gc);
         self.draw_drop_target(gc);
     }
 }

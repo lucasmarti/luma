@@ -1,7 +1,7 @@
 use flo_canvas::{Draw, GraphicsContext};
 
 use crate::{
-    engine::{directions::squares::Square, piece::Piece, position::Position},
+    engine::{self, directions::squares::Square, piece::Piece, position::Position},
     gui::{
         configuration::{BACKGROUND_COLOR, FIELD_SIZE, MENU_HEIGHT},
         state_machine::{GameState, SquareSelected},
@@ -39,19 +39,26 @@ impl UIGame {
         for (square, piece) in position.get_all_pieces() {
             self.set_piece(square, piece);
         }
+        if let Some(square) = engine::get_check_square(position) {
+            self.ui_board.set_check_square(square);
+        }
+        if let Some(chess_move) = position.get_last_move() {
+            self.set_last_move_square(chess_move.from);
+            self.set_last_move_square(chess_move.to);
+        }
         if let GameState::Player(square_selected) = state {
             match square_selected {
                 SquareSelected::From(data) => {
-                    for chess_move in data.possible_moves.iter() {
+                    for chess_move in data.possible_moves_from.iter() {
                         self.set_drop_target_square(chess_move.to);
                     }
-                    self.set_selected_square(data.square);
+                    self.set_selected_square(data.from);
                 }
                 SquareSelected::Promotion(data) => {
-                    if let Some(chess_move) = data.promotion_moves.first() {
+                    if let Some(chess_move) = data.possible_promotion_moves.first() {
                         self.set_selected_square(chess_move.from);
                         self.set_drop_target_square(chess_move.to);
-                        match chess_move.piece.get_color() {
+                        match position.get_player() {
                             crate::engine::piece::Color::Black => {
                                 self.set_black_promotion_buttons_disabled(false)
                             }
@@ -64,10 +71,6 @@ impl UIGame {
                 _ => {}
             }
         }
-
-        //        if let Some(square) = engine::get_check_square(position){
-        //            self.ui_board.
-        //        }
     }
 
     pub fn reset_squares(&mut self) {

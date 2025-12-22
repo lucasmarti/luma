@@ -1,16 +1,12 @@
 use flo_canvas::{Draw, DrawingTarget};
 
 use crate::{
-    engine::{
-        self,
-        chess_moves::{ChessMove, MoveType},
-        directions::squares::Square,
-        position::Position,
-    },
+    engine::{self, directions::squares::Square, position::Position},
     gui::{
         state_machine::{
-            self, FromSquareSelectedData, GameState, PromoteData, PromotionSquareSelectedData,
-            SelectToSquareData, SquareSelected, StateFunction,
+            self, FromSquareSelectedData, GameState, NoSquareSelectedData, PromoteFunctionData,
+            PromotionSquareSelectedData, SelectFromSquareFunctionData, SelectToSquareFunctionData,
+            SquareSelected, StateFunction,
         },
         ui_board::Orientation,
         ui_element::{CanvasCoordinate, UIElement},
@@ -29,8 +25,8 @@ impl Game {
         Game {
             canvas,
             ui: UIGame::new(),
-            state: GameState::Player(SquareSelected::No),
-            position: Position::new_starting_position(),
+            state: GameState::NoGame,
+            position: Position::default(),
         }
     }
     pub fn draw(&mut self) {
@@ -50,7 +46,7 @@ impl Game {
             if let Some(state_function) = state_machine::get_function(event, &self.state) {
                 match state_function {
                     StateFunction::NewGameAs(color) => self.new_game_as(color),
-                    StateFunction::SelectFromSquare(square) => self.select_from_square(square),
+                    StateFunction::SelectFromSquare(data) => self.select_from_square(data),
                     StateFunction::SelectToSquare(data) => self.select_to_square(data),
                     StateFunction::Promote(data) => self.promote(data),
                     StateFunction::TurnBoard => self.turn_board(),
@@ -66,17 +62,25 @@ impl Game {
             engine::piece::Color::Black => Orientation::WhiteDown,
             engine::piece::Color::White => Orientation::WhiteUp,
         };
-        println!("set orientation {:?}", orientation);
         self.ui.set_orientation(orientation);
         self.update_ui();
 
         match color {
             engine::piece::Color::Black => {
                 self.state = GameState::Computer;
+                self.position = Position::new_starting_position();
                 self.execute_computer_move();
             }
             engine::piece::Color::White => {
-                self.state = GameState::Player(SquareSelected::No);
+                self.position = Position::new_starting_position();
+                match engine::get_possible_moves(&self.position) {
+                    Ok(possible_moves) => {
+                        self.state = GameState::Player(SquareSelected::No(NoSquareSelectedData {
+                            possible_moves: map_possible_moves(possible_moves),
+                        }));
+                    }
+                    Err(_) => self.state = GameState::NoGame,
+                }
             }
         }
     }
@@ -84,65 +88,139 @@ impl Game {
         self.ui.turn_board();
         self.update_ui();
     }
-    fn select_from_square(&mut self, square: Square) {
-        if engine::is_valid_drag_square(&self.position, square) {
-            self.state = GameState::Player(SquareSelected::From(FromSquareSelectedData {
-                square,
-                possible_moves: engine::get_possible_moves(&self.position, square),
+    fn select_from_square(&mut self, data: SelectFromSquareFunctionData) {
+        let possible_moves_from = get_selected_moves_from(data.possible_moves.clone(), data.from);
+        if possible_moves_from.is_empty() {
+            self.state = GameState::Player(SquareSelected::No(NoSquareSelectedData {
+                possible_moves: data.possible_moves.clone(),
             }));
         } else {
-            self.state = GameState::Player(SquareSelected::No);
+            self.state = GameState::Player(SquareSelected::From(FromSquareSelectedData {
+                possible_moves: data.possible_moves.clone(),
+                possible_moves_from,
+                from: data.from,
+            }));
         }
         self.update_ui();
     }
 
-    fn select_to_square(&mut self, data: SelectToSquareData) {
-        match data.get_chess_move_for_to_square() {
-            Some(chess_move) => match chess_move.move_type {
-                MoveType::Promotion | MoveType::PromotionCapture => {
-                    self.enable_promotion_buttons(data);
-                }
-                _ => {
-                    self.execute_player_move(chess_move);
-                }
-            },
-            None => self.state = GameState::Player(SquareSelected::No),
+    fn select_to_square(&mut self, data: SelectToSquareFunctionData) {
+        match get_selected_moves_to(data.possible_moves_from, data.to) {
+            Some(SimpleMoveOrPromotions::SimpleMove(ui_move)) => {
+                self.execute_player_move(ui_move.position);
+            }
+            Some(SimpleMoveOrPromotions::Promotions(possible_promotion_moves)) => {
+                self.enable_promotion_buttons(data.possible_moves, possible_promotion_moves);
+            }
+            None => {
+                self.state = GameState::Player(SquareSelected::No(NoSquareSelectedData {
+                    possible_moves: data.possible_moves.clone(),
+                }));
+                self.update_ui();
+            }
         }
-        self.draw();
     }
 
-    fn promote(&mut self, data: PromoteData) {
+    fn promote(&mut self, data: PromoteFunctionData) {
         self.ui.disabled_promotion_buttons();
-        match data.get_chess_move_for_selected_promotion_piece() {
-            Some(chess_move) => self.execute_player_move(chess_move),
-            None => panic!("Irgendwas ist nicht sauber implementiert"),
+        if let Some(promotion_move) = data.possible_promotion_moves.iter().find(|promotion_move| {
+            promotion_move.position.get_promotion_piece() == Some(data.piece)
+        }) {
+            self.position = promotion_move.position;
+            self.state = GameState::Computer;
+            self.execute_computer_move();
         }
     }
 
-    fn enable_promotion_buttons(&mut self, data: SelectToSquareData) {
+    fn enable_promotion_buttons(
+        &mut self,
+        possible_moves: Vec<UIMove>,
+        possible_promotion_moves: Vec<UIMove>,
+    ) {
         self.state = GameState::Player(SquareSelected::Promotion(
-            PromotionSquareSelectedData::from(data),
+            PromotionSquareSelectedData::from(possible_moves, possible_promotion_moves),
         ));
         self.update_ui();
     }
 
     fn execute_computer_move(&mut self) {
         match engine::get_next_move(&self.position) {
-            Some(conmputer_position) => {
-                self.position = conmputer_position;
-                self.state = GameState::Player(SquareSelected::No);
+            engine::MoveOrEnd::Move(position) => {
+                self.position = position;
+                match engine::get_possible_moves(&self.position) {
+                    Ok(possible_moves) => {
+                        self.state = GameState::Player(SquareSelected::No(NoSquareSelectedData {
+                            possible_moves: map_possible_moves(possible_moves),
+                        }));
+                    }
+                    Err(game_end) => {
+                        self.state = GameState::GameOver;
+                    }
+                }
             }
-            None => self.state = GameState::GameOver,
+            engine::MoveOrEnd::GameEnd(game_end) => {
+                self.state = GameState::GameOver;
+            }
         }
         self.update_ui();
     }
 
-    fn execute_player_move(&mut self, chess_move: ChessMove) {
-        if let Some(position) = engine::execute_move(&self.position, chess_move) {
-            self.position = position;
-        }
-        self.update_ui();
+    fn execute_player_move(&mut self, position: Position) {
+        self.position = position;
         self.state = GameState::Computer;
+        self.update_ui();
         self.execute_computer_move();
     }
+}
+
+fn map_possible_moves(possible_moves: Vec<Position>) -> Vec<UIMove> {
+    let mut ui_possible_moves: Vec<UIMove> = Vec::new();
+    for possible_move in possible_moves {
+        if let (Some(from), Some(to)) = (
+            possible_move.get_from_square(),
+            possible_move.get_to_square(),
+        ) {
+            ui_possible_moves.push(UIMove {
+                from,
+                to,
+                position: possible_move,
+            });
+        }
+    }
+    ui_possible_moves
+}
+
+fn get_selected_moves_from(possible_moves: Vec<UIMove>, from: Square) -> Vec<UIMove> {
+    possible_moves
+        .into_iter()
+        .filter(|ui_move| from == ui_move.from)
+        .collect()
+}
+
+fn get_selected_moves_to(
+    possible_moves: Vec<UIMove>,
+    to: Square,
+) -> Option<SimpleMoveOrPromotions> {
+    let mut moves_from_to: Vec<UIMove> = possible_moves
+        .into_iter()
+        .filter(|ui_move| to == ui_move.to)
+        .collect();
+    if moves_from_to.len() == 4 {
+        Some(SimpleMoveOrPromotions::Promotions(moves_from_to))
+    } else {
+        moves_from_to
+            .pop()
+            .map(|ui_move| SimpleMoveOrPromotions::SimpleMove(ui_move))
+    }
+}
+#[derive(Debug, Clone, Copy)]
+pub struct UIMove {
+    pub from: Square,
+    pub to: Square,
+    pub position: Position,
+}
+
+enum SimpleMoveOrPromotions {
+    SimpleMove(UIMove),
+    Promotions(Vec<UIMove>),
 }
