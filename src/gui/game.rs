@@ -3,19 +3,18 @@ use flo_canvas::{Draw, DrawingTarget};
 use crate::{
     engine::{
         self,
-        chess_moves::{self, ChessMove, MoveType},
+        chess_moves::{ChessMove, MoveType},
         directions::squares::Square,
         position::Position,
     },
     gui::{
         state_machine::{
-            self, FromSquareSelectedData, GameState, PlayerUIState, PromoteData,
-            PromotionSquareSelectedData, SelectToSquareData, StateFunction,
+            self, FromSquareSelectedData, GameState, PromoteData, PromotionSquareSelectedData,
+            SelectToSquareData, SquareSelected, StateFunction,
         },
         ui_board::Orientation,
         ui_element::{CanvasCoordinate, UIElement},
         ui_game::UIGame,
-        ui_menu,
     },
 };
 
@@ -30,7 +29,7 @@ impl Game {
         Game {
             canvas,
             ui: UIGame::new(),
-            state: GameState::Player(PlayerUIState::NoSquareSelected),
+            state: GameState::Player(SquareSelected::No),
             position: Position::new_starting_position(),
         }
     }
@@ -77,7 +76,7 @@ impl Game {
                 self.execute_computer_move();
             }
             engine::piece::Color::White => {
-                self.state = GameState::Player(PlayerUIState::NoSquareSelected);
+                self.state = GameState::Player(SquareSelected::No);
             }
         }
     }
@@ -87,13 +86,12 @@ impl Game {
     }
     fn select_from_square(&mut self, square: Square) {
         if engine::is_valid_drag_square(&self.position, square) {
-            self.state =
-                GameState::Player(PlayerUIState::FromSquareSelected(FromSquareSelectedData {
-                    square: square,
-                    possible_moves: engine::get_possible_moves(&self.position, square),
-                }));
+            self.state = GameState::Player(SquareSelected::From(FromSquareSelectedData {
+                square,
+                possible_moves: engine::get_possible_moves(&self.position, square),
+            }));
         } else {
-            self.state = GameState::Player(PlayerUIState::NoSquareSelected);
+            self.state = GameState::Player(SquareSelected::No);
         }
         self.update_ui();
     }
@@ -108,7 +106,7 @@ impl Game {
                     self.execute_player_move(chess_move);
                 }
             },
-            None => self.state = GameState::Player(PlayerUIState::NoSquareSelected),
+            None => self.state = GameState::Player(SquareSelected::No),
         }
         self.draw();
     }
@@ -122,7 +120,7 @@ impl Game {
     }
 
     fn enable_promotion_buttons(&mut self, data: SelectToSquareData) {
-        self.state = GameState::Player(PlayerUIState::PromotionSquareSelected(
+        self.state = GameState::Player(SquareSelected::Promotion(
             PromotionSquareSelectedData::from(data),
         ));
         self.update_ui();
@@ -132,7 +130,7 @@ impl Game {
         match engine::get_next_move(&self.position) {
             Some(conmputer_position) => {
                 self.position = conmputer_position;
-                self.state = GameState::Player(PlayerUIState::NoSquareSelected);
+                self.state = GameState::Player(SquareSelected::No);
             }
             None => self.state = GameState::GameOver,
         }

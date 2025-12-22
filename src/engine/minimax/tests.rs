@@ -3,26 +3,26 @@ use crate::engine::minimax::*;
 #[test]
 fn test_full_tree_max_player_1() {
     let tree = build_tree();
-    let result = evaluate(&tree, Player::MAX, 3);
+    let result = evaluate(&tree, Player::Max, 3);
     assert_eq!(result.0.unwrap().id, 3);
 }
 #[test]
 fn test_full_tree_max_player_2() {
     let tree = build_tree();
-    let result = evaluate(&tree, Player::MAX, 3);
+    let result = evaluate(&tree, Player::Max, 3);
     assert_eq!(result.1, 5.0);
 }
 
 #[test]
 fn test_full_tree_min_player_1() {
     let tree = build_tree();
-    let result = evaluate(&tree, Player::MIN, 3);
+    let result = evaluate(&tree, Player::Min, 3);
     assert_eq!(result.0.unwrap().id, 1);
 }
 #[test]
 fn test_full_tree_min_player_2() {
     let tree = build_tree();
-    let result = evaluate(&tree, Player::MIN, 3);
+    let result = evaluate(&tree, Player::Min, 3);
     assert_eq!(result.1, 3.0);
 }
 
@@ -33,7 +33,7 @@ fn test_game_over() {
         value: 11.0,
         children: Vec::new(),
     };
-    let result = evaluate(&empty_tree, Player::MAX, 2);
+    let result = evaluate(&empty_tree, Player::Max, 2);
     assert!(result.0.is_none());
     assert_eq!(result.1, 11.0);
 }

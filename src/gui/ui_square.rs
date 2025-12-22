@@ -1,6 +1,6 @@
-use std::{fs::File, io::Cursor};
+use std::io::Cursor;
 
-use flo_canvas::{Color, Draw, DrawingTarget, GraphicsContext, GraphicsPrimitives};
+use flo_canvas::{Color, Draw, GraphicsContext, GraphicsPrimitives};
 
 use crate::{
     engine::directions::squares::Square,

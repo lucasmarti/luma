@@ -1,11 +1,7 @@
 use crate::engine::{
     chess_moves::{common::progess, ChessMove, MoveType},
     directions::{self, squares::Square, DirectionFn, RowFn},
-    piece::{
-        Color, Piece, Piece::BlackBishop, Piece::BlackKnight, Piece::BlackPawn, Piece::BlackQueen,
-        Piece::BlackRook, Piece::WhiteBishop, Piece::WhiteKnight, Piece::WhitePawn,
-        Piece::WhiteQueen, Piece::WhiteRook, Typ,
-    },
+    piece::{Color, Piece, Typ},
     position::Position,
 };
 
@@ -176,7 +172,7 @@ fn get_move_white_left_capture(position: &Position, from: Square) -> Option<Posi
     if directions::is_in_row_7(from) {
         return None;
     }
-    return get_move_capture(position, from, directions::up_left, Piece::WhitePawn);
+    get_move_capture(position, from, directions::up_left, Piece::WhitePawn)
 }
 
 fn get_move_white_right_capture(position: &Position, from: Square) -> Option<Position> {
@@ -184,7 +180,7 @@ fn get_move_white_right_capture(position: &Position, from: Square) -> Option<Pos
     if directions::is_in_row_7(from) {
         return None;
     }
-    return get_move_capture(position, from, directions::up_right, Piece::WhitePawn);
+    get_move_capture(position, from, directions::up_right, Piece::WhitePawn)
 }
 
 fn get_move_black_left_capture(position: &Position, from: Square) -> Option<Position> {
@@ -192,7 +188,7 @@ fn get_move_black_left_capture(position: &Position, from: Square) -> Option<Posi
     if directions::is_in_row_2(from) {
         return None;
     }
-    return get_move_capture(position, from, directions::down_left, Piece::BlackPawn);
+    get_move_capture(position, from, directions::down_left, Piece::BlackPawn)
 }
 
 fn get_move_black_right_capture(position: &Position, from: Square) -> Option<Position> {
@@ -200,7 +196,7 @@ fn get_move_black_right_capture(position: &Position, from: Square) -> Option<Pos
     if directions::is_in_row_2(from) {
         return None;
     }
-    return get_move_capture(position, from, directions::down_right, Piece::BlackPawn);
+    get_move_capture(position, from, directions::down_right, Piece::BlackPawn)
 }
 
 fn get_move_en_passant(
@@ -252,18 +248,18 @@ fn get_moves_black_promotion(position: &Position, from: Square) -> Vec<Position>
 }
 
 fn get_moves_white_promotion_left_capture(position: &Position, from: Square) -> Vec<Position> {
-    return get_promotion_capture(position, from, WHITE_PROMOTION_LEFT_CONFIG);
+    get_promotion_capture(position, from, WHITE_PROMOTION_LEFT_CONFIG)
 }
 
 fn get_moves_white_promotion_right_capture(position: &Position, from: Square) -> Vec<Position> {
-    return get_promotion_capture(position, from, WHITE_PROMOTION_RIGHT_CONFIG);
+    get_promotion_capture(position, from, WHITE_PROMOTION_RIGHT_CONFIG)
 }
 fn get_moves_black_promotion_left_capture(position: &Position, from: Square) -> Vec<Position> {
-    return get_promotion_capture(position, from, BLACK_PROMOTION_LEFT_CONFIG);
+    get_promotion_capture(position, from, BLACK_PROMOTION_LEFT_CONFIG)
 }
 
 fn get_moves_black_promotion_right_capture(position: &Position, from: Square) -> Vec<Position> {
-    return get_promotion_capture(position, from, BLACK_PROMOTION_RIGHT_CONFIG);
+    get_promotion_capture(position, from, BLACK_PROMOTION_RIGHT_CONFIG)
 }
 
 fn get_promotion(position: &Position, from: Square, config: PromotionConfig) -> Vec<Position> {
@@ -436,7 +432,7 @@ pub fn is_pawn_two_rows_forward(piece: Piece, from: Square, to: Square) -> bool 
             }
         }
     }
-    return false;
+    false
 }
 
 #[cfg(test)]

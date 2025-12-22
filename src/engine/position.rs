@@ -1,11 +1,7 @@
 use crate::engine::{
     chess_moves::{ChessMove, MoveType},
     directions::squares::*,
-    piece::{
-        Color, Piece, Piece::BlackBishop, Piece::BlackKing, Piece::BlackKnight, Piece::BlackPawn,
-        Piece::BlackQueen, Piece::BlackRook, Piece::WhiteBishop, Piece::WhiteKing,
-        Piece::WhiteKnight, Piece::WhitePawn, Piece::WhiteQueen, Piece::WhiteRook, Typ,
-    },
+    piece::{Color, Piece, Typ},
     position::bitboard::Bitboard,
 };
 
@@ -45,26 +41,19 @@ impl Position {
     }
 
     pub fn get_to_square(&self) -> Option<Square> {
-        match self.last_move {
-            Some(chess_move) => Some(chess_move.to),
-            None => None,
-        }
+        self.last_move.map(|chess_move| chess_move.to)
     }
 
     pub fn get_last_move_from_square(&self) -> Option<Square> {
-        match self.last_move {
-            Some(chess_move) => Some(chess_move.from),
-            None => None,
-        }
+        self.last_move.map(|chess_move| chess_move.from)
     }
 
     pub fn is_promotion(&self) -> bool {
         match self.last_move {
-            Some(chess_move) => match chess_move.move_type {
-                MoveType::Promotion => true,
-                MoveType::PromotionCapture => true,
-                _ => false,
-            },
+            Some(chess_move) => matches!(
+                chess_move.move_type,
+                MoveType::Promotion | MoveType::PromotionCapture
+            ),
             None => false,
         }
     }
@@ -134,7 +123,7 @@ impl Position {
             Color::Black => Piece::BlackKing,
             Color::White => Piece::WhiteKing,
         };
-        for square in self.get_squares(king).iter() {
+        if let Some(square) = self.get_squares(king).iter().next() {
             return square;
         }
         panic!("No King found {:?}", color);

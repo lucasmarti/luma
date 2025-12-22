@@ -1,4 +1,3 @@
-use futures::stream::iter;
 use rand::seq::IndexedRandom;
 
 use crate::engine::{
@@ -9,7 +8,7 @@ use crate::engine::{
     },
     directions::squares::{Square, BLACK_KING_STARTING_POSITION, WHITE_KING_STARTING_POSITION},
     minimax::chess_impl::get_best_move,
-    piece::Piece::{self, BlackKing, WhiteKing},
+    piece::Piece::{self},
     position::Position,
 };
 
@@ -30,7 +29,7 @@ pub fn get_check_square(position: &Position) -> Option<Square> {
             piece::Color::Black => Piece::BlackKing,
             piece::Color::White => Piece::WhiteKing,
         };
-        for square in position.get_squares(king).iter() {
+        if let Some(square) = position.get_squares(king).iter().next() {
             return Some(square);
         }
     }
@@ -40,10 +39,7 @@ pub fn get_check_square(position: &Position) -> Option<Square> {
 #[allow(dead_code)]
 fn get_random_move(position: &Position) -> Option<Position> {
     let positions = get_current_player_moves(position);
-    match positions.choose(&mut rand::rng()) {
-        Some(position) => Some(*position),
-        None => None,
-    }
+    positions.choose(&mut rand::rng()).copied()
 }
 
 pub fn is_valid_drag_square(position: &Position, square: Square) -> bool {

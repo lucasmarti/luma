@@ -8,14 +8,14 @@ use crate::{
 };
 pub enum GameState {
     Computer,
-    Player(PlayerUIState),
+    Player(SquareSelected),
     GameOver,
 }
 #[derive(Debug)]
-pub enum PlayerUIState {
-    NoSquareSelected,
-    FromSquareSelected(FromSquareSelectedData),
-    PromotionSquareSelected(PromotionSquareSelectedData),
+pub enum SquareSelected {
+    No,
+    From(FromSquareSelectedData),
+    Promotion(PromotionSquareSelectedData),
 }
 #[derive(Debug)]
 pub struct FromSquareSelectedData {
@@ -92,18 +92,15 @@ pub fn get_function(event: UIEvent, state: &GameState) -> Option<StateFunction> 
         UIEvent::TurnBoardClicked => Some(StateFunction::TurnBoard),
         UIEvent::NewGameAsButtonClicked(color) => Some(StateFunction::NewGameAs(color)),
         UIEvent::PromoteToButtonClicked(piece) => match state {
-            GameState::Player(player_uistate) => match player_uistate {
-                PlayerUIState::PromotionSquareSelected(data) => {
-                    Some(StateFunction::Promote(PromoteData::from(data, piece)))
-                }
-                _ => None,
-            },
+            GameState::Player(SquareSelected::Promotion(data)) => {
+                Some(StateFunction::Promote(PromoteData::from(data, piece)))
+            }
             _ => None,
         },
         UIEvent::SquareClicked(square) => match state {
             GameState::Player(player_uistate) => match player_uistate {
-                PlayerUIState::NoSquareSelected => Some(StateFunction::SelectFromSquare(square)),
-                PlayerUIState::FromSquareSelected(data) => Some(StateFunction::SelectToSquare(
+                SquareSelected::No => Some(StateFunction::SelectFromSquare(square)),
+                SquareSelected::From(data) => Some(StateFunction::SelectToSquare(
                     SelectToSquareData::from(data, square),
                 )),
                 _ => None,

@@ -9,10 +9,7 @@ use crate::engine::{
         pawn::get_pawn_moves,
     },
     directions::{self, squares::Square, DirectionFn},
-    piece::{
-        Piece, Piece::BlackBishop, Piece::BlackKing, Piece::BlackKnight, Piece::BlackPawn, Piece::BlackQueen, Piece::BlackRook,
-        Piece::WhiteBishop, Piece::WhiteKing, Piece::WhiteKnight, Piece::WhitePawn, Piece::WhiteQueen, Piece::WhiteRook,
-    },
+    piece::Piece,
     position::Position,
 };
 

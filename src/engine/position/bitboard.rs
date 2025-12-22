@@ -4,7 +4,7 @@ use std::ops::{BitAnd, BitOr};
 
 use crate::engine::directions::squares::Square;
 
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Default)]
 
 pub struct Bitboard(u64);
 impl Bitboard {
@@ -13,14 +13,14 @@ impl Bitboard {
         if index > 63 {
             panic!("Index out of bound[0..63] found {:?}", index);
         }
-        Bitboard { 0: 1 << index }
+        Bitboard(1 << index)
     }
     pub fn count_ones(&self) -> u32 {
         self.0.count_ones()
     }
 
     pub fn from_vec(vec: Vec<Square>) -> Bitboard {
-        let mut bitboard = Bitboard { 0: 0 };
+        let mut bitboard = Bitboard(0);
         for square in vec {
             bitboard.set_bit(square);
         }
@@ -39,7 +39,7 @@ impl Bitboard {
         self.0
     }
 
-    pub fn iter(&self) -> BitboardIterator {
+    pub fn iter(&self) -> BitboardIterator<'_> {
         BitboardIterator {
             bitboard: self,
             index: 0,
@@ -67,11 +67,6 @@ impl BitAnd for Bitboard {
 
     fn bitand(self, rhs: Self) -> Self::Output {
         Bitboard(self.0.bitand(rhs.0))
-    }
-}
-impl Default for Bitboard {
-    fn default() -> Self {
-        Self(Default::default())
     }
 }
 

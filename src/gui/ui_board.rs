@@ -5,7 +5,7 @@ use flo_canvas::Draw;
 use crate::{
     engine::{directions::squares::Square, piece::Piece},
     gui::{
-        configuration::{BLACK_FIELD_COLOR, FIELD_SIZE, WHITE_FIELD_COLOR},
+        configuration::{BLACK_FIELD_COLOR, WHITE_FIELD_COLOR},
         ui_container::Container,
         ui_element::{CanvasCoordinate, UIElement, UIEvent},
         ui_layout::BoardLayout,
@@ -100,7 +100,7 @@ impl UIBoard {
 }
 impl UIElement for UIBoard {
     fn draw(&self, gc: &mut Vec<Draw>) {
-        for ui_square in self.squares.values().cloned() {
+        for ui_square in self.squares.values() {
             ui_square.draw(gc);
         }
     }

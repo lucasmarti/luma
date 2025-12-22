@@ -20,83 +20,82 @@ pub struct UIMenu {
 impl UIMenu {
     pub fn new(container: Container) -> Self {
         let layout = MenuLayout::new(container);
-        let menu = UIMenu {
+        UIMenu {
             container,
             buttons: vec![
                 UIButton::new(
-                    layout.get(Column::Id_1),
+                    layout.get(Column::Id1),
                     Icon::NEW_GAME_BLACK,
                     UIEvent::NewGameAsButtonClicked(Color::Black),
                 ),
                 UIButton::new(
-                    layout.get(Column::Id_2),
+                    layout.get(Column::Id2),
                     Icon::NEW_GAME_WHITE,
                     UIEvent::NewGameAsButtonClicked(Color::White),
                 ),
                 UIButton::new(
-                    layout.get(Column::Id_3),
+                    layout.get(Column::Id3),
                     Icon::TURN_BOARD,
                     UIEvent::TurnBoardClicked,
                 ),
                 UIButton::new(
-                    layout.get(Column::Id_13),
+                    layout.get(Column::Id13),
                     Icon::WHITE_BISHOP,
                     UIEvent::PromoteToButtonClicked(Piece::WhiteBishop),
                 )
                 .disabled(true)
                 .group(Group::WhitePromotionButtons),
                 UIButton::new(
-                    layout.get(Column::Id_14),
+                    layout.get(Column::Id14),
                     Icon::WHITE_KNIGHT,
                     UIEvent::PromoteToButtonClicked(Piece::WhiteKnight),
                 )
                 .disabled(true)
                 .group(Group::WhitePromotionButtons),
                 UIButton::new(
-                    layout.get(Column::Id_15),
+                    layout.get(Column::Id15),
                     Icon::WHITE_QUEEN,
                     UIEvent::PromoteToButtonClicked(Piece::WhiteQueen),
                 )
                 .disabled(true)
                 .group(Group::WhitePromotionButtons),
                 UIButton::new(
-                    layout.get(Column::Id_16),
+                    layout.get(Column::Id16),
                     Icon::WHITE_ROOK,
                     UIEvent::PromoteToButtonClicked(Piece::WhiteRook),
                 )
                 .disabled(true)
                 .group(Group::WhitePromotionButtons),
                 UIButton::new(
-                    layout.get(Column::Id_13),
+                    layout.get(Column::Id13),
                     Icon::BLACK_BISHOP,
                     UIEvent::PromoteToButtonClicked(Piece::BlackBishop),
                 )
                 .group(Group::BlackPromotionButtons)
                 .disabled(true),
                 UIButton::new(
-                    layout.get(Column::Id_14),
+                    layout.get(Column::Id14),
                     Icon::BLACK_KNIGHT,
                     UIEvent::PromoteToButtonClicked(Piece::BlackKnight),
                 )
                 .disabled(true)
                 .group(Group::BlackPromotionButtons),
                 UIButton::new(
-                    layout.get(Column::Id_15),
+                    layout.get(Column::Id15),
                     Icon::BLACK_QUEEN,
                     UIEvent::PromoteToButtonClicked(Piece::BlackQueen),
                 )
                 .disabled(true)
                 .group(Group::BlackPromotionButtons),
                 UIButton::new(
-                    layout.get(Column::Id_16),
+                    layout.get(Column::Id16),
                     Icon::BLACK_ROOK,
                     UIEvent::PromoteToButtonClicked(Piece::BlackRook),
                 )
                 .disabled(true)
                 .group(Group::BlackPromotionButtons),
             ],
-        };
-        menu
+        }
     }
 
     fn set_group_disabled(&mut self, disabled: bool, group: Group) {

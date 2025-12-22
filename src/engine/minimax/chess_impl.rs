@@ -17,7 +17,7 @@ impl Minimax for Node {
     }
 
     fn is_game_over(&self) -> bool {
-        self.children.len() == 0
+        self.children.is_empty()
     }
 
     fn get_children(&self) -> &Vec<Self>
@@ -31,18 +31,15 @@ pub fn get_best_move(position: Position) -> Option<Position> {
     let depth = 3;
     let tree = build_tree(position, depth);
     let minimx_player = match tree.position.get_player() {
-        crate::engine::piece::Color::Black => Player::MIN,
-        crate::engine::piece::Color::White => Player::MAX,
+        crate::engine::piece::Color::Black => Player::Min,
+        crate::engine::piece::Color::White => Player::Max,
     };
     let result = evaluate(&tree, minimx_player, depth);
-    match result.0 {
-        Some(node) => Some(node.position),
-        None => None,
-    }
+    result.0.map(|node| node.position)
 }
 fn build_tree(position: Position, depth: u8) -> Node {
     let mut node = Node {
-        position: position,
+        position,
         children: Vec::new(),
     };
     if depth > 0 {

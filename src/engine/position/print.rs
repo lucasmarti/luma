@@ -2,6 +2,7 @@ use crate::engine::position::bitboard::Bitboard;
 
 use super::Position;
 
+#[allow(dead_code)]
 pub trait Print {
     fn print_board(&self);
     fn print(&self, name: String, board: Bitboard);

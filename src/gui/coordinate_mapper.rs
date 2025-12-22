@@ -18,7 +18,7 @@ pub fn get_canvas_from_square(square: Square) -> CanvasCoordinate {
     }
     let pos_x: f32 = (index % 8) as f32 * FIELD_SIZE;
     let pos_y: f32 = ((index - (index % 8)) / 8) as f32 * FIELD_SIZE;
-    return CanvasCoordinate { x: pos_x, y: pos_y };
+    CanvasCoordinate { x: pos_x, y: pos_y }
 }
 
 pub fn get_square_from_canvas(location: (f64, f64)) -> Option<Square> {

@@ -2,7 +2,6 @@ use flo_canvas::{Draw, GraphicsContext, GraphicsPrimitives};
 use std::io::Cursor;
 
 use crate::gui::{
-    configuration::{MENU_ICON_HEIGHT, MENU_ICON_WIDTH},
     icon::Icon,
     ui_container::Container,
     ui_element::{CanvasCoordinate, UIElement, UIEvent},

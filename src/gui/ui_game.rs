@@ -1,15 +1,10 @@
 use flo_canvas::{Draw, GraphicsContext};
 
 use crate::{
-    engine::{
-        self,
-        directions::squares::Square,
-        piece::Piece,
-        position::{self, Position},
-    },
+    engine::{directions::squares::Square, piece::Piece, position::Position},
     gui::{
-        configuration::{BACKGROUND_COLOR, FIELD_SIZE, MENU_HEIGHT, MENU_POS_Y},
-        state_machine::GameState,
+        configuration::{BACKGROUND_COLOR, FIELD_SIZE, MENU_HEIGHT},
+        state_machine::{GameState, SquareSelected},
         ui_board::{Orientation, UIBoard},
         ui_container::Container,
         ui_element::{CanvasCoordinate, UIElement, UIEvent},
@@ -44,15 +39,15 @@ impl UIGame {
         for (square, piece) in position.get_all_pieces() {
             self.set_piece(square, piece);
         }
-        match state {
-            GameState::Player(player_uistate) => match player_uistate {
-                super::state_machine::PlayerUIState::FromSquareSelected(data) => {
+        if let GameState::Player(square_selected) = state {
+            match square_selected {
+                SquareSelected::From(data) => {
                     for chess_move in data.possible_moves.iter() {
-                        self.set_drop_target_square(chess_move.to.clone());
+                        self.set_drop_target_square(chess_move.to);
                     }
                     self.set_selected_square(data.square);
                 }
-                super::state_machine::PlayerUIState::PromotionSquareSelected(data) => {
+                SquareSelected::Promotion(data) => {
                     if let Some(chess_move) = data.promotion_moves.first() {
                         self.set_selected_square(chess_move.from);
                         self.set_drop_target_square(chess_move.to);
@@ -67,9 +62,9 @@ impl UIGame {
                     }
                 }
                 _ => {}
-            },
-            _ => {}
+            }
         }
+
         //        if let Some(square) = engine::get_check_square(position){
         //            self.ui_board.
         //        }

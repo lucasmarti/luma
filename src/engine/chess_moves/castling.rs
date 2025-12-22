@@ -103,7 +103,7 @@ fn is_save_passage(position: &Position, sqares: &[Square], color: Color) -> bool
             return false;
         }
     }
-    return true;
+    true
 }
 
 fn is_empty_path(position: &Position, sqares: &[Square]) -> bool {

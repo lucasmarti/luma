@@ -25,7 +25,4 @@ impl Container {
     pub fn get_height(&self) -> f32 {
         self.y_vertical_max - self.y_vertical_min
     }
-    pub fn get_width(&self) -> f32 {
-        self.x_horizontal_max - self.x_horizontal_min
-    }
 }

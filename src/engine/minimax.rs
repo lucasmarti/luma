@@ -1,11 +1,11 @@
-const MAX_VALUE: f32 = std::f32::MAX;
-const MIN_VALUE: f32 = std::f32::MIN;
+const MAX_VALUE: f32 = f32::MAX;
+const MIN_VALUE: f32 = f32::MIN;
 //pub const DEPTH: u8 = 2;
 
 pub enum Player {
     #[allow(unused)]
-    MIN,
-    MAX,
+    Min,
+    Max,
 }
 pub trait Minimax {
     fn evaluate(&self) -> f32;
@@ -19,10 +19,10 @@ pub fn evaluate<P: Minimax>(position: &P, player: Player, depth: u8) -> (Option<
     let mut alpha = MIN_VALUE;
     let mut beta = MAX_VALUE;
     match player {
-        Player::MAX => {
+        Player::Max => {
             let mut best_value = MIN_VALUE;
             if depth == 0 || position.is_game_over() {
-                return (None, position.evaluate());
+                (None, position.evaluate())
             } else {
                 for child in position.get_children() {
                     let child_value = minimise(child, depth - 1, alpha, beta);
@@ -35,12 +35,12 @@ pub fn evaluate<P: Minimax>(position: &P, player: Player, depth: u8) -> (Option<
                         break;
                     }
                 }
-                return (best_position, best_value);
+                (best_position, best_value)
             }
         }
-        Player::MIN => {
+        Player::Min => {
             if depth == 0 || position.is_game_over() {
-                return (None, position.evaluate());
+                (None, position.evaluate())
             } else {
                 let mut best_value = MAX_VALUE;
                 for child in position.get_children() {
@@ -54,7 +54,7 @@ pub fn evaluate<P: Minimax>(position: &P, player: Player, depth: u8) -> (Option<
                         break;
                     }
                 }
-                return (best_position, best_value);
+                (best_position, best_value)
             }
         }
     }
@@ -62,7 +62,7 @@ pub fn evaluate<P: Minimax>(position: &P, player: Player, depth: u8) -> (Option<
 
 fn minimise<P: Minimax>(position: &P, depth: u8, alpha: f32, mut beta: f32) -> f32 {
     if depth == 0 || position.is_game_over() {
-        return position.evaluate();
+        position.evaluate()
     } else {
         let mut best_value = MAX_VALUE;
         for child in position.get_children() {
@@ -73,7 +73,7 @@ fn minimise<P: Minimax>(position: &P, depth: u8, alpha: f32, mut beta: f32) -> f
                 break;
             }
         }
-        return best_value;
+        best_value
     }
 }
 

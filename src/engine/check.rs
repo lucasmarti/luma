@@ -3,7 +3,7 @@ use crate::engine::{
         DIAGONAL_DIRECTIONS, HORIZONTAL_VERTICAL_DIRECTIONS, KING_DIRECTIONS, KNIGHT_DIRECTIONS,
     },
     directions::{self, squares::Square},
-    piece::{Color, Piece, Typ, *},
+    piece::{Color, Piece},
     position::Position,
 };
 /// Check if the king of the given color is in check
@@ -15,7 +15,7 @@ pub fn is_check(position: &Position, color: Color) -> bool {
 pub fn filter_checks(positions: Vec<Position>, color: Color) -> Vec<Position> {
     positions
         .into_iter()
-        .filter(|position| !is_check(&position, color))
+        .filter(|position| !is_check(position, color))
         .collect()
 }
 

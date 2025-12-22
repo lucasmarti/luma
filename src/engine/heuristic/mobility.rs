@@ -30,7 +30,7 @@ fn get_score(positions: Vec<Position>) -> f32 {
                 piece::Typ::Knight => KNIGHT_FACTOR,
                 piece::Typ::Bishop => BISHOP_FACTOR,
             };
-            score = score + factor;
+            score += factor;
         } else {
             panic!("Position without ChessMove in heuristic.");
         }

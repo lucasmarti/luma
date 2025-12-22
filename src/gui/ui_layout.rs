@@ -65,45 +65,45 @@ impl BoardLayout {
         self.layout.cell(row as u8, column as u8).unwrap()
     }
 }
-
+#[allow(dead_code)]
 pub enum Column {
-    Id_1,
-    Id_2,
-    Id_3,
-    Id_4,
-    Id_5,
-    Id_6,
-    Id_7,
-    Id_8,
-    Id_9,
-    Id_10,
-    Id_11,
-    Id_12,
-    Id_13,
-    Id_14,
-    Id_15,
-    Id_16,
+    Id1,
+    Id2,
+    Id3,
+    Id4,
+    Id5,
+    Id6,
+    Id7,
+    Id8,
+    Id9,
+    Id10,
+    Id11,
+    Id12,
+    Id13,
+    Id14,
+    Id15,
+    Id16,
 }
 
 impl Column {
     fn as_index(&self) -> u8 {
         match self {
-            Column::Id_1 => 1,
-            Column::Id_2 => 2,
-            Column::Id_3 => 3,
-            Column::Id_4 => 4,
-            Column::Id_5 => 5,
-            Column::Id_6 => 6,
-            Column::Id_7 => 7,
-            Column::Id_8 => 8,
-            Column::Id_9 => 9,
-            Column::Id_10 => 10,
-            Column::Id_11 => 11,
-            Column::Id_12 => 12,
-            Column::Id_13 => 13,
-            Column::Id_14 => 14,
-            Column::Id_15 => 15,
-            Column::Id_16 => 16,
+            Column::Id1 => 1,
+            Column::Id2 => 2,
+            Column::Id3 => 3,
+            Column::Id4 => 4,
+            Column::Id5 => 5,
+            Column::Id6 => 6,
+            Column::Id7 => 7,
+            Column::Id8 => 8,
+            Column::Id9 => 9,
+            Column::Id10 => 10,
+            Column::Id11 => 11,
+            Column::Id12 => 12,
+            Column::Id13 => 13,
+            Column::Id14 => 14,
+            Column::Id15 => 15,
+            Column::Id16 => 16,
         }
     }
 }

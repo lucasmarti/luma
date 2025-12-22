@@ -188,9 +188,9 @@ fn get_score_for_pieces(position: &Position, pieces: [Piece; 6]) -> f32 {
     for piece in pieces {
         let mut piece_score: f32 = 0.0;
         for square in position.get_squares(piece).iter() {
-            piece_score = piece_score + get_value(piece, square);
+            piece_score += get_value(piece, square);
         }
-        total_score = total_score + piece_score;
+        total_score += piece_score;
     }
     total_score
 }
