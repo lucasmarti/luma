@@ -46,6 +46,10 @@ const ONE_ROW: u32 = 8;
 const TWO_ROWS: u32 = 16;
 const ONE_COLUMN: u32 = 1;
 const TWO_COLUMNS: u32 = 2;
+const COLUMN_A: u32 = 1;
+const COLUMN_B: u32 = 2;
+const COLUMN_G: u32 = 7;
+const COLUMN_H: u32 = 8;
 
 pub type DirectionFn = fn(Square) -> Option<Square>;
 pub type RowFn = fn(Square) -> bool;
@@ -175,20 +179,23 @@ pub fn left_left_down(square: Square) -> Option<Square> {
         None
     }
 }
+fn get_column(square: Square) -> u32 {
+    (square.as_index() % 8) + 1
+}
 fn is_in_first_or_second_column(square: Square) -> bool {
-    (square.as_index() % 8 == 0) || (square.as_index() % 8 == 1)
+    get_column(square) == COLUMN_A || get_column(square) == COLUMN_B
 }
 
 pub fn is_in_last_or_second_last_column(square: Square) -> bool {
-    (square.as_index() % 8 == 7) || (square.as_index() % 8 == 6)
+    get_column(square) == COLUMN_H || get_column(square) == COLUMN_G
 }
 
 fn is_in_first_column(square: Square) -> bool {
-    square.as_index() % 8 == 0
+    get_column(square) == COLUMN_A
 }
 
 fn is_in_last_column(square: Square) -> bool {
-    square.as_index() % 8 == 7
+    get_column(square) == COLUMN_H
 }
 
 pub fn is_in_last_or_second_last_row(square: Square) -> bool {

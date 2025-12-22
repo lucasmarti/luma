@@ -25,17 +25,3 @@ pub const ALL_PIECES_SET: [Piece; 12] = [
 ];
 pub const FIELD_SIZE: f32 = 100.0;
 pub const MENU_HEIGHT: f32 = 50.0;
-
-#[derive(Clone, Copy, Debug)]
-pub enum Action {
-    NewGameAsWhite,
-    NewGameAsBlack,
-    PromoteWhiteQueen,
-    PromoteWhiteRook,
-    PromoteWhiteBishop,
-    PromoteWhiteKnight,
-    PromoteBlackQueen,
-    PromoteBlackRook,
-    PromoteBlackBishop,
-    PromoteBlackKnight,
-}

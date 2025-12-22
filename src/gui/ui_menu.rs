@@ -26,71 +26,71 @@ impl UIMenu {
                 UIButton::new(
                     layout.get(Column::Id1),
                     Icon::NEW_GAME_BLACK,
-                    UIEvent::NewGameAsButtonClicked(Color::Black),
+                    UIEvent::NewGameAs(Color::Black),
                 ),
                 UIButton::new(
                     layout.get(Column::Id2),
                     Icon::NEW_GAME_WHITE,
-                    UIEvent::NewGameAsButtonClicked(Color::White),
+                    UIEvent::NewGameAs(Color::White),
                 ),
                 UIButton::new(
                     layout.get(Column::Id3),
                     Icon::TURN_BOARD,
-                    UIEvent::TurnBoardClicked,
+                    UIEvent::TurnBoard,
                 ),
                 UIButton::new(
                     layout.get(Column::Id13),
                     Icon::WHITE_BISHOP,
-                    UIEvent::PromoteToButtonClicked(Piece::WhiteBishop),
+                    UIEvent::PromoteTo(Piece::WhiteBishop),
                 )
                 .disabled(true)
                 .group(Group::WhitePromotionButtons),
                 UIButton::new(
                     layout.get(Column::Id14),
                     Icon::WHITE_KNIGHT,
-                    UIEvent::PromoteToButtonClicked(Piece::WhiteKnight),
+                    UIEvent::PromoteTo(Piece::WhiteKnight),
                 )
                 .disabled(true)
                 .group(Group::WhitePromotionButtons),
                 UIButton::new(
                     layout.get(Column::Id15),
                     Icon::WHITE_QUEEN,
-                    UIEvent::PromoteToButtonClicked(Piece::WhiteQueen),
+                    UIEvent::PromoteTo(Piece::WhiteQueen),
                 )
                 .disabled(true)
                 .group(Group::WhitePromotionButtons),
                 UIButton::new(
                     layout.get(Column::Id16),
                     Icon::WHITE_ROOK,
-                    UIEvent::PromoteToButtonClicked(Piece::WhiteRook),
+                    UIEvent::PromoteTo(Piece::WhiteRook),
                 )
                 .disabled(true)
                 .group(Group::WhitePromotionButtons),
                 UIButton::new(
                     layout.get(Column::Id13),
                     Icon::BLACK_BISHOP,
-                    UIEvent::PromoteToButtonClicked(Piece::BlackBishop),
+                    UIEvent::PromoteTo(Piece::BlackBishop),
                 )
                 .group(Group::BlackPromotionButtons)
                 .disabled(true),
                 UIButton::new(
                     layout.get(Column::Id14),
                     Icon::BLACK_KNIGHT,
-                    UIEvent::PromoteToButtonClicked(Piece::BlackKnight),
+                    UIEvent::PromoteTo(Piece::BlackKnight),
                 )
                 .disabled(true)
                 .group(Group::BlackPromotionButtons),
                 UIButton::new(
                     layout.get(Column::Id15),
                     Icon::BLACK_QUEEN,
-                    UIEvent::PromoteToButtonClicked(Piece::BlackQueen),
+                    UIEvent::PromoteTo(Piece::BlackQueen),
                 )
                 .disabled(true)
                 .group(Group::BlackPromotionButtons),
                 UIButton::new(
                     layout.get(Column::Id16),
                     Icon::BLACK_ROOK,
-                    UIEvent::PromoteToButtonClicked(Piece::BlackRook),
+                    UIEvent::PromoteTo(Piece::BlackRook),
                 )
                 .disabled(true)
                 .group(Group::BlackPromotionButtons),

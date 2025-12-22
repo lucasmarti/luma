@@ -1,4 +1,10 @@
 use crate::engine::directions::*;
+#[test]
+fn test_get_column() {
+    assert_eq!(get_column(A1), 1);
+    assert_eq!(get_column(F1), 6);
+    assert_eq!(get_column(H7), 8);
+}
 
 #[test]
 fn test_up() {

@@ -127,7 +127,7 @@ impl UIElement for UISquare {
             && canvas_coordinate.y >= self.container.y_vertical_min
             && canvas_coordinate.y <= self.container.y_vertical_max
         {
-            Some(UIEvent::SquareClicked(self.id))
+            Some(UIEvent::Square(self.id))
         } else {
             None
         }

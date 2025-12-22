@@ -89,15 +89,15 @@ pub enum StateFunction {
 
 pub fn get_function(event: UIEvent, state: &GameState) -> Option<StateFunction> {
     match event {
-        UIEvent::TurnBoardClicked => Some(StateFunction::TurnBoard),
-        UIEvent::NewGameAsButtonClicked(color) => Some(StateFunction::NewGameAs(color)),
-        UIEvent::PromoteToButtonClicked(piece) => match state {
+        UIEvent::TurnBoard => Some(StateFunction::TurnBoard),
+        UIEvent::NewGameAs(color) => Some(StateFunction::NewGameAs(color)),
+        UIEvent::PromoteTo(piece) => match state {
             GameState::Player(SquareSelected::Promotion(data)) => {
                 Some(StateFunction::Promote(PromoteData::from(data, piece)))
             }
             _ => None,
         },
-        UIEvent::SquareClicked(square) => match state {
+        UIEvent::Square(square) => match state {
             GameState::Player(player_uistate) => match player_uistate {
                 SquareSelected::No => Some(StateFunction::SelectFromSquare(square)),
                 SquareSelected::From(data) => Some(StateFunction::SelectToSquare(
