@@ -1,5 +1,5 @@
-const MAX_VALUE: f32 = f32::MAX;
-const MIN_VALUE: f32 = f32::MIN;
+pub const MAX_VALUE: f32 = f32::MAX;
+pub const MIN_VALUE: f32 = f32::MIN;
 //pub const DEPTH: u8 = 2;
 
 pub enum Player {

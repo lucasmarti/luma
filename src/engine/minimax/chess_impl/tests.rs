@@ -1,9 +1,38 @@
 use crate::engine::{
     directions::squares::*,
-    minimax::chess_impl::get_best_move,
+    minimax::{
+        chess_impl::{get_best_move, Node},
+        Minimax, MIN_VALUE,
+    },
     piece::*,
     position::{print::Print, Position},
 };
+
+#[test]
+fn test_evaluate() {
+    let checkmate_white_position = Position::default()
+        .put_piece(Piece::BlackKing, E8)
+        .put_piece(Piece::WhiteKing, A1)
+        .put_piece(Piece::BlackQueen, A8)
+        .put_piece(Piece::BlackRook, B8);
+    let mut node = Node {
+        position: checkmate_white_position,
+        children: Vec::new(),
+    };
+
+    assert_eq!(node.evaluate(), MIN_VALUE);
+
+    let draw_position = Position::default()
+        .put_piece(Piece::BlackKing, E8)
+        .put_piece(Piece::WhiteKing, A1)
+        .put_piece(Piece::BlackQueen, B8)
+        .put_piece(Piece::BlackRook, H2);
+    let node2 = Node {
+        position: draw_position,
+        children: Vec::new(),
+    };
+    assert_eq!(node2.evaluate(), 0.0);
+}
 
 #[test]
 fn test_get_best_move() {

@@ -1,7 +1,9 @@
 use crate::engine::{
+    check::is_check,
     chess_moves::get_current_player_moves,
     heuristic::heuristic,
-    minimax::{evaluate, Minimax, Player},
+    minimax::{evaluate, Minimax, Player, MAX_VALUE, MIN_VALUE},
+    piece::Color,
     position::Position,
 };
 
@@ -13,7 +15,18 @@ pub struct Node {
 
 impl Minimax for Node {
     fn evaluate(&self) -> f32 {
-        heuristic(&self.position)
+        if get_current_player_moves(&self.position).is_empty() {
+            if is_check(&self.position, self.position.get_player()) {
+                match self.position.get_player() {
+                    Color::Black => MAX_VALUE,
+                    Color::White => MIN_VALUE,
+                }
+            } else {
+                0.0
+            }
+        } else {
+            heuristic(&self.position)
+        }
     }
 
     fn is_game_over(&self) -> bool {
