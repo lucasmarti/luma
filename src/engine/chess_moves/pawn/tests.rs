@@ -1,12 +1,4 @@
-use crate::engine::{
-    chess_moves::pawn::*,
-    directions::squares::*,
-    piece::{
-        Piece::BlackBishop, Piece::BlackKnight, Piece::BlackPawn, Piece::BlackQueen, Piece::BlackRook, Piece::WhiteBishop,
-        Piece::WhiteKnight, Piece::WhitePawn, Piece::WhiteQueen, Piece::WhiteRook,
-    },
-    position::Position,
-};
+use crate::engine::{chess_moves::pawn::*, directions::squares::*, position::Position};
 
 #[cfg(test)]
 mod test_white_forward {
@@ -705,8 +697,12 @@ mod test_aggregate_functions {
         // Should have forward and two-forward moves
         assert_eq!(moves.len(), 2);
 
-        let has_e3 = moves.iter().any(|p| p.is_occupied_by_piece(E3, Piece::WhitePawn));
-        let has_e4 = moves.iter().any(|p| p.is_occupied_by_piece(E4, Piece::WhitePawn));
+        let has_e3 = moves
+            .iter()
+            .any(|p| p.is_occupied_by_piece(E3, Piece::WhitePawn));
+        let has_e4 = moves
+            .iter()
+            .any(|p| p.is_occupied_by_piece(E4, Piece::WhitePawn));
 
         assert!(has_e3);
         assert!(has_e4);
@@ -724,9 +720,15 @@ mod test_aggregate_functions {
         // Forward, left capture, right capture
         assert_eq!(moves.len(), 3);
 
-        let has_forward = moves.iter().any(|p| p.is_occupied_by_piece(E5, Piece::WhitePawn));
-        let has_left_capture = moves.iter().any(|p| p.is_occupied_by_piece(D5, Piece::WhitePawn));
-        let has_right_capture = moves.iter().any(|p| p.is_occupied_by_piece(F5, Piece::WhitePawn));
+        let has_forward = moves
+            .iter()
+            .any(|p| p.is_occupied_by_piece(E5, Piece::WhitePawn));
+        let has_left_capture = moves
+            .iter()
+            .any(|p| p.is_occupied_by_piece(D5, Piece::WhitePawn));
+        let has_right_capture = moves
+            .iter()
+            .any(|p| p.is_occupied_by_piece(F5, Piece::WhitePawn));
 
         assert!(has_forward);
         assert!(has_left_capture);
@@ -791,8 +793,12 @@ mod test_aggregate_functions {
         // Should have forward and two-forward moves
         assert_eq!(moves.len(), 2);
 
-        let has_e6 = moves.iter().any(|p| p.is_occupied_by_piece(E6, Piece::BlackPawn));
-        let has_e5 = moves.iter().any(|p| p.is_occupied_by_piece(E5, Piece::BlackPawn));
+        let has_e6 = moves
+            .iter()
+            .any(|p| p.is_occupied_by_piece(E6, Piece::BlackPawn));
+        let has_e5 = moves
+            .iter()
+            .any(|p| p.is_occupied_by_piece(E5, Piece::BlackPawn));
 
         assert!(has_e6);
         assert!(has_e5);
@@ -825,8 +831,12 @@ mod test_public_interface {
         // Should have forward and two-forward moves
         assert_eq!(moves.len(), 2);
 
-        let has_e3 = moves.iter().any(|p| p.is_occupied_by_piece(E3, Piece::WhitePawn));
-        let has_e4 = moves.iter().any(|p| p.is_occupied_by_piece(E4, Piece::WhitePawn));
+        let has_e3 = moves
+            .iter()
+            .any(|p| p.is_occupied_by_piece(E3, Piece::WhitePawn));
+        let has_e4 = moves
+            .iter()
+            .any(|p| p.is_occupied_by_piece(E4, Piece::WhitePawn));
 
         assert!(has_e3);
         assert!(has_e4);
@@ -841,8 +851,12 @@ mod test_public_interface {
         // Should have forward and two-forward moves
         assert_eq!(moves.len(), 2);
 
-        let has_e6 = moves.iter().any(|p| p.is_occupied_by_piece(E6, Piece::BlackPawn));
-        let has_e5 = moves.iter().any(|p| p.is_occupied_by_piece(E5, Piece::BlackPawn));
+        let has_e6 = moves
+            .iter()
+            .any(|p| p.is_occupied_by_piece(E6, Piece::BlackPawn));
+        let has_e5 = moves
+            .iter()
+            .any(|p| p.is_occupied_by_piece(E5, Piece::BlackPawn));
 
         assert!(has_e6);
         assert!(has_e5);

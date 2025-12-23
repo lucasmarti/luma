@@ -34,7 +34,7 @@ impl Bitboard {
     pub fn remove_bit(&mut self, square: Square) {
         self.0.set_bit(square.as_index(), false);
     }
-
+    #[allow(dead_code)]
     pub fn get_inner(&self) -> u64 {
         self.0
     }

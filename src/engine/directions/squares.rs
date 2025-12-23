@@ -1,6 +1,4 @@
 use std::cmp::Ordering;
-pub const WHITE_KING_STARTING_POSITION: Square = E1;
-pub const BLACK_KING_STARTING_POSITION: Square = E8;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Square(u32);

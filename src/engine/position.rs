@@ -1,5 +1,5 @@
 use crate::engine::{
-    chess_moves::{ChessMove, MoveType},
+    chess_moves::ChessMove,
     directions::squares::*,
     piece::{Color, Piece, Typ},
     position::bitboard::Bitboard,
@@ -46,16 +46,6 @@ impl Position {
 
     pub fn get_from_square(&self) -> Option<Square> {
         self.last_move.map(|chess_move| chess_move.from)
-    }
-
-    pub fn is_promotion(&self) -> bool {
-        match self.last_move {
-            Some(chess_move) => matches!(
-                chess_move.move_type,
-                MoveType::Promotion | MoveType::PromotionCapture
-            ),
-            None => false,
-        }
     }
 
     pub fn new_starting_position() -> Position {

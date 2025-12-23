@@ -1,6 +1,6 @@
 //pub mod chess_board_canvas;
 mod configuration;
-pub mod coordinate_mapper;
+//pub mod coordinate_mapper;
 mod icon;
 //mod draw_functions;
 pub mod game;

@@ -110,7 +110,7 @@ impl Game {
                 self.execute_player_move(ui_move.position);
             }
             Some(SimpleMoveOrPromotions::Promotions(possible_promotion_moves)) => {
-                self.enable_promotion_buttons(data.possible_moves, possible_promotion_moves);
+                self.enable_promotion_buttons(possible_promotion_moves);
             }
             None => {
                 self.state = GameState::Player(SquareSelected::No(NoSquareSelectedData {
@@ -132,13 +132,9 @@ impl Game {
         }
     }
 
-    fn enable_promotion_buttons(
-        &mut self,
-        possible_moves: Vec<UIMove>,
-        possible_promotion_moves: Vec<UIMove>,
-    ) {
+    fn enable_promotion_buttons(&mut self, possible_promotion_moves: Vec<UIMove>) {
         self.state = GameState::Player(SquareSelected::Promotion(
-            PromotionSquareSelectedData::from(possible_moves, possible_promotion_moves),
+            PromotionSquareSelectedData::from(possible_promotion_moves),
         ));
         self.update_ui();
     }
@@ -153,12 +149,13 @@ impl Game {
                             possible_moves: map_possible_moves(possible_moves),
                         }));
                     }
-                    Err(game_end) => {
+                    Err(_) => {
                         self.state = GameState::GameOver;
                     }
                 }
             }
             engine::MoveOrEnd::GameEnd(game_end) => {
+                println!("{:?}", game_end);
                 self.state = GameState::GameOver;
             }
         }
@@ -208,9 +205,7 @@ fn get_selected_moves_to(
     if moves_from_to.len() == 4 {
         Some(SimpleMoveOrPromotions::Promotions(moves_from_to))
     } else {
-        moves_from_to
-            .pop()
-            .map(|ui_move| SimpleMoveOrPromotions::SimpleMove(ui_move))
+        moves_from_to.pop().map(SimpleMoveOrPromotions::SimpleMove)
     }
 }
 #[derive(Debug, Clone, Copy)]

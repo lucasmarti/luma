@@ -1,6 +1,5 @@
 use crate::{
     engine::{
-        chess_moves::{ChessMove, MoveType},
         directions::squares::Square,
         piece::{Color, Piece},
     },
@@ -31,14 +30,12 @@ pub struct FromSquareSelectedData {
 
 #[derive(Debug)]
 pub struct PromotionSquareSelectedData {
-    pub possible_moves: Vec<UIMove>,
     pub possible_promotion_moves: Vec<UIMove>,
 }
 
 impl PromotionSquareSelectedData {
-    pub fn from(possible_moves: Vec<UIMove>, possible_promotion_moves: Vec<UIMove>) -> Self {
+    pub fn from(possible_promotion_moves: Vec<UIMove>) -> Self {
         PromotionSquareSelectedData {
-            possible_moves,
             possible_promotion_moves,
         }
     }
@@ -60,7 +57,6 @@ impl SelectToSquareFunctionData {
 }
 #[derive(Debug)]
 pub struct PromoteFunctionData {
-    pub possible_moves: Vec<UIMove>,
     pub possible_promotion_moves: Vec<UIMove>,
     pub piece: Piece,
 }
@@ -68,7 +64,6 @@ pub struct PromoteFunctionData {
 impl PromoteFunctionData {
     pub fn from(data: &PromotionSquareSelectedData, piece: Piece) -> Self {
         PromoteFunctionData {
-            possible_moves: data.possible_moves.clone(),
             possible_promotion_moves: data.possible_promotion_moves.clone(),
             piece,
         }

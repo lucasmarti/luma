@@ -3,6 +3,7 @@ use crate::{
     gui::{configuration::FIELD_SIZE, ui_element::CanvasCoordinate},
 };
 
+/*
 fn get_field_from_canvas(canvas: f64) -> Option<u32> {
     let field: i64 = ((canvas / FIELD_SIZE as f64).floor() as i64) + 1;
     if field > 0 {
@@ -11,6 +12,7 @@ fn get_field_from_canvas(canvas: f64) -> Option<u32> {
         None
     }
 }
+
 pub fn get_canvas_from_square(square: Square) -> CanvasCoordinate {
     let index = square.as_index();
     if index > 63 {
@@ -31,3 +33,4 @@ pub fn get_square_from_canvas(location: (f64, f64)) -> Option<Square> {
     }
     None
 }
+    */
