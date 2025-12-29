@@ -25,7 +25,7 @@ impl Minimax for Node {
                 0.0
             }
         } else {
-            heuristic(&self.position)
+            heuristic(&self.position).total
         }
     }
 
@@ -41,7 +41,7 @@ impl Minimax for Node {
     }
 }
 pub fn get_best_move(position: Position) -> Option<Position> {
-    let depth = 3;
+    let depth = 2;
     let tree = build_tree(position, depth);
     let minimx_player = match tree.position.get_player() {
         crate::engine::piece::Color::Black => Player::Min,

@@ -179,7 +179,7 @@ pub fn left_left_down(square: Square) -> Option<Square> {
         None
     }
 }
-fn get_column(square: Square) -> u32 {
+pub fn get_column(square: Square) -> u32 {
     (square.as_index() % 8) + 1
 }
 fn is_in_first_or_second_column(square: Square) -> bool {
