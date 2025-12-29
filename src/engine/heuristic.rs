@@ -1,5 +1,12 @@
-use crate::engine::position::Position;
+use crate::engine::{
+    piece::Piece,
+    position::{self, print::Print, Position},
+};
 
+static enabled_mobility: bool = true;
+static enabled_material: bool = true;
+static enabled_squares: bool = true;
+static enabled_pawn_structure: bool = true;
 #[derive(Debug, Default, Clone, Copy, PartialEq)]
 pub struct Score {
     pub material: f32,
@@ -29,15 +36,29 @@ pub fn heuristic(position: &Position) -> Evaluation {
         mobility: mobility::count_black(position),
         pawn_structure: pawn_structures::count_black(position),
     };
-
-    let total = white_score.material
-        + white_score.mobility
-        + white_score.squares
-        + white_score.pawn_structure
-        - (black_score.material
-            + black_score.mobility
-            + black_score.squares
-            + black_score.pawn_structure);
+    let mut total = 0.0;
+    if enabled_material {
+        total = total + (white_score.material - black_score.material);
+    }
+    if enabled_mobility {
+        total = total + (white_score.mobility - black_score.mobility);
+    }
+    if enabled_squares {
+        total = total + (white_score.squares - black_score.squares);
+    }
+    if enabled_pawn_structure {
+        total = total + (white_score.pawn_structure - black_score.pawn_structure);
+    }
+    /*
+       let total = white_score.material
+           + white_score.mobility
+           + white_score.squares
+           + white_score.pawn_structure
+           - (black_score.material
+               + black_score.mobility
+               + black_score.squares
+               + black_score.pawn_structure);
+    */
     let evaluation = Evaluation {
         black_score,
         white_score,

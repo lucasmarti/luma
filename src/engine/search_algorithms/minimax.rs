@@ -1,23 +1,7 @@
-pub const MAX_VALUE: f32 = f32::MAX;
-pub const MIN_VALUE: f32 = f32::MIN;
-//pub const DEPTH: u8 = 2;
+use crate::engine::search_algorithms::{node::Node, Player, MAX_VALUE, MIN_VALUE};
 
-pub enum Player {
-    #[allow(unused)]
-    Min,
-    Max,
-}
-pub trait Minimax {
-    fn evaluate(&self) -> f32;
-    fn is_game_over(&self) -> bool;
-    fn get_children(&self) -> &Vec<Self>
-    where
-        Self: Sized;
-}
-pub fn evaluate<P: Minimax>(position: &P, player: Player, depth: u8) -> (Option<&P>, f32) {
+pub fn evaluate<P: Node>(position: &P, player: Player, depth: u8) -> (Option<&P>, f32) {
     let mut best_position: Option<&P> = None;
-    let mut alpha = MIN_VALUE;
-    let mut beta = MAX_VALUE;
     match player {
         Player::Max => {
             let mut best_value = MIN_VALUE;
@@ -25,14 +9,10 @@ pub fn evaluate<P: Minimax>(position: &P, player: Player, depth: u8) -> (Option<
                 (None, position.evaluate())
             } else {
                 for child in position.get_children() {
-                    let child_value = minimise(child, depth - 1, alpha, beta);
+                    let child_value = minimise(child, depth - 1);
                     if child_value >= best_value {
                         best_value = child_value;
                         best_position = Some(child);
-                    }
-                    alpha = max(alpha, child_value);
-                    if beta <= alpha {
-                        break;
                     }
                 }
                 (best_position, best_value)
@@ -44,14 +24,10 @@ pub fn evaluate<P: Minimax>(position: &P, player: Player, depth: u8) -> (Option<
             } else {
                 let mut best_value = MAX_VALUE;
                 for child in position.get_children() {
-                    let child_value = maximise(child, depth - 1, alpha, beta);
+                    let child_value = maximise(child, depth - 1);
                     if child_value <= best_value {
                         best_value = child_value;
                         best_position = Some(child);
-                    }
-                    beta = min(beta, child_value);
-                    if beta <= alpha {
-                        break;
                     }
                 }
                 (best_position, best_value)
@@ -60,35 +36,27 @@ pub fn evaluate<P: Minimax>(position: &P, player: Player, depth: u8) -> (Option<
     }
 }
 
-fn minimise<P: Minimax>(position: &P, depth: u8, alpha: f32, mut beta: f32) -> f32 {
+fn minimise<P: Node>(position: &P, depth: u8) -> f32 {
     if depth == 0 || position.is_game_over() {
         position.evaluate()
     } else {
         let mut best_value = MAX_VALUE;
         for child in position.get_children() {
-            let child_value = maximise(child, depth - 1, alpha, beta);
+            let child_value = maximise(child, depth - 1);
             best_value = min(best_value, child_value);
-            beta = min(beta, child_value);
-            if beta <= alpha {
-                break;
-            }
         }
         best_value
     }
 }
 
-fn maximise<P: Minimax>(position: &P, depth: u8, mut alpha: f32, beta: f32) -> f32 {
+fn maximise<P: Node>(position: &P, depth: u8) -> f32 {
     let mut best_value = MIN_VALUE;
     if depth == 0 || position.is_game_over() {
         best_value = position.evaluate();
     } else {
         for child in position.get_children() {
-            let child_value = minimise(child, depth - 1, alpha, beta);
+            let child_value = minimise(child, depth - 1);
             best_value = max(best_value, child_value);
-            alpha = max(alpha, child_value);
-            if beta <= alpha {
-                break;
-            }
         }
     }
     best_value
@@ -109,7 +77,3 @@ fn min(a: f32, b: f32) -> f32 {
         b
     }
 }
-
-pub mod chess_impl;
-#[cfg(test)]
-mod tests;

@@ -2,12 +2,12 @@ use crate::engine::{
     check::is_check,
     chess_moves::get_current_player_moves,
     directions::squares::Square,
-    minimax::chess_impl::get_best_move,
     piece::{
         Color,
         Piece::{self},
     },
     position::Position,
+    search_algorithms::get_best_move,
 };
 
 pub fn get_next_move(position: &Position) -> MoveOrEnd {
@@ -81,13 +81,12 @@ pub fn is_valid_drag_square(position: &Position, square: Square) -> bool {
     }
 }
 */
-
 mod check;
 pub mod chess_moves;
 pub mod directions;
 mod heuristic;
-mod minimax;
 pub mod piece;
 pub mod position;
+pub mod search_algorithms;
 #[cfg(test)]
 mod tests;

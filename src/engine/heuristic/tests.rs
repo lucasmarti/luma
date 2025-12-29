@@ -1,7 +1,23 @@
 use crate::engine::directions::squares::*;
-use crate::engine::piece::Piece::*;
+use crate::engine::heuristic::*;
+use crate::engine::piece::Piece::{self, *};
 use crate::engine::position::*;
-use crate::engine::{heuristic::*, position};
+
+#[test]
+fn test_queen_loss() {
+    let position = Position::new_starting_position()
+        .remove_piece(E2)
+        .put_piece(Piece::WhitePawn, E4)
+        .remove_piece(C7)
+        .put_piece(Piece::BlackPawn, C6)
+        .remove_piece(D1)
+        .put_piece(Piece::WhiteQueen, H5)
+        .remove_piece(G7)
+        .remove_piece(H5)
+        .put_piece(Piece::BlackKnight, H5);
+    let evaluation = heuristic(&position);
+    println!("{:?}", evaluation);
+}
 
 #[test]
 fn test_isolated_pawns() {
