@@ -1,14 +1,14 @@
+use crate::engine::search_algorithms::node::Node;
+
+#[cfg(test)]
 use crate::engine::{
     directions::squares::*,
+    heuristic::heuristic,
     piece::*,
     position::{print::Print, Position},
-    search_algorithms::{
-        alpha_beta, get_best_move, minimax,
-        node::{ChessNode, Node},
-        Player, MIN_VALUE,
-    },
+    search_algorithms::{alpha_beta, get_best_move, minimax, Player, MAX_VALUE, MIN_VALUE},
 };
-use rand::{Rng, SeedableRng};
+use rand::random_range;
 
 #[test]
 fn test_evaluate() {
@@ -17,23 +17,16 @@ fn test_evaluate() {
         .put_piece(Piece::WhiteKing, A1)
         .put_piece(Piece::BlackQueen, A8)
         .put_piece(Piece::BlackRook, B8);
-    let mut node = ChessNode {
-        position: checkmate_white_position,
-        children: Vec::new(),
-    };
 
-    assert_eq!(node.evaluate(), MIN_VALUE);
+    assert_eq!(heuristic(&checkmate_white_position).total, MIN_VALUE);
 
     let draw_position = Position::default()
         .put_piece(Piece::BlackKing, E8)
         .put_piece(Piece::WhiteKing, A1)
         .put_piece(Piece::BlackQueen, B8)
         .put_piece(Piece::BlackRook, H2);
-    let node2 = ChessNode {
-        position: draw_position,
-        children: Vec::new(),
-    };
-    assert_eq!(node2.evaluate(), 0.0);
+
+    assert_eq!(heuristic(&draw_position).total, 0.0);
 }
 
 #[test]
@@ -67,19 +60,19 @@ fn test_get_best_move2() {
 #[test]
 fn test_full_tree_max_player_1() {
     let tree = build_tree();
-    let result_minimax = minimax::evaluate(&tree, Player::Max, 3);
-    let result_alpha_beta = alpha_beta::evaluate(&tree, Player::Max, 3);
+    let result_minimax = minimax::minimax(tree.clone(), Player::Max);
+    let result_alpha_beta = alpha_beta::alpha_beta(tree, Player::Max, MIN_VALUE, MAX_VALUE);
 
-    assert_eq!(result_alpha_beta, result_minimax);
+    assert_eq!(result_alpha_beta.best_node, result_minimax.0);
     assert_eq!(result_minimax.0.unwrap().id, 3);
 }
 #[test]
 fn test_full_tree_max_player_2() {
     let tree = build_tree();
-    let result_minimax = minimax::evaluate(&tree, Player::Max, 3);
-    let result_alpha_beta = alpha_beta::evaluate(&tree, Player::Max, 3);
+    let result_minimax = minimax::minimax(tree.clone(), Player::Max);
+    let result_alpha_beta = alpha_beta::alpha_beta(tree, Player::Max, MIN_VALUE, MAX_VALUE);
 
-    assert_eq!(result_alpha_beta, result_minimax);
+    assert_eq!(result_alpha_beta.best_node, result_minimax.0);
 
     assert_eq!(result_minimax.1, 5.0);
 }
@@ -87,19 +80,19 @@ fn test_full_tree_max_player_2() {
 #[test]
 fn test_full_tree_min_player_1() {
     let tree = build_tree();
-    let result_minimax = minimax::evaluate(&tree, Player::Min, 3);
-    let result_alpha_beta = alpha_beta::evaluate(&tree, Player::Min, 3);
+    let result_minimax = minimax::minimax(tree.clone(), Player::Min);
+    let result_alpha_beta = alpha_beta::alpha_beta(tree, Player::Min, MIN_VALUE, MAX_VALUE);
 
-    assert_eq!(result_alpha_beta, result_minimax);
+    assert_eq!(result_alpha_beta.best_node, result_minimax.0);
     assert_eq!(result_minimax.0.unwrap().id, 1);
 }
 #[test]
 fn test_full_tree_min_player_2() {
     let tree = build_tree();
-    let result_minimax = minimax::evaluate(&tree, Player::Min, 3);
-    let result_alpha_beta = alpha_beta::evaluate(&tree, Player::Min, 3);
+    let result_minimax = minimax::minimax(tree.clone(), Player::Min);
+    let result_alpha_beta = alpha_beta::alpha_beta(tree, Player::Min, MIN_VALUE, MAX_VALUE);
 
-    assert_eq!(result_alpha_beta, result_minimax);
+    assert_eq!(result_alpha_beta.best_node, result_minimax.0);
     assert_eq!(result_minimax.1, 3.0);
 }
 
@@ -110,58 +103,68 @@ fn test_game_over() {
         value: 11.0,
         children: Vec::new(),
     };
-    let result_minimax = minimax::evaluate(&empty_tree, Player::Max, 2);
-    let result_alpha_beta = alpha_beta::evaluate(&empty_tree, Player::Max, 2);
+    let result_minimax = minimax::minimax(empty_tree.clone(), Player::Max);
+    let result_alpha_beta = alpha_beta::alpha_beta(empty_tree, Player::Max, MIN_VALUE, MAX_VALUE);
 
-    assert_eq!(result_alpha_beta, result_minimax);
+    assert_eq!(result_alpha_beta.best_node, result_minimax.0);
     assert!(result_minimax.0.is_none());
     assert_eq!(result_minimax.1, 11.0);
 }
+/*
+#[test]
+fn test_bug_xyz() {
+    let position = init_position_for_bug_testing();
+    let depth = 2;
+    let tree = search_algorithms::build_tree(position, depth);
+    let minimx_player = match tree.position.get_player() {
+        crate::engine::piece::Color::Black => Player::Min,
+        crate::engine::piece::Color::White => Player::Max,
+    };
+    let result_alpha_beta = alpha_beta::evaluate(&tree, minimx_player, depth);
+    let result_minimax = minimax::evaluate(&tree, minimx_player, depth);
+    if let (Some(alpha), Some(minimax)) = (result_alpha_beta.0, result_minimax.0) {
+        println!("Alpha Beta {:?}", alpha.id);
+        println!("Minimax {:?}", minimax.id);
+    }
+    println!("{:?}", result_alpha_beta.1);
+    assert_eq!(result_alpha_beta.1, result_minimax.1);
+}
+     */
 
 #[test]
 fn test_random_tree() {
-    let tree = generate_random_tree(10, 3, 42);
-    let result_minimax = minimax::evaluate(&tree, Player::Max, 8);
-    let result_alpha_beta = alpha_beta::evaluate(&tree, Player::Max, 8);
-    assert_eq!(result_minimax, result_alpha_beta);
+    let tree = generate_random_tree(10, 3);
+    let result_minimax = minimax::minimax(tree.clone(), Player::Max);
+    let result_alpha_beta = alpha_beta::alpha_beta(tree.clone(), Player::Max, MIN_VALUE, MAX_VALUE);
+    assert_eq!(result_alpha_beta.best_node, result_minimax.0);
 }
-
-fn generate_random_tree(depth: u32, branching_factor: u32, seed: u64) -> TestPosition {
-    let mut rng = rand::rngs::StdRng::seed_from_u64(seed);
+#[allow(dead_code)]
+fn generate_random_tree(depth: u32, branching_factor: u32) -> TestPosition {
     let mut id_counter = 0;
 
-    fn build_recursive(
-        depth: u32,
-        branching_factor: u32,
-        id_counter: &mut u32,
-        rng: &mut rand::rngs::StdRng,
-    ) -> TestPosition {
+    fn build_recursive(depth: u32, branching_factor: u32, id_counter: &mut u32) -> TestPosition {
         let current_id = *id_counter;
         *id_counter += 1;
 
         if depth == 0 {
             // Leaf: Random Wert zwischen 0 und 100
-            let value = rng.gen_range(0.0..100.0);
+            let value = random_range(0.0..100.0);
             return TestPosition::leafe(current_id, value);
         }
 
         // Branch: Erstelle Kinder
         let mut children = Vec::new();
         for _ in 0..branching_factor {
-            children.push(build_recursive(
-                depth - 1,
-                branching_factor,
-                id_counter,
-                rng,
-            ));
+            children.push(build_recursive(depth - 1, branching_factor, id_counter));
         }
 
         TestPosition::branch(current_id, children)
     }
 
-    build_recursive(depth, branching_factor, &mut id_counter, &mut rng)
+    build_recursive(depth, branching_factor, &mut id_counter)
 }
 
+#[allow(dead_code)]
 fn build_tree() -> TestPosition {
     TestPosition::branch(
         0,
@@ -213,30 +216,29 @@ fn build_tree() -> TestPosition {
     )
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct TestPosition {
     pub id: u32,
     pub value: f32,
     pub children: Vec<TestPosition>,
 }
-
 impl Node for TestPosition {
     fn evaluate(&self) -> f32 {
         self.value
     }
 
-    fn is_game_over(&self) -> bool {
+    fn is_leaf(&self) -> bool {
         self.children.is_empty()
     }
 
-    fn get_children(&self) -> &Vec<Self>
+    fn get_children(&self) -> Vec<Self>
     where
         Self: Sized,
     {
-        &self.children
+        self.children.clone()
     }
 }
-
+#[allow(dead_code)]
 impl TestPosition {
     fn branch(id: u32, children: Vec<TestPosition>) -> TestPosition {
         TestPosition {

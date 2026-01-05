@@ -1,4 +1,9 @@
-use crate::engine::{directions::squares::*, piece::*};
+use crate::engine::{
+    chess_moves::{ChessMove, MoveType},
+    directions::squares::*,
+    piece::*,
+    position::{self, bitboard::Bitboard},
+};
 
 use super::{print::Print, Position};
 
@@ -37,5 +42,8 @@ fn test_put_white_king() {
     let position = Position::new_starting_position();
     let new_position = position.put_piece(Piece::WhiteKing, E2);
     assert_ne!(position.is_occupied_by_piece(E2, Piece::WhiteKing), true);
-    assert_eq!(new_position.is_occupied_by_piece(E2, Piece::WhiteKing), true);
+    assert_eq!(
+        new_position.is_occupied_by_piece(E2, Piece::WhiteKing),
+        true
+    );
 }

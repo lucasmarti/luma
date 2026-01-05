@@ -1,4 +1,4 @@
-#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+#[derive(Clone, Copy, PartialEq, Eq, Debug, Hash)]
 
 pub enum Piece {
     BlackQueen,
@@ -57,7 +57,7 @@ pub enum Typ {
     Knight,
     Bishop,
 }
-#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+#[derive(Clone, Copy, PartialEq, Eq, Debug, Hash)]
 pub enum Color {
     Black,
     White,

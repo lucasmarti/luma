@@ -1,11 +1,17 @@
 use crate::engine::{
-    chess_moves::get_current_player_moves, position::Position, search_algorithms::node::ChessNode,
+    chess_moves::get_current_player_moves,
+    heuristic::heuristic,
+    position::{print::Print, Position},
+    search_algorithms::{
+        alpha_beta::{alpha_beta, AlphaBetaResult},
+        node::ChessNode,
+    },
 };
 
 pub const MAX_VALUE: f32 = f32::MAX;
 pub const MIN_VALUE: f32 = f32::MIN;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub enum Player {
     #[allow(unused)]
     Min,
@@ -13,14 +19,20 @@ pub enum Player {
 }
 
 pub fn get_best_move(position: Position) -> Option<Position> {
-    let depth = 2;
+    let depth = 4;
     let tree = build_tree(position, depth);
     let minimx_player = match tree.position.get_player() {
         crate::engine::piece::Color::Black => Player::Min,
         crate::engine::piece::Color::White => Player::Max,
     };
-    let result = alpha_beta::evaluate(&tree, minimx_player, depth);
-    result.0.map(|node| node.position)
+    let alpha_beta_result = alpha_beta(tree, minimx_player, MIN_VALUE, MAX_VALUE);
+    if let Some(leaf) = alpha_beta_result.leaf.clone().map(|node| node.position) {
+        leaf.print_board();
+        println!("{:?}", heuristic(&leaf));
+    }
+    let leaf = alpha_beta_result.leaf;
+
+    alpha_beta_result.best_node.map(|node| node.position)
 }
 
 fn build_tree(position: Position, depth: u8) -> ChessNode {

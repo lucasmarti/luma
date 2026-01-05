@@ -1,6 +1,6 @@
 use crate::engine::{
-    directions::{self, squares, DirectionFn},
-    piece::{Color, Piece},
+    directions::{self},
+    piece::Piece,
     position::Position,
 };
 const PAWN_IN_FRONT_SCORE: f32 = -15.0;
@@ -43,13 +43,13 @@ pub fn get_isolated_pawns(position: &Position, pawn: Piece) -> f32 {
     let mut score: f32 = 0.0;
     let mut columns: u32 = 0;
     for square in position.get_squares(pawn).iter() {
-        columns = columns | 1 << (directions::get_column(square))
+        columns |= 1 << (directions::get_column(square))
     }
 
     for col in 1..9 {
-        let left_column_has_pawn = (columns & (1 << col - 1)) != 0;
+        let left_column_has_pawn = (columns & (1 << (col - 1))) != 0;
         let center_column_has_pawn = (columns & (1 << col)) != 0;
-        let right_column_has_pawn = (columns & (1 << col + 1)) != 0;
+        let right_column_has_pawn = (columns & (1 << (col + 1))) != 0;
         if !left_column_has_pawn && center_column_has_pawn && !right_column_has_pawn {
             score += ISOLATED_PAWN_SCORE;
         }

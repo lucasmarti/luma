@@ -1,7 +1,6 @@
 use crate::engine::{
     chess_moves::ChessMove,
     directions::squares::*,
-    heuristic::Score,
     piece::{Color, Piece, Typ},
     position::bitboard::Bitboard,
 };

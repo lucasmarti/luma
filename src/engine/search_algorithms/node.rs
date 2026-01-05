@@ -4,13 +4,13 @@ use crate::engine::{
     heuristic::heuristic,
     piece::Color,
     position::Position,
-    search_algorithms::{alpha_beta, Player, MAX_VALUE, MIN_VALUE},
+    search_algorithms::{MAX_VALUE, MIN_VALUE},
 };
 
 pub trait Node {
     fn evaluate(&self) -> f32;
-    fn is_game_over(&self) -> bool;
-    fn get_children(&self) -> &Vec<Self>
+    fn is_leaf(&self) -> bool;
+    fn get_children(&self) -> Vec<Self>
     where
         Self: Sized;
 }
@@ -37,14 +37,14 @@ impl Node for ChessNode {
         }
     }
 
-    fn is_game_over(&self) -> bool {
+    fn is_leaf(&self) -> bool {
         self.children.is_empty()
     }
 
-    fn get_children(&self) -> &Vec<Self>
+    fn get_children(&self) -> Vec<Self>
     where
         Self: Sized,
     {
-        &self.children
+        self.children.clone()
     }
 }
