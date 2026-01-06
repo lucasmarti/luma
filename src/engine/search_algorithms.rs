@@ -1,13 +1,14 @@
+use std::sync::Mutex;
+
 use crate::engine::{
     chess_moves::get_current_player_moves,
-    heuristic::heuristic,
+    evaluation::Evaluation,
     position::{print::Print, Position},
-    search_algorithms::{
-        alpha_beta::{alpha_beta, AlphaBetaResult},
-        node::ChessNode,
-    },
+    search_algorithms::{alpha_beta::alpha_beta, node::ChessNode},
 };
-
+lazy_static::lazy_static! {
+    pub static ref CALL_COUNT: Mutex<u64> = Mutex::new(0);
+}
 pub const MAX_VALUE: f32 = f32::MAX;
 pub const MIN_VALUE: f32 = f32::MIN;
 
@@ -28,10 +29,8 @@ pub fn get_best_move(position: Position) -> Option<Position> {
     let alpha_beta_result = alpha_beta(tree, minimx_player, MIN_VALUE, MAX_VALUE);
     if let Some(leaf) = alpha_beta_result.leaf.clone().map(|node| node.position) {
         leaf.print_board();
-        println!("{:?}", heuristic(&leaf));
+        println!("{:?}", Evaluation::new(&leaf));
     }
-    let leaf = alpha_beta_result.leaf;
-
     alpha_beta_result.best_node.map(|node| node.position)
 }
 

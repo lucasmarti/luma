@@ -1,7 +1,7 @@
 use crate::engine::{
     check::is_check,
     chess_moves::get_current_player_moves,
-    heuristic::heuristic,
+    evaluation::Evaluation,
     piece::Color,
     position::Position,
     search_algorithms::{MAX_VALUE, MIN_VALUE},
@@ -33,7 +33,7 @@ impl Node for ChessNode {
                 0.0
             }
         } else {
-            heuristic(&self.position).total
+            Evaluation::new(&self.position).score
         }
     }
 

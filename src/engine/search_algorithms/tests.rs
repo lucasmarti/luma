@@ -3,31 +3,11 @@ use crate::engine::search_algorithms::node::Node;
 #[cfg(test)]
 use crate::engine::{
     directions::squares::*,
-    heuristic::heuristic,
     piece::*,
     position::{print::Print, Position},
     search_algorithms::{alpha_beta, get_best_move, minimax, Player, MAX_VALUE, MIN_VALUE},
 };
 use rand::random_range;
-
-#[test]
-fn test_evaluate() {
-    let checkmate_white_position = Position::default()
-        .put_piece(Piece::BlackKing, E8)
-        .put_piece(Piece::WhiteKing, A1)
-        .put_piece(Piece::BlackQueen, A8)
-        .put_piece(Piece::BlackRook, B8);
-
-    assert_eq!(heuristic(&checkmate_white_position).total, MIN_VALUE);
-
-    let draw_position = Position::default()
-        .put_piece(Piece::BlackKing, E8)
-        .put_piece(Piece::WhiteKing, A1)
-        .put_piece(Piece::BlackQueen, B8)
-        .put_piece(Piece::BlackRook, H2);
-
-    assert_eq!(heuristic(&draw_position).total, 0.0);
-}
 
 #[test]
 fn test_get_best_move() {

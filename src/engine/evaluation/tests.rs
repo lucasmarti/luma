@@ -1,7 +1,8 @@
 use crate::engine::directions::squares::*;
-use crate::engine::heuristic::*;
+use crate::engine::evaluation::pawn_structures::get_passed_pawns;
 use crate::engine::piece::Piece::{self, *};
 use crate::engine::position::*;
+use crate::engine::{evaluation::*, position};
 
 #[test]
 fn test_queen_loss() {
@@ -15,7 +16,7 @@ fn test_queen_loss() {
         .remove_piece(G7)
         .remove_piece(H5)
         .put_piece(Piece::BlackKnight, H5);
-    let evaluation = heuristic(&position);
+    let evaluation = Evaluation::new(&position);
     println!("{:?}", evaluation);
 }
 
@@ -77,7 +78,7 @@ fn test_equal_material() {
 #[test]
 fn test_white_queen_missing() {
     let position = Position::new_starting_position().remove_piece(D1);
-    assert_eq!(heuristic(&position).total, -88.0);
+    assert_eq!(Evaluation::new(&position).score, -88.0);
 }
 
 #[test]
@@ -95,5 +96,21 @@ fn test_black_queen_missing() {
         squares::count_white(&position) - squares::count_black(&position),
         -0.5
     );
-    assert_eq!(heuristic(&position).total, 88.0);
+    assert_eq!(Evaluation::new(&position).score, 88.0);
+}
+
+#[test]
+fn test_get_passed_pawns() {
+    let position1 = Position::default().put_piece(Piece::WhitePawn, A4);
+    assert_eq!(get_passed_pawns(&position1, WhitePawn), 15.0);
+
+    let position2 = Position::default()
+        .put_piece(Piece::BlackPawn, A4)
+        .put_piece(WhitePawn, A3);
+    assert_eq!(get_passed_pawns(&position2, BlackPawn), 0.0);
+
+    let position3 = Position::default()
+        .put_piece(Piece::BlackPawn, A4)
+        .put_piece(WhitePawn, B3);
+    assert_eq!(get_passed_pawns(&position3, BlackPawn), 0.0);
 }

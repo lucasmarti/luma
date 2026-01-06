@@ -38,7 +38,7 @@ pub fn alpha_beta<N: Node + Clone>(
                 }
                 AlphaBetaResult {
                     value: max_value,
-                    leaf: leaf,
+                    leaf,
                     best_node: max_node,
                 }
             }
@@ -60,7 +60,7 @@ pub fn alpha_beta<N: Node + Clone>(
                 }
                 AlphaBetaResult {
                     value: min_value,
-                    leaf: leaf,
+                    leaf,
                     best_node: min_node,
                 }
             }

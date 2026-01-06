@@ -59,32 +59,10 @@ pub enum GameEnd {
     Draw,
     Victory(Color),
 }
-
-/*
-    pub fn execute_move(position: &Position, chess_move: ChessMove) -> Option<Position> {
-    get_valid_drop_positions(position, chess_move.from)
-        .iter()
-        .find(|pos| pos.get_last_move() == Some(chess_move))
-        .cloned()
-}
-
-#[allow(dead_code)]
-fn get_random_move(position: &Position) -> Option<Position> {
-    let positions = get_current_player_moves(position);
-    positions.choose(&mut rand::rng()).copied()
-}
-
-pub fn is_valid_drag_square(position: &Position, square: Square) -> bool {
-    match position.get_piece_at(square) {
-        Some(piece) => piece.get_color() == position.get_player(),
-        None => false,
-    }
-}
-*/
 mod check;
 pub mod chess_moves;
 pub mod directions;
-mod heuristic;
+mod evaluation;
 pub mod piece;
 pub mod position;
 pub mod search_algorithms;

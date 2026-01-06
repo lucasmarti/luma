@@ -1,9 +1,4 @@
-use crate::engine::{
-    chess_moves::{ChessMove, MoveType},
-    directions::squares::*,
-    piece::*,
-    position::{self, bitboard::Bitboard},
-};
+use crate::engine::{directions::squares::*, piece::*};
 
 use super::{print::Print, Position};
 

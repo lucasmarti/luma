@@ -4,11 +4,11 @@ use crate::engine::{
     position::Position,
 };
 
-const QUEEN_FACTOR: f32 = 4.5;
-const KING_FACTOR: f32 = 1.5;
-const ROOK_FACTOR: f32 = 2.5;
-const KNIGHT_FACTOR: f32 = 3.5;
-const BISHOP_FACTOR: f32 = 3.5;
+const QUEEN_FACTOR: f32 = 0.25; // ~2.25 Punkte pro Feld
+const ROOK_FACTOR: f32 = 0.20; // ~1.0 Punkte pro Feld
+const BISHOP_FACTOR: f32 = 0.10; // ~0.3 Punkte pro Feld
+const KNIGHT_FACTOR: f32 = 0.15; // ~0.45 Punkte pro Feld
+const KING_FACTOR: f32 = 0.05; // König-Aktivität ist später wichtig
 const PAWN_FACTOR: f32 = 0.0;
 
 pub fn count_black(position: &Position) -> f32 {
