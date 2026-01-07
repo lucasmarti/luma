@@ -4,8 +4,9 @@ use crate::engine::{
     piece::{Color, Piece, Typ},
     position::bitboard::Bitboard,
 };
+use std::hash::{Hash, Hasher};
 
-#[derive(Clone, Copy, PartialEq, Debug, Eq, Hash)]
+#[derive(Clone, Copy, Debug, Eq)]
 pub struct Position {
     white_king: Bitboard,
     white_queen: Bitboard,
@@ -314,6 +315,46 @@ pub enum CastlingType {
 impl CastlingType {
     fn as_index(&self) -> usize {
         *self as usize
+    }
+}
+
+impl Hash for Position {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.white_king.hash(state);
+        self.white_queen.hash(state);
+        self.white_rooks.hash(state);
+        self.white_bishops.hash(state);
+        self.white_knights.hash(state);
+        self.white_pawns.hash(state);
+        self.black_king.hash(state);
+        self.black_queen.hash(state);
+        self.black_rooks.hash(state);
+        self.black_bishops.hash(state);
+        self.black_knights.hash(state);
+        self.black_pawns.hash(state);
+        self.castling_rights.hash(state);
+        self.en_passant.hash(state);
+        self.player.hash(state);
+    }
+}
+
+impl PartialEq for Position {
+    fn eq(&self, other: &Self) -> bool {
+        self.white_king == other.white_king
+            && self.white_queen == other.white_queen
+            && self.white_rooks == other.white_rooks
+            && self.white_bishops == other.white_bishops
+            && self.white_knights == other.white_knights
+            && self.white_pawns == other.white_pawns
+            && self.black_king == other.black_king
+            && self.black_queen == other.black_queen
+            && self.black_rooks == other.black_rooks
+            && self.black_bishops == other.black_bishops
+            && self.black_knights == other.black_knights
+            && self.black_pawns == other.black_pawns
+            && self.castling_rights == other.castling_rights
+            && self.en_passant == other.en_passant
+            && self.player == other.player
     }
 }
 pub mod bitboard;
