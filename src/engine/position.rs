@@ -5,7 +5,7 @@ use crate::engine::{
     position::bitboard::Bitboard,
 };
 
-#[derive(Clone, Copy, PartialEq, Debug)]
+#[derive(Clone, Copy, PartialEq, Debug, Eq, Hash)]
 pub struct Position {
     white_king: Bitboard,
     white_queen: Bitboard,
@@ -304,7 +304,7 @@ impl Default for Position {
     }
 }
 
-#[derive(Clone, Copy, PartialEq, Debug)]
+#[derive(Clone, Copy, Eq, Hash, PartialEq, Debug)]
 pub enum CastlingType {
     BlackQueenside = 0,
     BlackKingside = 1,

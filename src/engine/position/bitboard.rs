@@ -4,7 +4,7 @@ use std::ops::{BitAnd, BitOr};
 
 use crate::engine::directions::squares::Square;
 
-#[derive(Clone, Copy, Debug, PartialEq, Default)]
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 
 pub struct Bitboard(u64);
 impl Bitboard {

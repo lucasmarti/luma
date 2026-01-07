@@ -1,4 +1,4 @@
-use crate::engine::search_algorithms::node::Node;
+use crate::engine::{cache::Cache, search_algorithms::node::Node};
 
 #[cfg(test)]
 use crate::engine::{
@@ -40,8 +40,9 @@ fn test_get_best_move2() {
 #[test]
 fn test_full_tree_max_player_1() {
     let tree = build_tree();
-    let result_minimax = minimax::minimax(tree.clone(), Player::Max);
-    let result_alpha_beta = alpha_beta::alpha_beta(tree, Player::Max, MIN_VALUE, MAX_VALUE);
+    let result_minimax = minimax::minimax(tree.clone(), Player::Max, &mut Cache::new());
+    let result_alpha_beta =
+        alpha_beta::alpha_beta(tree, Player::Max, MIN_VALUE, MAX_VALUE, &mut Cache::new());
 
     assert_eq!(result_alpha_beta.best_node, result_minimax.0);
     assert_eq!(result_minimax.0.unwrap().id, 3);
@@ -49,8 +50,9 @@ fn test_full_tree_max_player_1() {
 #[test]
 fn test_full_tree_max_player_2() {
     let tree = build_tree();
-    let result_minimax = minimax::minimax(tree.clone(), Player::Max);
-    let result_alpha_beta = alpha_beta::alpha_beta(tree, Player::Max, MIN_VALUE, MAX_VALUE);
+    let result_minimax = minimax::minimax(tree.clone(), Player::Max, &mut Cache::new());
+    let result_alpha_beta =
+        alpha_beta::alpha_beta(tree, Player::Max, MIN_VALUE, MAX_VALUE, &mut Cache::new());
 
     assert_eq!(result_alpha_beta.best_node, result_minimax.0);
 
@@ -60,8 +62,9 @@ fn test_full_tree_max_player_2() {
 #[test]
 fn test_full_tree_min_player_1() {
     let tree = build_tree();
-    let result_minimax = minimax::minimax(tree.clone(), Player::Min);
-    let result_alpha_beta = alpha_beta::alpha_beta(tree, Player::Min, MIN_VALUE, MAX_VALUE);
+    let result_minimax = minimax::minimax(tree.clone(), Player::Min, &mut Cache::new());
+    let result_alpha_beta =
+        alpha_beta::alpha_beta(tree, Player::Min, MIN_VALUE, MAX_VALUE, &mut Cache::new());
 
     assert_eq!(result_alpha_beta.best_node, result_minimax.0);
     assert_eq!(result_minimax.0.unwrap().id, 1);
@@ -69,8 +72,9 @@ fn test_full_tree_min_player_1() {
 #[test]
 fn test_full_tree_min_player_2() {
     let tree = build_tree();
-    let result_minimax = minimax::minimax(tree.clone(), Player::Min);
-    let result_alpha_beta = alpha_beta::alpha_beta(tree, Player::Min, MIN_VALUE, MAX_VALUE);
+    let result_minimax = minimax::minimax(tree.clone(), Player::Min, &mut Cache::new());
+    let result_alpha_beta =
+        alpha_beta::alpha_beta(tree, Player::Min, MIN_VALUE, MAX_VALUE, &mut Cache::new());
 
     assert_eq!(result_alpha_beta.best_node, result_minimax.0);
     assert_eq!(result_minimax.1, 3.0);
@@ -83,39 +87,31 @@ fn test_game_over() {
         value: 11.0,
         children: Vec::new(),
     };
-    let result_minimax = minimax::minimax(empty_tree.clone(), Player::Max);
-    let result_alpha_beta = alpha_beta::alpha_beta(empty_tree, Player::Max, MIN_VALUE, MAX_VALUE);
+    let result_minimax = minimax::minimax(empty_tree.clone(), Player::Max, &mut Cache::new());
+    let result_alpha_beta = alpha_beta::alpha_beta(
+        empty_tree,
+        Player::Max,
+        MIN_VALUE,
+        MAX_VALUE,
+        &mut Cache::new(),
+    );
 
     assert_eq!(result_alpha_beta.best_node, result_minimax.0);
     assert!(result_minimax.0.is_none());
     assert_eq!(result_minimax.1, 11.0);
 }
-/*
-#[test]
-fn test_bug_xyz() {
-    let position = init_position_for_bug_testing();
-    let depth = 2;
-    let tree = search_algorithms::build_tree(position, depth);
-    let minimx_player = match tree.position.get_player() {
-        crate::engine::piece::Color::Black => Player::Min,
-        crate::engine::piece::Color::White => Player::Max,
-    };
-    let result_alpha_beta = alpha_beta::evaluate(&tree, minimx_player, depth);
-    let result_minimax = minimax::evaluate(&tree, minimx_player, depth);
-    if let (Some(alpha), Some(minimax)) = (result_alpha_beta.0, result_minimax.0) {
-        println!("Alpha Beta {:?}", alpha.id);
-        println!("Minimax {:?}", minimax.id);
-    }
-    println!("{:?}", result_alpha_beta.1);
-    assert_eq!(result_alpha_beta.1, result_minimax.1);
-}
-     */
 
 #[test]
 fn test_random_tree() {
     let tree = generate_random_tree(10, 3);
-    let result_minimax = minimax::minimax(tree.clone(), Player::Max);
-    let result_alpha_beta = alpha_beta::alpha_beta(tree.clone(), Player::Max, MIN_VALUE, MAX_VALUE);
+    let result_minimax = minimax::minimax(tree.clone(), Player::Max, &mut Cache::new());
+    let result_alpha_beta = alpha_beta::alpha_beta(
+        tree.clone(),
+        Player::Max,
+        MIN_VALUE,
+        MAX_VALUE,
+        &mut Cache::new(),
+    );
     assert_eq!(result_alpha_beta.best_node, result_minimax.0);
 }
 #[allow(dead_code)]
@@ -203,7 +199,7 @@ pub struct TestPosition {
     pub children: Vec<TestPosition>,
 }
 impl Node for TestPosition {
-    fn evaluate(&self) -> f32 {
+    fn evaluate(&self, cache: &mut Cache) -> f32 {
         self.value
     }
 

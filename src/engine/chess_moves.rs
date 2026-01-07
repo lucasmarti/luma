@@ -56,7 +56,7 @@ fn get_new_positions(position: &Position, piece: Piece, get_moves_fn: MovesFn) -
     }
     new_positions
 }
-#[derive(Clone, Copy, PartialEq, Debug)]
+#[derive(Clone, Copy, Eq, Hash, PartialEq, Debug)]
 pub struct ChessMove {
     pub move_type: MoveType,
     pub piece: Piece,
@@ -66,7 +66,7 @@ pub struct ChessMove {
     pub pormotion: Option<Piece>,
 }
 
-#[derive(Clone, Copy, PartialEq, Debug)]
+#[derive(Clone, Copy, Eq, Hash, PartialEq, Debug)]
 pub enum MoveType {
     Quiet,
     Capture,

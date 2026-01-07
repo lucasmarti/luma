@@ -12,6 +12,7 @@ pub struct Evaluation {
     pub black_score: Score,
     pub white_score: Score,
     pub score: f32,
+    pub hits: u32,
 }
 impl Evaluation {
     pub fn new(position: &Position) -> Evaluation {
@@ -42,6 +43,7 @@ impl Evaluation {
             black_score,
             white_score,
             score,
+            hits: 0,
         }
     }
 }

@@ -1,8 +1,9 @@
-use std::sync::Mutex;
+use std::{collections::HashMap, hash::Hash, sync::Mutex};
 
 use crate::engine::{
+    cache::Cache,
     chess_moves::get_current_player_moves,
-    evaluation::Evaluation,
+    evaluation::{self, Evaluation},
     position::{print::Print, Position},
     search_algorithms::{alpha_beta::alpha_beta, node::ChessNode},
 };
@@ -20,18 +21,23 @@ pub enum Player {
 }
 
 pub fn get_best_move(position: Position) -> Option<Position> {
+    let cache = &mut Cache::new();
     let depth = 4;
     let tree = build_tree(position, depth);
     let minimx_player = match tree.position.get_player() {
         crate::engine::piece::Color::Black => Player::Min,
         crate::engine::piece::Color::White => Player::Max,
     };
-    let alpha_beta_result = alpha_beta(tree, minimx_player, MIN_VALUE, MAX_VALUE);
-    if let Some(leaf) = alpha_beta_result.leaf.clone().map(|node| node.position) {
-        leaf.print_board();
-        println!("{:?}", Evaluation::new(&leaf));
+    let best_move = alpha_beta(tree, minimx_player, MIN_VALUE, MAX_VALUE, cache)
+        .best_node
+        .map(|node| node.position);
+    let mut hits = 0;
+    for evaluation in cache.values() {
+        hits += evaluation.hits;
     }
-    alpha_beta_result.best_node.map(|node| node.position)
+    println!("Cache size = {:?}", cache.len());
+    println!("Number of hits = {:?}", hits);
+    best_move
 }
 
 fn build_tree(position: Position, depth: u8) -> ChessNode {

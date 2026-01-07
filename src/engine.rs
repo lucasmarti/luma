@@ -59,6 +59,7 @@ pub enum GameEnd {
     Draw,
     Victory(Color),
 }
+pub mod cache;
 mod check;
 pub mod chess_moves;
 pub mod directions;

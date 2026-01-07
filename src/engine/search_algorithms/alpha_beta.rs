@@ -1,4 +1,9 @@
-use crate::engine::search_algorithms::{node::Node, Player, MAX_VALUE, MIN_VALUE};
+use std::collections::HashMap;
+
+use crate::engine::{
+    cache::Cache,
+    search_algorithms::{node::Node, Player, MAX_VALUE, MIN_VALUE},
+};
 
 pub struct AlphaBetaResult<N: Node + Clone> {
     pub value: f32,
@@ -10,14 +15,14 @@ pub fn alpha_beta<N: Node + Clone>(
     player: Player,
     mut alpha: f32,
     mut beta: f32,
+    cache: &mut Cache,
 ) -> AlphaBetaResult<N> {
     if node.is_leaf() {
         AlphaBetaResult {
-            value: node.evaluate(),
-            leaf: Some(node),
+            value: node.evaluate(cache),
+            leaf: Some(node.clone()),
             best_node: None,
         }
-        //(None, node.evaluate())
     } else {
         match player {
             Player::Max => {
@@ -25,7 +30,8 @@ pub fn alpha_beta<N: Node + Clone>(
                 let mut max_node: Option<N> = None;
                 let mut leaf: Option<N> = None;
                 for child in node.get_children() {
-                    let alpha_beta_result = alpha_beta(child.clone(), Player::Min, alpha, beta);
+                    let alpha_beta_result =
+                        alpha_beta(child.clone(), Player::Min, alpha, beta, cache);
                     if alpha_beta_result.value > max_value {
                         max_value = alpha_beta_result.value;
                         max_node = Some(child);
@@ -47,7 +53,8 @@ pub fn alpha_beta<N: Node + Clone>(
                 let mut min_node: Option<N> = None;
                 let mut leaf: Option<N> = None;
                 for child in node.get_children() {
-                    let alpha_beta_result = alpha_beta(child.clone(), Player::Max, alpha, beta);
+                    let alpha_beta_result =
+                        alpha_beta(child.clone(), Player::Max, alpha, beta, cache);
                     if alpha_beta_result.value < min_value {
                         min_value = alpha_beta_result.value;
                         min_node = Some(child);
