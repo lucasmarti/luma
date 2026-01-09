@@ -1,5 +1,4 @@
 use crate::engine::{
-    cache::Cache,
     check::is_check,
     chess_moves::{get_current_player_moves, ChessMove},
     evaluation::Evaluation,

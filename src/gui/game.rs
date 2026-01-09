@@ -131,8 +131,9 @@ impl Game {
     fn promote(&mut self, data: PromoteFunctionData) {
         self.ui.disabled_promotion_buttons();
         if let Some(promotion_move) = data.possible_promotion_moves.iter().find(|promotion_move| {
-            promotion_move.move_type == MoveType::Promotion
-                || promotion_move.move_type == MoveType::PromotionCapture
+            (promotion_move.move_type == MoveType::Promotion
+                || promotion_move.move_type == MoveType::PromotionCapture)
+                && promotion_move.pormotion == Some(data.piece)
         }) {
             self.position = promotion_move.position;
             self.state = GameState::Computer;

@@ -1,16 +1,10 @@
-use crate::engine::{
-    cache::Cache,
-    search_algorithms::minimax::{self, minimax},
-};
-
 #[cfg(test)]
 use crate::engine::{
     directions::squares::*,
     piece::*,
     position::{print::Print, Position},
-    search_algorithms::{alpha_beta, get_best_move, Player, MAX_VALUE, MIN_VALUE},
+    search_algorithms::get_best_move,
 };
-use rand::random_range;
 
 #[test]
 fn test_get_best_move() {

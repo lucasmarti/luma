@@ -1,5 +1,5 @@
 use crate::engine::{
-    chess_moves::{self, common::progess, ChessMove, MoveType},
+    chess_moves::{common::progess, ChessMove, MoveType},
     directions::{self, squares::Square, DirectionFn, RowFn},
     piece::{Color, Piece, Typ},
     position::Position,

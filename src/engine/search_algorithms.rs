@@ -1,10 +1,7 @@
-use std::{collections::HashMap, hash::Hash, sync::Mutex};
+use std::sync::Mutex;
 
 use crate::engine::{
-    cache::Cache,
-    chess_moves::{get_current_player_moves, ChessMove},
-    evaluation::{self, Evaluation},
-    position::{print::Print, Position},
+    cache::Cache, chess_moves::ChessMove, position::Position,
     search_algorithms::alpha_beta::alpha_beta,
 };
 lazy_static::lazy_static! {
@@ -22,7 +19,7 @@ pub enum Player {
 
 pub fn get_best_move(position: Position) -> Option<ChessMove> {
     let cache = &mut Cache::new();
-    let depth = 4;
+    let depth = 2;
     //let tree = build_tree(position, depth);
     let minimx_player = match position.get_player() {
         crate::engine::piece::Color::Black => Player::Min,
@@ -38,19 +35,6 @@ pub fn get_best_move(position: Position) -> Option<ChessMove> {
     println!("Number of hits = {:?}", hits);
     best_move
 }
-/*
-fn build_tree(position: Position, depth: u8) -> ChessNode {
-    let mut node = ChessNode {
-        position,
-        children: Vec::new(),
-    };
-    if depth > 0 {
-        for child in get_current_player_moves(&position) {
-            node.children.push(build_tree(child.position, depth - 1));
-        }
-    }
-    node
-} */
 pub mod alpha_beta;
 pub mod minimax;
 pub mod node;

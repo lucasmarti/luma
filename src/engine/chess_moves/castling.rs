@@ -1,7 +1,6 @@
 use crate::engine::{
     check::{is_check, is_under_attack},
     chess_moves::{
-        self,
         castling::configurations::{
             CastlingConfiguration, BLACK_KINGSIDE, BLACK_QUEENSIDE, WHITE_KINGSIDE, WHITE_QUEENSIDE,
         },
