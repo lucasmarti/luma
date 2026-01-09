@@ -18,10 +18,10 @@ pub fn alpha_beta(
     player: Player,
     mut alpha: f32,
     mut beta: f32,
-    mut depth: u8,
+    depth: u8,
     cache: &mut Cache,
 ) -> AlphaBetaResult {
-    let mut children = get_children(position);
+    let children = get_children(position);
     if depth == 0 || children.is_empty() {
         AlphaBetaResult {
             value: evaluate(position, cache),

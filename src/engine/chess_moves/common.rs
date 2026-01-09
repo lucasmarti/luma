@@ -139,7 +139,7 @@ pub fn progess(position: &Position, piece: Piece, from: Square, to: Square) -> C
         .toggle_player();
     new_position = set_en_passant_if_necessary(new_position, piece, from, to);
     new_position = remove_castling_rights_if_necessary(new_position, from);
-    let chess_move = ChessMove {
+    ChessMove {
         move_type: tuple.0,
         piece,
         from,
@@ -147,8 +147,7 @@ pub fn progess(position: &Position, piece: Piece, from: Square, to: Square) -> C
         capture: tuple.1,
         pormotion: None,
         position: new_position,
-    };
-    chess_move
+    }
 }
 #[cfg(test)]
 mod tests;

@@ -52,8 +52,8 @@ pub fn evaluate(position: &Position) -> f32 {
             0.0
         }
     } else {
-        let evaluation = Evaluation::new(&position);
-        return evaluation.score;
+        let evaluation = Evaluation::new(position);
+        evaluation.score
     }
 }
 

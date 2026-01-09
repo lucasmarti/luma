@@ -83,7 +83,7 @@ impl Game {
                 match engine::get_possible_moves(&self.position) {
                     Ok(possible_moves) => {
                         self.state = GameState::Player(SquareSelected::No(NoSquareSelectedData {
-                            possible_moves: possible_moves,
+                            possible_moves,
                         }));
                     }
                     Err(_) => self.state = GameState::NoGame,
