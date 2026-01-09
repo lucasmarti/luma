@@ -1,9 +1,6 @@
-//pub mod chess_board_canvas;
 mod configuration;
-//pub mod coordinate_mapper;
-mod icon;
-//mod draw_functions;
 pub mod game;
+mod icon;
 mod state_machine;
 mod ui_board;
 mod ui_button;

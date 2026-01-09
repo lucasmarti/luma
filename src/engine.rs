@@ -2,10 +2,7 @@ use crate::engine::{
     check::is_check,
     chess_moves::{get_current_player_moves, ChessMove},
     directions::squares::Square,
-    piece::{
-        Color,
-        Piece::{self},
-    },
+    piece::Piece::{self},
     position::Position,
     search_algorithms::get_best_move,
 };
@@ -15,7 +12,7 @@ pub fn get_next_move(position: &Position) -> MoveOrEnd {
         Some(chess_move) => MoveOrEnd::Move(chess_move),
         None => {
             if is_check(position, position.get_player()) {
-                MoveOrEnd::GameEnd(GameEnd::Victory(position.get_player().get_opponent_color()))
+                MoveOrEnd::GameEnd(GameEnd::Victory)
             } else {
                 MoveOrEnd::GameEnd(GameEnd::Draw)
             }
@@ -28,7 +25,7 @@ pub fn get_possible_moves(position: &Position) -> Result<Vec<ChessMove>, GameEnd
 
     if chess_moves.is_empty() {
         if is_check(position, position.get_player()) {
-            Err(GameEnd::Victory(position.get_player().get_opponent_color()))
+            Err(GameEnd::Victory)
         } else {
             Err(GameEnd::Draw)
         }
@@ -57,7 +54,7 @@ pub enum MoveOrEnd {
 #[derive(Debug)]
 pub enum GameEnd {
     Draw,
-    Victory(Color),
+    Victory,
 }
 pub mod cache;
 mod check;

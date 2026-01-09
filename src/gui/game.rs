@@ -24,7 +24,6 @@ pub struct Game {
     ui: UIGame,
     state: GameState,
     position: Position,
-    last_move: Option<ChessMove>,
 }
 impl Game {
     pub fn new(canvas: DrawingTarget) -> Self {
@@ -33,7 +32,6 @@ impl Game {
             ui: UIGame::new(),
             state: GameState::NoGame,
             position: Position::default(),
-            last_move: None,
         }
     }
     pub fn draw(&mut self) {
@@ -44,7 +42,7 @@ impl Game {
         });
     }
     fn update_ui(&mut self) {
-        self.ui.update(&self.position, &self.last_move, &self.state);
+        self.ui.update(&self.position, &self.state);
         self.draw();
     }
 
@@ -70,8 +68,6 @@ impl Game {
             engine::piece::Color::White => Orientation::WhiteUp,
         };
         self.ui.set_orientation(orientation);
-        self.update_ui();
-
         match color {
             engine::piece::Color::Black => {
                 self.state = GameState::Computer;
@@ -84,7 +80,9 @@ impl Game {
                     Ok(possible_moves) => {
                         self.state = GameState::Player(SquareSelected::No(NoSquareSelectedData {
                             possible_moves,
+                            last_move: None,
                         }));
+                        self.update_ui();
                     }
                     Err(_) => self.state = GameState::NoGame,
                 }
@@ -100,6 +98,7 @@ impl Game {
         if possible_moves_from.is_empty() {
             self.state = GameState::Player(SquareSelected::No(NoSquareSelectedData {
                 possible_moves: data.possible_moves.clone(),
+                last_move: None,
             }));
         } else {
             self.state = GameState::Player(SquareSelected::From(FromSquareSelectedData {
@@ -122,6 +121,7 @@ impl Game {
             None => {
                 self.state = GameState::Player(SquareSelected::No(NoSquareSelectedData {
                     possible_moves: data.possible_moves.clone(),
+                    last_move: None,
                 }));
                 self.update_ui();
             }
@@ -152,11 +152,11 @@ impl Game {
         match engine::get_next_move(&self.position) {
             engine::MoveOrEnd::Move(chess_move) => {
                 self.position = chess_move.position;
-                self.last_move = Some(chess_move);
                 match engine::get_possible_moves(&self.position) {
                     Ok(possible_moves) => {
                         self.state = GameState::Player(SquareSelected::No(NoSquareSelectedData {
                             possible_moves,
+                            last_move: Some(chess_move),
                         }));
                     }
                     Err(_) => {
@@ -174,7 +174,6 @@ impl Game {
 
     fn execute_player_move(&mut self, position: Position) {
         self.position = position;
-        self.last_move = None;
         self.state = GameState::Computer;
         self.update_ui();
         self.execute_computer_move();

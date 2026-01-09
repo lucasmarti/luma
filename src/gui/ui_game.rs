@@ -36,22 +36,13 @@ impl UIGame {
         }
     }
 
-    pub fn update(
-        &mut self,
-        position: &Position,
-        last_move: &Option<ChessMove>,
-        state: &GameState,
-    ) {
+    pub fn update(&mut self, position: &Position, state: &GameState) {
         self.reset_squares();
         for (square, piece) in position.get_all_pieces() {
             self.set_piece(square, piece);
         }
         if let Some(square) = engine::get_check_square(position) {
             self.ui_board.set_check_square(square);
-        }
-        if let Some(chess_move) = last_move {
-            self.set_last_move_square(chess_move.from);
-            self.set_last_move_square(chess_move.to);
         }
         if let GameState::Player(square_selected) = state {
             match square_selected {
@@ -75,7 +66,13 @@ impl UIGame {
                         }
                     }
                 }
-                _ => {}
+                SquareSelected::No(data) => {
+                    if let Some(chess_move) = data.last_move {
+                        println!("Set last move");
+                        self.set_last_move_square(chess_move.from);
+                        self.set_last_move_square(chess_move.to);
+                    }
+                }
             }
         }
     }

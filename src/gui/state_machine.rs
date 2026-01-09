@@ -6,6 +6,8 @@ use crate::{
     },
     gui::ui_element::UIEvent,
 };
+#[derive(Debug)]
+
 pub enum GameState {
     NoGame,
     Computer,
@@ -21,6 +23,7 @@ pub enum SquareSelected {
 #[derive(Debug)]
 pub struct NoSquareSelectedData {
     pub possible_moves: Vec<ChessMove>,
+    pub last_move: Option<ChessMove>,
 }
 #[derive(Debug)]
 pub struct FromSquareSelectedData {
