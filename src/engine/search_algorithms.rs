@@ -2,10 +2,10 @@ use std::{collections::HashMap, hash::Hash, sync::Mutex};
 
 use crate::engine::{
     cache::Cache,
-    chess_moves::get_current_player_moves,
+    chess_moves::{get_current_player_moves, ChessMove},
     evaluation::{self, Evaluation},
     position::{print::Print, Position},
-    search_algorithms::{alpha_beta::alpha_beta, node::ChessNode},
+    search_algorithms::alpha_beta::alpha_beta,
 };
 lazy_static::lazy_static! {
     pub static ref CALL_COUNT: Mutex<u64> = Mutex::new(0);
@@ -20,17 +20,16 @@ pub enum Player {
     Max,
 }
 
-pub fn get_best_move(position: Position) -> Option<Position> {
+pub fn get_best_move(position: Position) -> Option<ChessMove> {
     let cache = &mut Cache::new();
     let depth = 4;
-    let tree = build_tree(position, depth);
-    let minimx_player = match tree.position.get_player() {
+    //let tree = build_tree(position, depth);
+    let minimx_player = match position.get_player() {
         crate::engine::piece::Color::Black => Player::Min,
         crate::engine::piece::Color::White => Player::Max,
     };
-    let best_move = alpha_beta(tree, minimx_player, MIN_VALUE, MAX_VALUE, cache)
-        .best_node
-        .map(|node| node.position);
+    let best_move =
+        alpha_beta(&position, minimx_player, MIN_VALUE, MAX_VALUE, depth, cache).best_move;
     let mut hits = 0;
     for evaluation in cache.values() {
         hits += evaluation.hits;
@@ -39,7 +38,7 @@ pub fn get_best_move(position: Position) -> Option<Position> {
     println!("Number of hits = {:?}", hits);
     best_move
 }
-
+/*
 fn build_tree(position: Position, depth: u8) -> ChessNode {
     let mut node = ChessNode {
         position,
@@ -47,11 +46,11 @@ fn build_tree(position: Position, depth: u8) -> ChessNode {
     };
     if depth > 0 {
         for child in get_current_player_moves(&position) {
-            node.children.push(build_tree(child, depth - 1));
+            node.children.push(build_tree(child.position, depth - 1));
         }
     }
     node
-}
+} */
 pub mod alpha_beta;
 pub mod minimax;
 pub mod node;

@@ -23,32 +23,8 @@ pub struct Position {
     castling_rights: [bool; 4],
     en_passant: Option<Square>,
     player: Color,
-    last_move: Option<ChessMove>,
 }
 impl Position {
-    pub fn get_promotion_piece(&self) -> Option<Piece> {
-        match self.last_move {
-            Some(chess_move) => chess_move.pormotion,
-            None => None,
-        }
-    }
-    pub fn set_last_move(mut self, chess_move: ChessMove) -> Position {
-        self.last_move = Some(chess_move);
-        self
-    }
-
-    pub fn get_last_move(&self) -> Option<ChessMove> {
-        self.last_move
-    }
-
-    pub fn get_to_square(&self) -> Option<Square> {
-        self.last_move.map(|chess_move| chess_move.to)
-    }
-
-    pub fn get_from_square(&self) -> Option<Square> {
-        self.last_move.map(|chess_move| chess_move.from)
-    }
-
     pub fn new_starting_position() -> Position {
         Position {
             white_king: Bitboard::from(E1),
@@ -300,7 +276,6 @@ impl Default for Position {
             castling_rights: [true, true, true, true],
             en_passant: None,
             player: Color::White,
-            last_move: None,
         }
     }
 }

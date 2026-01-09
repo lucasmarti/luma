@@ -17,16 +17,24 @@ use crate::engine::{
 fn test_progress_white_king() {
     let position = Position::default();
     let new_position = progess(&position, Piece::WhiteKing, E1, E2);
-    assert!(!new_position.is_occupied_by_piece(E1, Piece::WhiteKing));
-    assert!(new_position.is_occupied_by_piece(E2, Piece::WhiteKing));
+    assert!(!new_position
+        .position
+        .is_occupied_by_piece(E1, Piece::WhiteKing));
+    assert!(new_position
+        .position
+        .is_occupied_by_piece(E2, Piece::WhiteKing));
 }
 
 #[test]
 fn test_promotion() {
     let position = Position::default().put_piece(Piece::WhitePawn, A7);
     let new_position = promote(&position, A7, A8, Piece::WhiteQueen);
-    assert!(new_position.is_occupied_by_piece(A8, Piece::WhiteQueen));
-    assert!(!new_position.is_occupied_by_piece(A7, Piece::WhitePawn));
+    assert!(new_position
+        .position
+        .is_occupied_by_piece(A8, Piece::WhiteQueen));
+    assert!(!new_position
+        .position
+        .is_occupied_by_piece(A7, Piece::WhitePawn));
 }
 #[test]
 fn test_en_passant() {
@@ -35,9 +43,15 @@ fn test_en_passant() {
         .put_piece(Piece::BlackPawn, E4);
 
     let new_position = en_passant(&position, Piece::BlackPawn, E4, D3, D4);
-    assert!(!new_position.is_occupied_by_piece(D4, Piece::WhitePawn));
-    assert!(!new_position.is_occupied_by_piece(E4, Piece::BlackPawn));
-    assert!(new_position.is_occupied_by_piece(D3, Piece::BlackPawn));
+    assert!(!new_position
+        .position
+        .is_occupied_by_piece(D4, Piece::WhitePawn));
+    assert!(!new_position
+        .position
+        .is_occupied_by_piece(E4, Piece::BlackPawn));
+    assert!(new_position
+        .position
+        .is_occupied_by_piece(D3, Piece::BlackPawn));
 }
 
 // Tests for is_pawn_two_rows_forward function
@@ -193,31 +207,39 @@ fn test_disallow_castling_if_necessary_other_piece_move() {
 fn test_progess_toggles_player() {
     let position = Position::default(); // White to move
     let new_position = progess(&position, Piece::WhitePawn, E2, E3);
-    assert_eq!(new_position.get_player(), Color::Black);
+    assert_eq!(new_position.position.get_player(), Color::Black);
 }
 
 #[test]
 fn test_progess_sets_en_passant_for_pawn_two_squares() {
     let position = Position::default();
     let new_position = progess(&position, Piece::WhitePawn, E2, E4);
-    assert_eq!(new_position.get_en_passant(), Some(E4));
+    assert_eq!(new_position.position.get_en_passant(), Some(E4));
 }
 
 #[test]
 fn test_progess_disallows_castling_for_king_move() {
     let position = Position::default();
     let new_position = progess(&position, Piece::WhiteKing, E1, E2);
-    assert!(!new_position.get_castling_right(CastlingType::WhiteKingside));
-    assert!(!new_position.get_castling_right(CastlingType::WhiteQueenside));
+    assert!(!new_position
+        .position
+        .get_castling_right(CastlingType::WhiteKingside));
+    assert!(!new_position
+        .position
+        .get_castling_right(CastlingType::WhiteQueenside));
 }
 
 #[test]
 fn test_progess_disallows_castling_for_rook_move() {
     let position = Position::default();
     let new_position = progess(&position, Piece::WhiteRook, H1, H2);
-    assert!(!new_position.get_castling_right(CastlingType::WhiteKingside));
+    assert!(!new_position
+        .position
+        .get_castling_right(CastlingType::WhiteKingside));
     // Queenside should still be allowed
-    assert!(new_position.get_castling_right(CastlingType::WhiteQueenside));
+    assert!(new_position
+        .position
+        .get_castling_right(CastlingType::WhiteQueenside));
 }
 
 #[test]
@@ -297,19 +319,34 @@ fn test_bishop_white_moves() {
     let mut not_valid = false;
 
     for position in positions {
-        if position.is_occupied_by_piece(F5, Piece::WhiteBishop) {
+        if position
+            .position
+            .is_occupied_by_piece(F5, Piece::WhiteBishop)
+        {
             left_up = true;
         }
-        if position.is_occupied_by_piece(F3, Piece::WhiteBishop) {
+        if position
+            .position
+            .is_occupied_by_piece(F3, Piece::WhiteBishop)
+        {
             left_down = true;
         }
-        if position.is_occupied_by_piece(H5, Piece::WhiteBishop) {
+        if position
+            .position
+            .is_occupied_by_piece(H5, Piece::WhiteBishop)
+        {
             right_up = true;
         }
-        if position.is_occupied_by_piece(H3, Piece::WhiteBishop) {
+        if position
+            .position
+            .is_occupied_by_piece(H3, Piece::WhiteBishop)
+        {
             right_down = true;
         }
-        if position.is_occupied_by_piece(B2, Piece::WhiteBishop) {
+        if position
+            .position
+            .is_occupied_by_piece(B2, Piece::WhiteBishop)
+        {
             not_valid = true;
         }
     }
@@ -360,28 +397,52 @@ fn test_knight_moves() {
 
     println!("{:?}", positions.len());
     for position in positions {
-        if position.is_occupied_by_piece(C3, Piece::WhiteKnight) {
+        if position
+            .position
+            .is_occupied_by_piece(C3, Piece::WhiteKnight)
+        {
             found_c3 = true;
         }
-        if position.is_occupied_by_piece(D6, Piece::WhiteKnight) {
+        if position
+            .position
+            .is_occupied_by_piece(D6, Piece::WhiteKnight)
+        {
             found_d6 = true;
         }
-        if position.is_occupied_by_piece(F6, Piece::WhiteKnight) {
+        if position
+            .position
+            .is_occupied_by_piece(F6, Piece::WhiteKnight)
+        {
             found_f6 = true;
         }
-        if position.is_occupied_by_piece(D2, Piece::WhiteKnight) {
+        if position
+            .position
+            .is_occupied_by_piece(D2, Piece::WhiteKnight)
+        {
             found_d2 = true;
         }
-        if position.is_occupied_by_piece(F2, Piece::WhiteKnight) {
+        if position
+            .position
+            .is_occupied_by_piece(F2, Piece::WhiteKnight)
+        {
             found_f2 = true;
         }
-        if position.is_occupied_by_piece(G3, Piece::WhiteKnight) {
+        if position
+            .position
+            .is_occupied_by_piece(G3, Piece::WhiteKnight)
+        {
             found_g3 = true;
         }
-        if position.is_occupied_by_piece(G5, Piece::WhiteKnight) {
+        if position
+            .position
+            .is_occupied_by_piece(G5, Piece::WhiteKnight)
+        {
             found_g5 = true;
         }
-        if position.is_occupied_by_piece(C5, Piece::WhiteKnight) {
+        if position
+            .position
+            .is_occupied_by_piece(C5, Piece::WhiteKnight)
+        {
             found_not_c5 = false;
         }
     }
@@ -411,31 +472,58 @@ fn test_queen_white_moves() {
     let mut found_right_down = false;
 
     for position in positions {
-        if position.is_occupied_by_piece(G3, Piece::WhiteQueen) {
+        if position
+            .position
+            .is_occupied_by_piece(G3, Piece::WhiteQueen)
+        {
             found_down = true;
         }
-        if position.is_occupied_by_piece(G8, Piece::WhiteQueen) {
+        if position
+            .position
+            .is_occupied_by_piece(G8, Piece::WhiteQueen)
+        {
             found_up = true;
         }
-        if position.is_occupied_by_piece(A4, Piece::WhiteQueen) {
+        if position
+            .position
+            .is_occupied_by_piece(A4, Piece::WhiteQueen)
+        {
             found_left = true;
         }
-        if position.is_occupied_by_piece(H4, Piece::WhiteQueen) {
+        if position
+            .position
+            .is_occupied_by_piece(H4, Piece::WhiteQueen)
+        {
             found_right = true;
         }
-        if position.is_occupied_by_piece(B2, Piece::WhiteQueen) {
+        if position
+            .position
+            .is_occupied_by_piece(B2, Piece::WhiteQueen)
+        {
             found_not = false;
         }
-        if position.is_occupied_by_piece(F5, Piece::WhiteQueen) {
+        if position
+            .position
+            .is_occupied_by_piece(F5, Piece::WhiteQueen)
+        {
             found_left_up = true;
         }
-        if position.is_occupied_by_piece(F3, Piece::WhiteQueen) {
+        if position
+            .position
+            .is_occupied_by_piece(F3, Piece::WhiteQueen)
+        {
             found_left_down = true;
         }
-        if position.is_occupied_by_piece(H5, Piece::WhiteQueen) {
+        if position
+            .position
+            .is_occupied_by_piece(H5, Piece::WhiteQueen)
+        {
             found_right_up = true;
         }
-        if position.is_occupied_by_piece(H3, Piece::WhiteQueen) {
+        if position
+            .position
+            .is_occupied_by_piece(H3, Piece::WhiteQueen)
+        {
             found_right_down = true;
         }
     }
@@ -470,19 +558,19 @@ fn test_rook_white_moves() {
     let mut found_not = true;
 
     for position in positions {
-        if position.is_occupied_by_piece(G3, Piece::BlackRook) {
+        if position.position.is_occupied_by_piece(G3, Piece::BlackRook) {
             found_down = true;
         }
-        if position.is_occupied_by_piece(G8, Piece::BlackRook) {
+        if position.position.is_occupied_by_piece(G8, Piece::BlackRook) {
             found_up = true;
         }
-        if position.is_occupied_by_piece(A4, Piece::BlackRook) {
+        if position.position.is_occupied_by_piece(A4, Piece::BlackRook) {
             found_left = true;
         }
-        if position.is_occupied_by_piece(H4, Piece::BlackRook) {
+        if position.position.is_occupied_by_piece(H4, Piece::BlackRook) {
             found_right = true;
         }
-        if position.is_occupied_by_piece(B2, Piece::BlackRook) {
+        if position.position.is_occupied_by_piece(B2, Piece::BlackRook) {
             found_not = false;
         }
     }

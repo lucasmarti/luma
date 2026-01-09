@@ -1,6 +1,7 @@
 use crate::engine::{
     check::{is_check, is_under_attack},
     chess_moves::{
+        self,
         castling::configurations::{
             CastlingConfiguration, BLACK_KINGSIDE, BLACK_QUEENSIDE, WHITE_KINGSIDE, WHITE_QUEENSIDE,
         },
@@ -11,28 +12,31 @@ use crate::engine::{
     position::{CastlingType, Position},
 };
 
-pub fn get_black_castling_moves(position: &Position) -> Vec<Position> {
+pub fn get_black_castling_moves(position: &Position) -> Vec<ChessMove> {
     get_castling_moves(position, [BLACK_KINGSIDE, BLACK_QUEENSIDE])
 }
 
-pub fn get_white_castling_moves(position: &Position) -> Vec<Position> {
+pub fn get_white_castling_moves(position: &Position) -> Vec<ChessMove> {
     get_castling_moves(position, [WHITE_KINGSIDE, WHITE_QUEENSIDE])
 }
 
 fn get_castling_moves(
     position: &Position,
     castling_configurations: [CastlingConfiguration; 2],
-) -> Vec<Position> {
-    let mut positions: Vec<Position> = Vec::new();
+) -> Vec<ChessMove> {
+    let mut chess_moves: Vec<ChessMove> = Vec::new();
     for castling_config in castling_configurations {
-        if let Some(position) = get_castling_move(position, castling_config) {
-            positions.push(position);
+        if let Some(chess_move) = get_castling_move(position, castling_config) {
+            chess_moves.push(chess_move);
         }
     }
-    positions
+    chess_moves
 }
 
-pub fn get_castling_move(position: &Position, castling: CastlingConfiguration) -> Option<Position> {
+pub fn get_castling_move(
+    position: &Position,
+    castling: CastlingConfiguration,
+) -> Option<ChessMove> {
     if !position.get_castling_right(castling.castling_type) {
         return None;
     }
@@ -54,17 +58,6 @@ pub fn get_castling_move(position: &Position, castling: CastlingConfiguration) -
         return None;
     }
 
-    let chess_move: ChessMove = ChessMove {
-        move_type: MoveType::Castling {
-            castling_type: castling.castling_type,
-        },
-        piece: castling.king,
-        from: castling.king_from,
-        to: castling.king_to,
-        capture: None,
-        pormotion: None,
-    };
-
     let new_position = position
         .remove_piece(castling.king_from)
         .remove_piece(castling.rook_from)
@@ -72,10 +65,21 @@ pub fn get_castling_move(position: &Position, castling: CastlingConfiguration) -
         .put_piece(castling.rook, castling.rook_to)
         .toggle_player()
         .reset_en_passant()
-        .disallow_castling_for_color(castling.color)
-        .set_last_move(chess_move);
+        .disallow_castling_for_color(castling.color);
+
     if !is_check(&new_position, castling.color) {
-        return Some(new_position);
+        let chess_move: ChessMove = ChessMove {
+            move_type: MoveType::Castling {
+                castling_type: castling.castling_type,
+            },
+            piece: castling.king,
+            from: castling.king_from,
+            to: castling.king_to,
+            capture: None,
+            pormotion: None,
+            position: new_position,
+        };
+        return Some(chess_move);
     }
     None
 }

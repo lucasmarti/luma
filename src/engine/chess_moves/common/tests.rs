@@ -1,8 +1,12 @@
 use std::u32;
 
 use crate::engine::{
-    chess_moves::common::{
-        generate_path_with_limit, get_moves_for_king_at_square, get_moves_for_rook_at_square, slide,
+    chess_moves::{
+        common::{
+            generate_path_with_limit, get_moves_for_king_at_square, get_moves_for_rook_at_square,
+            slide,
+        },
+        ChessMove,
     },
     directions::{self, squares::*},
     piece::*,
@@ -18,39 +22,37 @@ fn test_slide1() {
 
     let path = generate_path_with_limit(G4, directions::up, u32::MAX);
     let positions = slide(&position, G4, path, Piece::WhiteQueen);
-    assert!(
-        positions
-            .iter()
-            .any(|p| p.is_occupied_by_piece(G5, Piece::WhiteQueen)
-                && p.is_occupied_by_piece(G7, Piece::WhitePawn))
-    );
-    assert!(
-        positions
-            .iter()
-            .any(|p| p.is_occupied_by_piece(G6, Piece::WhiteQueen)
-                && p.is_occupied_by_piece(G7, Piece::WhitePawn))
-    );
+    assert!(positions
+        .iter()
+        .any(|p| p.position.is_occupied_by_piece(G5, Piece::WhiteQueen)
+            && p.position.is_occupied_by_piece(G7, Piece::WhitePawn)));
+    assert!(positions
+        .iter()
+        .any(|p| p.position.is_occupied_by_piece(G6, Piece::WhiteQueen)
+            && p.position.is_occupied_by_piece(G7, Piece::WhitePawn)));
 }
 
 #[test]
 fn test_get_piece_moves_king() {
     let mut position: Position = Position::default();
     position = position.put_piece(Piece::WhiteKing, D4);
-    let positions = get_moves_for_king_at_square(&position, Piece::WhiteKing, D4);
+    let chess_move = get_moves_for_king_at_square(&position, Piece::WhiteKing, D4);
 
-    assert_eq!(positions.len(), 8);
+    assert_eq!(chess_move.len(), 8);
 
     // Check specific moves using helper function
-    assert!(contains_move(&positions, Piece::WhiteKing, D5)); // up
-    assert!(contains_move(&positions, Piece::WhiteKing, D3)); // down
-    assert!(contains_move(&positions, Piece::WhiteKing, C4)); // left
-    assert!(contains_move(&positions, Piece::WhiteKing, E4)); // right
+    assert!(contains_move(&chess_move, Piece::WhiteKing, D5)); // up
+    assert!(contains_move(&chess_move, Piece::WhiteKing, D3)); // down
+    assert!(contains_move(&chess_move, Piece::WhiteKing, C4)); // left
+    assert!(contains_move(&chess_move, Piece::WhiteKing, E4)); // right
 }
 
 #[test]
 fn test_get_piece_moves_king_blocked_by_own_piece() {
     let mut position: Position = Position::default();
-    position = position.put_piece(Piece::WhiteKing, D4).put_piece(Piece::WhitePawn, D5); // Block upward movement
+    position = position
+        .put_piece(Piece::WhiteKing, D4)
+        .put_piece(Piece::WhitePawn, D5); // Block upward movement
 
     let positions = get_moves_for_king_at_square(&position, Piece::WhiteKing, D4);
     assert_eq!(positions.len(), 7); // One less because D5 is blocked
@@ -92,9 +94,9 @@ fn test_get_piece_moves_rook_with_obstacles() {
     assert!(!contains_move(&positions, Piece::WhiteRook, G4)); // Can't go beyond captured piece
 }
 
-fn contains_move(positions: &Vec<Position>, piece: Piece, field: Square) -> bool {
-    for position in positions {
-        if position.is_occupied_by_piece(field, piece) {
+fn contains_move(chess_moves: &Vec<ChessMove>, piece: Piece, field: Square) -> bool {
+    for chess_move in chess_moves {
+        if chess_move.position.is_occupied_by_piece(field, piece) {
             return true;
         }
     }
@@ -111,21 +113,18 @@ fn test_slide2() {
 
     let positions = slide(&position, G4, path, Piece::WhiteQueen);
 
-    assert!(
-        positions
-            .iter()
-            .any(|p| p.is_occupied_by_piece(G5, Piece::WhiteQueen)
-                && p.is_occupied_by_piece(G7, Piece::BlackPawn))
-    );
-    assert!(
-        positions
-            .iter()
-            .any(|p| p.is_occupied_by_piece(G6, Piece::WhiteQueen)
-                && p.is_occupied_by_piece(G7, Piece::BlackPawn))
-    );
-    assert!(positions.iter().any(
-        |p| p.is_occupied_by_piece(G7, Piece::WhiteQueen) && !p.is_occupied_by_piece(G7, Piece::BlackPawn)
-    ));
+    assert!(positions
+        .iter()
+        .any(|p| p.position.is_occupied_by_piece(G5, Piece::WhiteQueen)
+            && p.position.is_occupied_by_piece(G7, Piece::BlackPawn)));
+    assert!(positions
+        .iter()
+        .any(|p| p.position.is_occupied_by_piece(G6, Piece::WhiteQueen)
+            && p.position.is_occupied_by_piece(G7, Piece::BlackPawn)));
+    assert!(positions
+        .iter()
+        .any(|p| p.position.is_occupied_by_piece(G7, Piece::WhiteQueen)
+            && !p.position.is_occupied_by_piece(G7, Piece::BlackPawn)));
 }
 
 #[test]
@@ -137,14 +136,14 @@ fn test_slide3() {
     let positions = slide(&position, G4, path, Piece::WhiteQueen);
     assert!(positions
         .iter()
-        .any(|p| p.is_occupied_by_piece(G5, Piece::WhiteQueen)));
+        .any(|p| p.position.is_occupied_by_piece(G5, Piece::WhiteQueen)));
     assert!(positions
         .iter()
-        .any(|p| p.is_occupied_by_piece(G6, Piece::WhiteQueen)));
+        .any(|p| p.position.is_occupied_by_piece(G6, Piece::WhiteQueen)));
     assert!(positions
         .iter()
-        .any(|p| p.is_occupied_by_piece(G7, Piece::WhiteQueen)));
+        .any(|p| p.position.is_occupied_by_piece(G7, Piece::WhiteQueen)));
     assert!(positions
         .iter()
-        .any(|p| p.is_occupied_by_piece(G8, Piece::WhiteQueen)));
+        .any(|p| p.position.is_occupied_by_piece(G8, Piece::WhiteQueen)));
 }

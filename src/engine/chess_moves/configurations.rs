@@ -7,6 +7,7 @@ use crate::engine::{
             get_moves_for_rook_at_square,
         },
         pawn::get_pawn_moves,
+        ChessMove,
     },
     directions::{self, squares::Square, DirectionFn},
     piece::Piece,
@@ -61,8 +62,8 @@ pub const KNIGHT_DIRECTIONS: [DirectionFn; 8] = [
     directions::down_down_right,
 ];
 
-pub type CastlingMovesFn = fn(position: &Position) -> Vec<Position>;
-pub type MovesFn = fn(position: &Position, piece: Piece, square: Square) -> Vec<Position>;
+pub type CastlingMovesFn = fn(position: &Position) -> Vec<ChessMove>;
+pub type MovesFn = fn(position: &Position, piece: Piece, square: Square) -> Vec<ChessMove>;
 pub struct Config {
     pub king: Piece,
     pub queen: Piece,

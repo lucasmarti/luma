@@ -1,9 +1,10 @@
 use crate::{
     engine::{
+        chess_moves::ChessMove,
         directions::squares::Square,
         piece::{Color, Piece},
     },
-    gui::{game::UIMove, ui_element::UIEvent},
+    gui::ui_element::UIEvent,
 };
 pub enum GameState {
     NoGame,
@@ -19,22 +20,22 @@ pub enum SquareSelected {
 }
 #[derive(Debug)]
 pub struct NoSquareSelectedData {
-    pub possible_moves: Vec<UIMove>,
+    pub possible_moves: Vec<ChessMove>,
 }
 #[derive(Debug)]
 pub struct FromSquareSelectedData {
     pub from: Square,
-    pub possible_moves: Vec<UIMove>,
-    pub possible_moves_from: Vec<UIMove>,
+    pub possible_moves: Vec<ChessMove>,
+    pub possible_moves_from: Vec<ChessMove>,
 }
 
 #[derive(Debug)]
 pub struct PromotionSquareSelectedData {
-    pub possible_promotion_moves: Vec<UIMove>,
+    pub possible_promotion_moves: Vec<ChessMove>,
 }
 
 impl PromotionSquareSelectedData {
-    pub fn from(possible_promotion_moves: Vec<UIMove>) -> Self {
+    pub fn from(possible_promotion_moves: Vec<ChessMove>) -> Self {
         PromotionSquareSelectedData {
             possible_promotion_moves,
         }
@@ -42,8 +43,8 @@ impl PromotionSquareSelectedData {
 }
 #[derive(Debug)]
 pub struct SelectToSquareFunctionData {
-    pub possible_moves: Vec<UIMove>,
-    pub possible_moves_from: Vec<UIMove>,
+    pub possible_moves: Vec<ChessMove>,
+    pub possible_moves_from: Vec<ChessMove>,
     pub to: Square,
 }
 impl SelectToSquareFunctionData {
@@ -57,7 +58,7 @@ impl SelectToSquareFunctionData {
 }
 #[derive(Debug)]
 pub struct PromoteFunctionData {
-    pub possible_promotion_moves: Vec<UIMove>,
+    pub possible_promotion_moves: Vec<ChessMove>,
     pub piece: Piece,
 }
 
@@ -78,7 +79,7 @@ pub enum StateFunction {
 }
 
 pub struct SelectFromSquareFunctionData {
-    pub possible_moves: Vec<UIMove>,
+    pub possible_moves: Vec<ChessMove>,
     pub from: Square,
 }
 impl SelectFromSquareFunctionData {

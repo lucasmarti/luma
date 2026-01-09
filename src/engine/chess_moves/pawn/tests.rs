@@ -11,8 +11,10 @@ mod test_white_forward {
 
         assert!(result.is_some());
         let new_position = result.unwrap();
-        assert!(new_position.is_occupied_by_piece(E3, Piece::WhitePawn));
-        assert!(!new_position.is_occupied(E2));
+        assert!(new_position
+            .position
+            .is_occupied_by_piece(E3, Piece::WhitePawn));
+        assert!(!new_position.position.is_occupied(E2));
     }
 
     #[test]
@@ -64,8 +66,10 @@ mod test_black_forward {
 
         assert!(result.is_some());
         let new_position = result.unwrap();
-        assert!(new_position.is_occupied_by_piece(E6, Piece::BlackPawn));
-        assert!(!new_position.is_occupied(E7));
+        assert!(new_position
+            .position
+            .is_occupied_by_piece(E6, Piece::BlackPawn));
+        assert!(!new_position.position.is_occupied(E7));
     }
 
     #[test]
@@ -117,9 +121,11 @@ mod test_white_two_forward {
 
         assert!(result.is_some());
         let new_position = result.unwrap();
-        assert!(new_position.is_occupied_by_piece(E4, Piece::WhitePawn));
-        assert!(!new_position.is_occupied(E2));
-        assert!(!new_position.is_occupied(E3));
+        assert!(new_position
+            .position
+            .is_occupied_by_piece(E4, Piece::WhitePawn));
+        assert!(!new_position.position.is_occupied(E2));
+        assert!(!new_position.position.is_occupied(E3));
     }
 
     #[test]
@@ -177,9 +183,11 @@ mod test_black_two_forward {
 
         assert!(result.is_some());
         let new_position = result.unwrap();
-        assert!(new_position.is_occupied_by_piece(E5, Piece::BlackPawn));
-        assert!(!new_position.is_occupied(E7));
-        assert!(!new_position.is_occupied(E6));
+        assert!(new_position
+            .position
+            .is_occupied_by_piece(E5, Piece::BlackPawn));
+        assert!(!new_position.position.is_occupied(E7));
+        assert!(!new_position.position.is_occupied(E6));
     }
 
     #[test]
@@ -229,9 +237,13 @@ mod test_white_captures {
 
         assert!(result.is_some());
         let new_position = result.unwrap();
-        assert!(new_position.is_occupied_by_piece(D5, Piece::WhitePawn));
-        assert!(!new_position.is_occupied(E4));
-        assert!(!new_position.is_occupied_by_piece(D5, Piece::BlackPawn));
+        assert!(new_position
+            .position
+            .is_occupied_by_piece(D5, Piece::WhitePawn));
+        assert!(!new_position.position.is_occupied(E4));
+        assert!(!new_position
+            .position
+            .is_occupied_by_piece(D5, Piece::BlackPawn));
     }
 
     #[test]
@@ -244,8 +256,10 @@ mod test_white_captures {
 
         assert!(result.is_some());
         let new_position = result.unwrap();
-        assert!(new_position.is_occupied_by_piece(F5, Piece::WhitePawn));
-        assert!(!new_position.is_occupied(E4));
+        assert!(new_position
+            .position
+            .is_occupied_by_piece(F5, Piece::WhitePawn));
+        assert!(!new_position.position.is_occupied(E4));
     }
 
     #[test]
@@ -327,8 +341,10 @@ mod test_black_captures {
 
         assert!(result.is_some());
         let new_position = result.unwrap();
-        assert!(new_position.is_occupied_by_piece(D4, Piece::BlackPawn));
-        assert!(!new_position.is_occupied(E5));
+        assert!(new_position
+            .position
+            .is_occupied_by_piece(D4, Piece::BlackPawn));
+        assert!(!new_position.position.is_occupied(E5));
     }
 
     #[test]
@@ -341,8 +357,10 @@ mod test_black_captures {
 
         assert!(result.is_some());
         let new_position = result.unwrap();
-        assert!(new_position.is_occupied_by_piece(F4, Piece::BlackPawn));
-        assert!(!new_position.is_occupied(E5));
+        assert!(new_position
+            .position
+            .is_occupied_by_piece(F4, Piece::BlackPawn));
+        assert!(!new_position.position.is_occupied(E5));
     }
 
     #[test]
@@ -375,9 +393,11 @@ mod test_white_en_passant {
 
         assert!(result.is_some());
         let new_position = result.unwrap();
-        assert!(new_position.is_occupied_by_piece(D6, Piece::WhitePawn));
-        assert!(!new_position.is_occupied(E5));
-        assert!(!new_position.is_occupied(D5)); // Captured pawn removed
+        assert!(new_position
+            .position
+            .is_occupied_by_piece(D6, Piece::WhitePawn));
+        assert!(!new_position.position.is_occupied(E5));
+        assert!(!new_position.position.is_occupied(D5)); // Captured pawn removed
     }
 
     #[test]
@@ -391,9 +411,11 @@ mod test_white_en_passant {
 
         assert!(result.is_some());
         let new_position = result.unwrap();
-        assert!(new_position.is_occupied_by_piece(F6, Piece::WhitePawn));
-        assert!(!new_position.is_occupied(E5));
-        assert!(!new_position.is_occupied(F5)); // Captured pawn removed
+        assert!(new_position
+            .position
+            .is_occupied_by_piece(F6, Piece::WhitePawn));
+        assert!(!new_position.position.is_occupied(E5));
+        assert!(!new_position.position.is_occupied(F5)); // Captured pawn removed
     }
 
     #[test]
@@ -459,9 +481,11 @@ mod test_black_en_passant {
 
         assert!(result.is_some());
         let new_position = result.unwrap();
-        assert!(new_position.is_occupied_by_piece(D3, Piece::BlackPawn));
-        assert!(!new_position.is_occupied(E4));
-        assert!(!new_position.is_occupied(D4)); // Captured pawn removed
+        assert!(new_position
+            .position
+            .is_occupied_by_piece(D3, Piece::BlackPawn));
+        assert!(!new_position.position.is_occupied(E4));
+        assert!(!new_position.position.is_occupied(D4)); // Captured pawn removed
     }
 
     #[test]
@@ -475,9 +499,11 @@ mod test_black_en_passant {
 
         assert!(result.is_some());
         let new_position = result.unwrap();
-        assert!(new_position.is_occupied_by_piece(F3, Piece::BlackPawn));
-        assert!(!new_position.is_occupied(E4));
-        assert!(!new_position.is_occupied(F4)); // Captured pawn removed
+        assert!(new_position
+            .position
+            .is_occupied_by_piece(F3, Piece::BlackPawn));
+        assert!(!new_position.position.is_occupied(E4));
+        assert!(!new_position.position.is_occupied(F4)); // Captured pawn removed
     }
 }
 
@@ -496,16 +522,16 @@ mod test_white_promotions {
         // Check each promotion piece
         let has_queen = results
             .iter()
-            .any(|p| p.is_occupied_by_piece(E8, Piece::WhiteQueen));
+            .any(|p| p.position.is_occupied_by_piece(E8, Piece::WhiteQueen));
         let has_rook = results
             .iter()
-            .any(|p| p.is_occupied_by_piece(E8, Piece::WhiteRook));
+            .any(|p| p.position.is_occupied_by_piece(E8, Piece::WhiteRook));
         let has_bishop = results
             .iter()
-            .any(|p| p.is_occupied_by_piece(E8, Piece::WhiteBishop));
+            .any(|p| p.position.is_occupied_by_piece(E8, Piece::WhiteBishop));
         let has_knight = results
             .iter()
-            .any(|p| p.is_occupied_by_piece(E8, Piece::WhiteKnight));
+            .any(|p| p.position.is_occupied_by_piece(E8, Piece::WhiteKnight));
 
         assert!(has_queen);
         assert!(has_rook);
@@ -514,7 +540,7 @@ mod test_white_promotions {
 
         // Original pawn should be gone in all cases
         for position in &results {
-            assert!(!position.is_occupied(E7));
+            assert!(!position.position.is_occupied(E7));
         }
     }
 
@@ -551,22 +577,24 @@ mod test_white_promotions {
 
         // All should capture on D8
         for position in &results {
-            assert!(!position.is_occupied(E7));
-            assert!(!position.is_occupied_by_piece(D8, Piece::BlackKnight));
+            assert!(!position.position.is_occupied(E7));
+            assert!(!position
+                .position
+                .is_occupied_by_piece(D8, Piece::BlackKnight));
         }
 
         let has_queen = results
             .iter()
-            .any(|p| p.is_occupied_by_piece(D8, Piece::WhiteQueen));
+            .any(|p| p.position.is_occupied_by_piece(D8, Piece::WhiteQueen));
         let has_rook = results
             .iter()
-            .any(|p| p.is_occupied_by_piece(D8, Piece::WhiteRook));
+            .any(|p| p.position.is_occupied_by_piece(D8, Piece::WhiteRook));
         let has_bishop = results
             .iter()
-            .any(|p| p.is_occupied_by_piece(D8, Piece::WhiteBishop));
+            .any(|p| p.position.is_occupied_by_piece(D8, Piece::WhiteBishop));
         let has_knight = results
             .iter()
-            .any(|p| p.is_occupied_by_piece(D8, Piece::WhiteKnight));
+            .any(|p| p.position.is_occupied_by_piece(D8, Piece::WhiteKnight));
 
         assert!(has_queen);
         assert!(has_rook);
@@ -585,8 +613,10 @@ mod test_white_promotions {
         assert_eq!(results.len(), 4);
 
         for position in &results {
-            assert!(!position.is_occupied(E7));
-            assert!(!position.is_occupied_by_piece(F8, Piece::BlackKnight));
+            assert!(!position.position.is_occupied(E7));
+            assert!(!position
+                .position
+                .is_occupied_by_piece(F8, Piece::BlackKnight));
         }
     }
 
@@ -630,16 +660,16 @@ mod test_black_promotions {
 
         let has_queen = results
             .iter()
-            .any(|p| p.is_occupied_by_piece(E1, Piece::BlackQueen));
+            .any(|p| p.position.is_occupied_by_piece(E1, Piece::BlackQueen));
         let has_rook = results
             .iter()
-            .any(|p| p.is_occupied_by_piece(E1, Piece::BlackRook));
+            .any(|p| p.position.is_occupied_by_piece(E1, Piece::BlackRook));
         let has_bishop = results
             .iter()
-            .any(|p| p.is_occupied_by_piece(E1, Piece::BlackBishop));
+            .any(|p| p.position.is_occupied_by_piece(E1, Piece::BlackBishop));
         let has_knight = results
             .iter()
-            .any(|p| p.is_occupied_by_piece(E1, Piece::BlackKnight));
+            .any(|p| p.position.is_occupied_by_piece(E1, Piece::BlackKnight));
 
         assert!(has_queen);
         assert!(has_rook);
@@ -647,7 +677,7 @@ mod test_black_promotions {
         assert!(has_knight);
 
         for position in &results {
-            assert!(!position.is_occupied(E2));
+            assert!(!position.position.is_occupied(E2));
         }
     }
 
@@ -662,8 +692,10 @@ mod test_black_promotions {
         assert_eq!(results.len(), 4);
 
         for position in &results {
-            assert!(!position.is_occupied(E2));
-            assert!(!position.is_occupied_by_piece(D1, Piece::WhiteKnight));
+            assert!(!position.position.is_occupied(E2));
+            assert!(!position
+                .position
+                .is_occupied_by_piece(D1, Piece::WhiteKnight));
         }
     }
 
@@ -678,14 +710,18 @@ mod test_black_promotions {
         assert_eq!(results.len(), 4);
 
         for position in &results {
-            assert!(!position.is_occupied(E2));
-            assert!(!position.is_occupied_by_piece(F1, Piece::WhiteKnight));
+            assert!(!position.position.is_occupied(E2));
+            assert!(!position
+                .position
+                .is_occupied_by_piece(F1, Piece::WhiteKnight));
         }
     }
 }
 
 #[cfg(test)]
 mod test_aggregate_functions {
+    use crate::engine::position::print::Print;
+
     use super::*;
 
     #[test]
@@ -699,10 +735,10 @@ mod test_aggregate_functions {
 
         let has_e3 = moves
             .iter()
-            .any(|p| p.is_occupied_by_piece(E3, Piece::WhitePawn));
+            .any(|p| p.position.is_occupied_by_piece(E3, Piece::WhitePawn));
         let has_e4 = moves
             .iter()
-            .any(|p| p.is_occupied_by_piece(E4, Piece::WhitePawn));
+            .any(|p| p.position.is_occupied_by_piece(E4, Piece::WhitePawn));
 
         assert!(has_e3);
         assert!(has_e4);
@@ -722,13 +758,13 @@ mod test_aggregate_functions {
 
         let has_forward = moves
             .iter()
-            .any(|p| p.is_occupied_by_piece(E5, Piece::WhitePawn));
+            .any(|p| p.position.is_occupied_by_piece(E5, Piece::WhitePawn));
         let has_left_capture = moves
             .iter()
-            .any(|p| p.is_occupied_by_piece(D5, Piece::WhitePawn));
+            .any(|p| p.position.is_occupied_by_piece(D5, Piece::WhitePawn));
         let has_right_capture = moves
             .iter()
-            .any(|p| p.is_occupied_by_piece(F5, Piece::WhitePawn));
+            .any(|p| p.position.is_occupied_by_piece(F5, Piece::WhitePawn));
 
         assert!(has_forward);
         assert!(has_left_capture);
@@ -758,9 +794,9 @@ mod test_aggregate_functions {
         // only forward
         assert_eq!(moves.len(), 1);
 
-        let has_en_passant = moves
-            .iter()
-            .any(|p| p.is_occupied_by_piece(D6, Piece::WhitePawn) && !p.is_occupied(D5));
+        let has_en_passant = moves.iter().any(|p| {
+            p.position.is_occupied_by_piece(D6, Piece::WhitePawn) && !p.position.is_occupied(D5)
+        });
 
         assert_eq!(false, has_en_passant);
     }
@@ -777,9 +813,11 @@ mod test_aggregate_functions {
         // Forward + en passant
         assert_eq!(moves.len(), 2);
 
-        let has_en_passant = moves
-            .iter()
-            .any(|p| p.is_occupied_by_piece(D6, Piece::WhitePawn) && !p.is_occupied(D5));
+        let has_en_passant = moves.iter().any(|p| {
+            p.position.print_board();
+            return (p.position.is_occupied_by_piece(D6, Piece::WhitePawn)
+                && !p.position.is_occupied(D5));
+        });
 
         assert!(has_en_passant);
     }
@@ -795,10 +833,10 @@ mod test_aggregate_functions {
 
         let has_e6 = moves
             .iter()
-            .any(|p| p.is_occupied_by_piece(E6, Piece::BlackPawn));
+            .any(|p| p.position.is_occupied_by_piece(E6, Piece::BlackPawn));
         let has_e5 = moves
             .iter()
-            .any(|p| p.is_occupied_by_piece(E5, Piece::BlackPawn));
+            .any(|p| p.position.is_occupied_by_piece(E5, Piece::BlackPawn));
 
         assert!(has_e6);
         assert!(has_e5);
@@ -833,10 +871,10 @@ mod test_public_interface {
 
         let has_e3 = moves
             .iter()
-            .any(|p| p.is_occupied_by_piece(E3, Piece::WhitePawn));
+            .any(|p| p.position.is_occupied_by_piece(E3, Piece::WhitePawn));
         let has_e4 = moves
             .iter()
-            .any(|p| p.is_occupied_by_piece(E4, Piece::WhitePawn));
+            .any(|p| p.position.is_occupied_by_piece(E4, Piece::WhitePawn));
 
         assert!(has_e3);
         assert!(has_e4);
@@ -853,10 +891,10 @@ mod test_public_interface {
 
         let has_e6 = moves
             .iter()
-            .any(|p| p.is_occupied_by_piece(E6, Piece::BlackPawn));
+            .any(|p| p.position.is_occupied_by_piece(E6, Piece::BlackPawn));
         let has_e5 = moves
             .iter()
-            .any(|p| p.is_occupied_by_piece(E5, Piece::BlackPawn));
+            .any(|p| p.position.is_occupied_by_piece(E5, Piece::BlackPawn));
 
         assert!(has_e6);
         assert!(has_e5);
@@ -879,9 +917,9 @@ mod test_public_interface {
         // Result: Only en passant capture is possible
         assert_eq!(moves.len(), 1);
 
-        let has_en_passant = moves
-            .iter()
-            .any(|p| p.is_occupied_by_piece(D6, Piece::WhitePawn) && !p.is_occupied(D5));
+        let has_en_passant = moves.iter().any(|p| {
+            p.position.is_occupied_by_piece(D6, Piece::WhitePawn) && !p.position.is_occupied(D5)
+        });
 
         assert!(has_en_passant);
     }

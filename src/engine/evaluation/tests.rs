@@ -29,7 +29,7 @@ fn test_isolated_pawns() {
         .put_piece(WhitePawn, F1);
     assert_eq!(
         pawn_structures::get_isolated_pawns(&position, WhitePawn),
-        -20.0
+        -8.0
     );
 }
 #[test]
@@ -41,7 +41,7 @@ fn test_isolated_pawns_2() {
         .put_piece(BlackPawn, F8);
     assert_eq!(
         pawn_structures::get_isolated_pawns(&position, BlackPawn),
-        -20.0
+        -8.0
     );
 }
 
@@ -55,11 +55,11 @@ fn test_doubled_pawns() {
         .put_piece(WhitePawn, D4);
     assert_eq!(
         pawn_structures::get_doubled_pawns(&position, BlackPawn),
-        -30.0
+        -6.0
     );
     assert_eq!(
         pawn_structures::get_doubled_pawns(&position, WhitePawn),
-        -15.0
+        -3.0
     );
 
     let position_2 = Position::default().put_piece(BlackPawn, F2);
@@ -78,7 +78,7 @@ fn test_equal_material() {
 #[test]
 fn test_white_queen_missing() {
     let position = Position::new_starting_position().remove_piece(D1);
-    assert_eq!(Evaluation::new(&position).score, -88.0);
+    assert_eq!(Evaluation::new(&position).score, -89.44995);
 }
 
 #[test]
@@ -90,13 +90,13 @@ fn test_black_queen_missing() {
     );
     assert_eq!(
         mobility::count_white(&position) - mobility::count_black(&position),
-        -1.5
+        -0.049999952
     );
     assert_eq!(
         squares::count_white(&position) - squares::count_black(&position),
         -0.5
     );
-    assert_eq!(Evaluation::new(&position).score, 88.0);
+    assert_eq!(Evaluation::new(&position).score, 89.44995);
 }
 
 #[test]

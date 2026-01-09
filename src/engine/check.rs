@@ -1,6 +1,9 @@
 use crate::engine::{
-    chess_moves::configurations::{
-        DIAGONAL_DIRECTIONS, HORIZONTAL_VERTICAL_DIRECTIONS, KING_DIRECTIONS, KNIGHT_DIRECTIONS,
+    chess_moves::{
+        configurations::{
+            DIAGONAL_DIRECTIONS, HORIZONTAL_VERTICAL_DIRECTIONS, KING_DIRECTIONS, KNIGHT_DIRECTIONS,
+        },
+        ChessMove,
     },
     directions::{self, squares::Square},
     piece::{Color, Piece},
@@ -12,10 +15,10 @@ pub fn is_check(position: &Position, color: Color) -> bool {
     is_under_attack(position, king_square, color)
 }
 
-pub fn filter_checks(positions: Vec<Position>, color: Color) -> Vec<Position> {
-    positions
+pub fn filter_checks(chess_moves: Vec<ChessMove>, color: Color) -> Vec<ChessMove> {
+    chess_moves
         .into_iter()
-        .filter(|position| !is_check(position, color))
+        .filter(|chess_move| !is_check(&chess_move.position, color))
         .collect()
 }
 

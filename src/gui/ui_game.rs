@@ -1,7 +1,9 @@
 use flo_canvas::{Draw, GraphicsContext};
 
 use crate::{
-    engine::{self, directions::squares::Square, piece::Piece, position::Position},
+    engine::{
+        self, chess_moves::ChessMove, directions::squares::Square, piece::Piece, position::Position,
+    },
     gui::{
         configuration::{BACKGROUND_COLOR, FIELD_SIZE, MENU_HEIGHT},
         state_machine::{GameState, SquareSelected},
@@ -34,7 +36,12 @@ impl UIGame {
         }
     }
 
-    pub fn update(&mut self, position: &Position, state: &GameState) {
+    pub fn update(
+        &mut self,
+        position: &Position,
+        last_move: &Option<ChessMove>,
+        state: &GameState,
+    ) {
         self.reset_squares();
         for (square, piece) in position.get_all_pieces() {
             self.set_piece(square, piece);
@@ -42,7 +49,7 @@ impl UIGame {
         if let Some(square) = engine::get_check_square(position) {
             self.ui_board.set_check_square(square);
         }
-        if let Some(chess_move) = position.get_last_move() {
+        if let Some(chess_move) = last_move {
             self.set_last_move_square(chess_move.from);
             self.set_last_move_square(chess_move.to);
         }

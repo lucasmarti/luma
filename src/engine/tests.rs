@@ -2,7 +2,10 @@
 use crate::engine::chess_moves::configurations::MovesFn;
 use crate::engine::{
     check::filter_checks,
-    chess_moves::configurations::{CastlingMovesFn, BLACK_MOVE_CONFIG, WHITE_MOVE_CONFIG},
+    chess_moves::{
+        configurations::{CastlingMovesFn, BLACK_MOVE_CONFIG, WHITE_MOVE_CONFIG},
+        ChessMove,
+    },
     piece,
 };
 use crate::engine::{
@@ -11,8 +14,8 @@ use crate::engine::{
     position::Position,
 };
 
-fn get_valid_drop_positions(position: &Position, from: Square) -> Vec<Position> {
-    let mut positions: Vec<Position> = Vec::new();
+fn get_valid_drop_positions(position: &Position, from: Square) -> Vec<ChessMove> {
+    let mut positions: Vec<ChessMove> = Vec::new();
     if let Some(piece) = position.get_piece_at(from) {
         let moves_fn = get_moves_fn(piece);
         positions.extend(moves_fn(position, piece, from));
@@ -56,15 +59,15 @@ fn get_moves_fn(piece: Piece) -> MovesFn {
 fn test_valid_drop_targets_pawn() {
     let position = Position::new_starting_position();
     let targets = get_valid_drop_positions(&position, D2);
-    assert!(targets.iter().any(|p| p.is_occupied(D3)));
-    assert!(targets.iter().any(|p| p.is_occupied(D4)));
+    assert!(targets.iter().any(|c| c.position.is_occupied(D3)));
+    assert!(targets.iter().any(|c| c.position.is_occupied(D4)));
 }
 #[test]
 fn test_valid_drop_targets_knight() {
     let position = Position::new_starting_position();
     let targets = get_valid_drop_positions(&position, B8);
-    assert!(targets.iter().any(|p| p.is_occupied(A6)));
-    assert!(targets.iter().any(|p| p.is_occupied(C6)));
+    assert!(targets.iter().any(|c| c.position.is_occupied(A6)));
+    assert!(targets.iter().any(|c| c.position.is_occupied(C6)));
 }
 
 #[test]
@@ -73,7 +76,7 @@ fn test_valid_drop_targets_castling() {
         .put_piece(Piece::WhiteRook, H1)
         .put_piece(Piece::WhiteKing, E1);
     let targets = get_valid_drop_positions(&position, E1);
-    assert!(targets.iter().any(|p| p.is_occupied(G1)));
+    assert!(targets.iter().any(|c| c.position.is_occupied(G1)));
 }
 
 #[test]
@@ -84,6 +87,5 @@ fn test_valid_drop_targets_en_passant() {
         .put_piece(Piece::BlackPawn, D4)
         .set_en_passant(E4);
     let targets = get_valid_drop_positions(&position, D4);
-    println!("{:?}", targets);
-    assert!(targets.iter().any(|p| p.is_occupied(E3)));
+    assert!(targets.iter().any(|c| c.position.is_occupied(E3)));
 }

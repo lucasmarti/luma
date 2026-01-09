@@ -1,40 +1,45 @@
-use std::collections::HashMap;
-
 use crate::engine::{
     cache::Cache,
-    search_algorithms::{node::Node, Player, MAX_VALUE, MIN_VALUE},
+    chess_moves::ChessMove,
+    position::Position,
+    search_algorithms::{
+        node::{evaluate, get_children},
+        Player, MAX_VALUE, MIN_VALUE,
+    },
 };
 
-pub struct AlphaBetaResult<N: Node + Clone> {
+pub struct AlphaBetaResult {
     pub value: f32,
-    pub leaf: Option<N>,
-    pub best_node: Option<N>,
+    pub leaf: Option<Position>,
+    pub best_move: Option<ChessMove>,
 }
-pub fn alpha_beta<N: Node + Clone>(
-    node: N,
+pub fn alpha_beta(
+    position: &Position,
     player: Player,
     mut alpha: f32,
     mut beta: f32,
+    mut depth: u8,
     cache: &mut Cache,
-) -> AlphaBetaResult<N> {
-    if node.is_leaf() {
+) -> AlphaBetaResult {
+    let mut children = get_children(position);
+    if depth == 0 || children.is_empty() {
         AlphaBetaResult {
-            value: node.evaluate(cache),
-            leaf: Some(node.clone()),
-            best_node: None,
+            value: evaluate(position, cache),
+            leaf: Some(*position),
+            best_move: None,
         }
     } else {
         match player {
             Player::Max => {
                 let mut max_value = MIN_VALUE;
-                let mut max_node: Option<N> = None;
-                let mut leaf: Option<N> = None;
-                for child in node.get_children() {
+                let mut max_move: Option<ChessMove> = None;
+                let mut leaf: Option<Position> = None;
+                for child in children {
                     let alpha_beta_result =
-                        alpha_beta(child.clone(), Player::Min, alpha, beta, cache);
+                        alpha_beta(&child.position, Player::Min, alpha, beta, depth - 1, cache);
                     if alpha_beta_result.value > max_value {
                         max_value = alpha_beta_result.value;
-                        max_node = Some(child);
+                        max_move = Some(child);
                         leaf = alpha_beta_result.leaf;
                     }
                     alpha = max(alpha, max_value);
@@ -45,19 +50,19 @@ pub fn alpha_beta<N: Node + Clone>(
                 AlphaBetaResult {
                     value: max_value,
                     leaf,
-                    best_node: max_node,
+                    best_move: max_move,
                 }
             }
             Player::Min => {
                 let mut min_value = MAX_VALUE;
-                let mut min_node: Option<N> = None;
-                let mut leaf: Option<N> = None;
-                for child in node.get_children() {
+                let mut min_move: Option<ChessMove> = None;
+                let mut leaf: Option<Position> = None;
+                for child in children {
                     let alpha_beta_result =
-                        alpha_beta(child.clone(), Player::Max, alpha, beta, cache);
+                        alpha_beta(&child.position, Player::Max, alpha, beta, depth - 1, cache);
                     if alpha_beta_result.value < min_value {
                         min_value = alpha_beta_result.value;
-                        min_node = Some(child);
+                        min_move = Some(child);
                         leaf = alpha_beta_result.leaf;
                     }
                     beta = min(beta, min_value);
@@ -68,7 +73,7 @@ pub fn alpha_beta<N: Node + Clone>(
                 AlphaBetaResult {
                     value: min_value,
                     leaf,
-                    best_node: min_node,
+                    best_move: min_move,
                 }
             }
         }

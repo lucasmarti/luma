@@ -1,6 +1,6 @@
 use crate::engine::{
     check::is_check,
-    chess_moves::get_current_player_moves,
+    chess_moves::{get_current_player_moves, ChessMove},
     directions::squares::Square,
     piece::{
         Color,
@@ -12,7 +12,7 @@ use crate::engine::{
 
 pub fn get_next_move(position: &Position) -> MoveOrEnd {
     match get_best_move(*position) {
-        Some(position) => MoveOrEnd::Move(position),
+        Some(chess_move) => MoveOrEnd::Move(chess_move),
         None => {
             if is_check(position, position.get_player()) {
                 MoveOrEnd::GameEnd(GameEnd::Victory(position.get_player().get_opponent_color()))
@@ -23,17 +23,17 @@ pub fn get_next_move(position: &Position) -> MoveOrEnd {
     }
 }
 
-pub fn get_possible_moves(position: &Position) -> Result<Vec<Position>, GameEnd> {
-    let positions: Vec<Position> = get_current_player_moves(position);
+pub fn get_possible_moves(position: &Position) -> Result<Vec<ChessMove>, GameEnd> {
+    let chess_moves: Vec<ChessMove> = get_current_player_moves(position);
 
-    if positions.is_empty() {
+    if chess_moves.is_empty() {
         if is_check(position, position.get_player()) {
             Err(GameEnd::Victory(position.get_player().get_opponent_color()))
         } else {
             Err(GameEnd::Draw)
         }
     } else {
-        Ok(positions)
+        Ok(chess_moves)
     }
 }
 
@@ -51,7 +51,7 @@ pub fn get_check_square(position: &Position) -> Option<Square> {
 }
 #[derive(Debug)]
 pub enum MoveOrEnd {
-    Move(Position),
+    Move(ChessMove),
     GameEnd(GameEnd),
 }
 #[derive(Debug)]
