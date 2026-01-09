@@ -1,18 +1,39 @@
 #[cfg(test)]
 use crate::engine::chess_moves::configurations::MovesFn;
 use crate::engine::{
+    self,
     check::filter_checks,
     chess_moves::{
         configurations::{CastlingMovesFn, BLACK_MOVE_CONFIG, WHITE_MOVE_CONFIG},
         ChessMove,
     },
-    piece,
+    get_possible_moves, piece,
+    position::{self, print::Print},
 };
 use crate::engine::{
     directions::squares::*,
     piece::Piece::{self},
     position::Position,
 };
+#[test]
+fn test_preemtive_game_end() {
+    let position = Position::default()
+        .put_piece(Piece::BlackRook, B1)
+        .put_piece(Piece::WhiteKing, G1)
+        .put_piece(Piece::WhitePawn, F2)
+        .put_piece(Piece::WhitePawn, G2)
+        .put_piece(Piece::WhitePawn, H2)
+        .put_piece(Piece::WhiteBishop, A3)
+        .put_piece(Piece::BlackKing, B8);
+    match engine::get_next_move(&position) {
+        engine::MoveOrEnd::Move(chess_move) => println!("Move"),
+        engine::MoveOrEnd::GameEnd(game_end) => println!("GameEnd"),
+    }
+    match get_possible_moves(&position) {
+        Ok(chess_moves) => println!("moves found"),
+        Err(game_end) => println!("game end"),
+    }
+}
 
 fn get_valid_drop_positions(position: &Position, from: Square) -> Vec<ChessMove> {
     let mut positions: Vec<ChessMove> = Vec::new();

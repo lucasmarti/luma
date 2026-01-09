@@ -19,7 +19,7 @@ pub enum Player {
 
 pub fn get_best_move(position: Position) -> Option<ChessMove> {
     let cache = &mut Cache::new();
-    let depth = 2;
+    let depth = 4;
     //let tree = build_tree(position, depth);
     let minimx_player = match position.get_player() {
         crate::engine::piece::Color::Black => Player::Min,
