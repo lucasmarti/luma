@@ -27,9 +27,9 @@ fn test_get_all() {
 #[test]
 fn test_remove_white_king() {
     let position = Position::new_starting_position();
-    assert_eq!(position.white_king.count_ones(), 1);
+    assert_eq!(position[(Color::White, Typ::King)].count_ones(), 1);
     let new_position = position.remove_piece(E1);
-    assert_eq!(new_position.white_king.count_ones(), 0);
+    assert_eq!(new_position[(Color::White, Typ::King)].count_ones(), 0);
 }
 
 #[test]

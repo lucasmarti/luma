@@ -1,4 +1,7 @@
-use crate::engine::position::bitboard::Bitboard;
+use crate::engine::{
+    piece::{Color, Typ},
+    position::bitboard::Bitboard,
+};
 
 use super::Position;
 
@@ -6,58 +9,48 @@ use super::Position;
 pub trait Print {
     fn print_board(&self);
     fn print(&self, name: String, board: Bitboard);
+    fn symbol(&self, color: Color, typ: Typ) -> char;
 }
 
 impl Print for Position {
+    fn symbol(&self, color: Color, typ: Typ) -> char {
+        match (color, typ) {
+            (Color::White, Typ::King) => 'K',
+            (Color::White, Typ::Queen) => 'Q',
+            (Color::White, Typ::Rook) => 'R',
+            (Color::White, Typ::Bishop) => 'B',
+            (Color::White, Typ::Knight) => 'N',
+            (Color::White, Typ::Pawn) => 'P',
+
+            (Color::Black, Typ::King) => 'k',
+            (Color::Black, Typ::Queen) => 'q',
+            (Color::Black, Typ::Rook) => 'r',
+            (Color::Black, Typ::Bishop) => 'b',
+            (Color::Black, Typ::Knight) => 'n',
+            (Color::Black, Typ::Pawn) => 'p',
+        }
+    }
+
     fn print_board(&self) {
-        let mut chars: [char; 64] = ['_'; 64];
-        for square in self.black_queen.iter() {
-            chars[square.as_index() as usize] = 'q';
-        }
-        for square in self.black_king.iter() {
-            chars[square.as_index() as usize] = 'k';
-        }
-        for square in self.black_rooks.iter() {
-            chars[square.as_index() as usize] = 'r';
-        }
-        for square in self.black_knights.iter() {
-            chars[square.as_index() as usize] = 'n';
-        }
-        for square in self.black_pawns.iter() {
-            chars[square.as_index() as usize] = 'p';
-        }
-        for square in self.black_bishops.iter() {
-            chars[square.as_index() as usize] = 'b';
+        let mut chars = ['_'; 64];
+
+        for color in Color::ALL {
+            for typ in Typ::ALL {
+                for square in self[(color, typ)].iter() {
+                    chars[square.as_index() as usize] = self.symbol(color, typ);
+                }
+            }
         }
 
-        for square in self.white_queen.iter() {
-            chars[square.as_index() as usize] = 'Q';
-        }
-        for square in self.white_king.iter() {
-            chars[square.as_index() as usize] = 'K';
-        }
-        for square in self.white_rooks.iter() {
-            chars[square.as_index() as usize] = 'R';
-        }
-        for square in self.white_knights.iter() {
-            chars[square.as_index() as usize] = 'N';
-        }
-        for square in self.white_pawns.iter() {
-            chars[square.as_index() as usize] = 'P';
-        }
-        for square in self.white_bishops.iter() {
-            chars[square.as_index() as usize] = 'B';
-        }
         for row in (0..8).rev() {
             for column in 0..8 {
-                let index = row * 8 + column;
-                print!("{}", chars[index]);
+                print!("{}", chars[row * 8 + column]);
             }
             println!();
         }
+
         println!();
         println!("Current Player: {:?}", self.get_player());
-        //println!("Heuristic Score: {:?}", heuristics(self));
         println!();
     }
 
