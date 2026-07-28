@@ -9,16 +9,16 @@ const PASSED_PAWN_SCORE: f32 = 15.0;
 
 pub fn count_black(position: &Position) -> f32 {
     let mut score: f32 = 0.0;
-    score += get_doubled_pawns(position, Piece::BlackPawn);
-    score += get_isolated_pawns(position, Piece::BlackPawn);
-    score += get_passed_pawns(position, Piece::BlackPawn);
+    score += get_doubled_pawns(position, Piece::BLACK_PAWN);
+    score += get_isolated_pawns(position, Piece::BLACK_PAWN);
+    score += get_passed_pawns(position, Piece::BLACK_PAWN);
     score
 }
 pub fn count_white(position: &Position) -> f32 {
     let mut score: f32 = 0.0;
-    score += get_doubled_pawns(position, Piece::WhitePawn);
-    score += get_isolated_pawns(position, Piece::WhitePawn);
-    score += get_passed_pawns(position, Piece::WhitePawn);
+    score += get_doubled_pawns(position, Piece::WHITE_PAWN);
+    score += get_isolated_pawns(position, Piece::WHITE_PAWN);
+    score += get_passed_pawns(position, Piece::WHITE_PAWN);
     score
 }
 
@@ -75,12 +75,12 @@ fn has_piece_in_direction(
 
 pub fn get_passed_pawns(position: &Position, pawn: Piece) -> f32 {
     let mut score = 0.0;
-    let opponent_pawn = match pawn.get_color() {
-        crate::engine::piece::Color::Black => Piece::WhitePawn,
-        crate::engine::piece::Color::White => Piece::BlackPawn,
+    let opponent_pawn = match pawn.color {
+        crate::engine::piece::Color::Black => Piece::WHITE_PAWN,
+        crate::engine::piece::Color::White => Piece::BLACK_PAWN,
     };
 
-    let direction_fn = match pawn.get_color() {
+    let direction_fn = match pawn.color {
         crate::engine::piece::Color::Black => directions::down,
         crate::engine::piece::Color::White => directions::up,
     };

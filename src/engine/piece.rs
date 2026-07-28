@@ -2,74 +2,32 @@ use strum::EnumCount;
 use strum_macros::EnumCount;
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug, Hash)]
-pub enum Piece {
-    BlackQueen,
-    BlackKing,
-    BlackBishop,
-    BlackRook,
-    BlackPawn,
-    BlackKnight,
-    WhiteQueen,
-    WhiteKing,
-    WhiteBishop,
-    WhiteRook,
-    WhitePawn,
-    WhiteKnight,
+pub struct Piece {
+    pub color: Color,
+    pub typ: Typ,
 }
 impl Piece {
-    pub const fn new(color: Color, typ: Typ) -> Self {
-        match (color, typ) {
-            (Color::Black, Typ::King) => Piece::BlackKing,
-            (Color::Black, Typ::Queen) => Piece::BlackQueen,
-            (Color::Black, Typ::Rook) => Piece::BlackRook,
-            (Color::Black, Typ::Bishop) => Piece::BlackBishop,
-            (Color::Black, Typ::Knight) => Piece::BlackKnight,
-            (Color::Black, Typ::Pawn) => Piece::BlackPawn,
+    pub const BLACK_KING: Self = Self::new(Color::Black, Typ::King);
+    pub const BLACK_QUEEN: Self = Self::new(Color::Black, Typ::Queen);
+    pub const BLACK_ROOK: Self = Self::new(Color::Black, Typ::Rook);
+    pub const BLACK_BISHOP: Self = Self::new(Color::Black, Typ::Bishop);
+    pub const BLACK_KNIGHT: Self = Self::new(Color::Black, Typ::Knight);
+    pub const BLACK_PAWN: Self = Self::new(Color::Black, Typ::Pawn);
 
-            (Color::White, Typ::King) => Piece::WhiteKing,
-            (Color::White, Typ::Queen) => Piece::WhiteQueen,
-            (Color::White, Typ::Rook) => Piece::WhiteRook,
-            (Color::White, Typ::Bishop) => Piece::WhiteBishop,
-            (Color::White, Typ::Knight) => Piece::WhiteKnight,
-            (Color::White, Typ::Pawn) => Piece::WhitePawn,
-        }
-    }
-    pub fn get_color(&self) -> Color {
-        match self {
-            Piece::BlackQueen => Color::Black,
-            Piece::BlackKing => Color::Black,
-            Piece::BlackBishop => Color::Black,
-            Piece::BlackRook => Color::Black,
-            Piece::BlackPawn => Color::Black,
-            Piece::BlackKnight => Color::Black,
-            Piece::WhiteQueen => Color::White,
-            Piece::WhiteKing => Color::White,
-            Piece::WhiteBishop => Color::White,
-            Piece::WhiteRook => Color::White,
-            Piece::WhitePawn => Color::White,
-            Piece::WhiteKnight => Color::White,
-        }
-    }
-    pub fn get_type(&self) -> Typ {
-        match self {
-            Piece::BlackQueen => Typ::Queen,
-            Piece::BlackKing => Typ::King,
-            Piece::BlackBishop => Typ::Bishop,
-            Piece::BlackRook => Typ::Rook,
-            Piece::BlackPawn => Typ::Pawn,
-            Piece::BlackKnight => Typ::Knight,
-            Piece::WhiteQueen => Typ::Queen,
-            Piece::WhiteKing => Typ::King,
-            Piece::WhiteBishop => Typ::Bishop,
-            Piece::WhiteRook => Typ::Rook,
-            Piece::WhitePawn => Typ::Pawn,
-            Piece::WhiteKnight => Typ::Knight,
-        }
+    pub const WHITE_KING: Self = Self::new(Color::White, Typ::King);
+    pub const WHITE_QUEEN: Self = Self::new(Color::White, Typ::Queen);
+    pub const WHITE_ROOK: Self = Self::new(Color::White, Typ::Rook);
+    pub const WHITE_BISHOP: Self = Self::new(Color::White, Typ::Bishop);
+    pub const WHITE_KNIGHT: Self = Self::new(Color::White, Typ::Knight);
+    pub const WHITE_PAWN: Self = Self::new(Color::White, Typ::Pawn);
+
+    pub const fn new(color: Color, typ: Typ) -> Self {
+        Self { color, typ }
     }
 }
 
 #[repr(u8)]
-#[derive(Clone, Copy, PartialEq, Eq, Debug, EnumCount)]
+#[derive(Clone, Copy, PartialEq, Eq, Debug, EnumCount, Hash)]
 pub enum Typ {
     King,
     Queen,

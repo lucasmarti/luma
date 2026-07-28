@@ -81,12 +81,12 @@ pub struct Config {
 }
 
 pub const WHITE_MOVE_CONFIG: Config = Config {
-    king: Piece::WhiteKing,
-    queen: Piece::WhiteQueen,
-    rook: Piece::WhiteRook,
-    knight: Piece::WhiteKnight,
-    bishop: Piece::WhiteBishop,
-    pawn: Piece::WhitePawn,
+    king: Piece::WHITE_KING,
+    queen: Piece::WHITE_QUEEN,
+    rook: Piece::WHITE_ROOK,
+    knight: Piece::WHITE_KNIGHT,
+    bishop: Piece::WHITE_BISHOP,
+    pawn: Piece::WHITE_PAWN,
     king_fn: get_moves_for_king_at_square,
     queen_fn: get_moves_for_queen_at_square,
     rook_fn: get_moves_for_rook_at_square,
@@ -97,12 +97,12 @@ pub const WHITE_MOVE_CONFIG: Config = Config {
 };
 
 pub const BLACK_MOVE_CONFIG: Config = Config {
-    king: Piece::BlackKing,
-    queen: Piece::BlackQueen,
-    rook: Piece::BlackRook,
-    knight: Piece::BlackKnight,
-    bishop: Piece::BlackBishop,
-    pawn: Piece::BlackPawn,
+    king: Piece::BLACK_KING,
+    queen: Piece::BLACK_QUEEN,
+    rook: Piece::BLACK_ROOK,
+    knight: Piece::BLACK_KNIGHT,
+    bishop: Piece::BLACK_BISHOP,
+    pawn: Piece::BLACK_PAWN,
     king_fn: get_moves_for_king_at_square,
     queen_fn: get_moves_for_queen_at_square,
     rook_fn: get_moves_for_rook_at_square,

@@ -21,7 +21,7 @@ pub fn count_white(position: &Position) -> f32 {
 fn get_score(chess_moves: Vec<ChessMove>) -> f32 {
     let mut score: f32 = 0.0;
     for chess_move in chess_moves {
-        let factor = match chess_move.piece.get_type() {
+        let factor = match chess_move.piece.typ {
             piece::Typ::King => KING_FACTOR,
             piece::Typ::Queen => QUEEN_FACTOR,
             piece::Typ::Rook => ROOK_FACTOR,

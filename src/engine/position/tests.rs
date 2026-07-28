@@ -10,18 +10,18 @@ fn test_new_starting_position() {
 #[test]
 fn test_get_black() {
     let position = Position::new_starting_position();
-    assert_eq!(position.get_black().count_ones(), 16);
+    assert_eq!(position.occupied[Color::Black.idx()].count_ones(), 16);
 }
 #[test]
 fn test_get_white() {
     let position = Position::new_starting_position();
-    assert_eq!(position.get_white().count_ones(), 16);
+    assert_eq!(position.occupied[Color::White.idx()].count_ones(), 16);
 }
 
 #[test]
 fn test_get_all() {
     let position = Position::new_starting_position();
-    assert_eq!(position.get_all().count_ones(), 32);
+    assert_eq!(position.all.count_ones(), 32);
 }
 
 #[test]
@@ -35,10 +35,10 @@ fn test_remove_white_king() {
 #[test]
 fn test_put_white_king() {
     let position = Position::new_starting_position();
-    let new_position = position.put_piece(Piece::WhiteKing, E2);
-    assert_ne!(position.is_occupied_by_piece(E2, Piece::WhiteKing), true);
+    let new_position = position.put_piece(Piece::WHITE_KING, E2);
+    assert_ne!(position.is_occupied_by_piece(E2, Piece::WHITE_KING), true);
     assert_eq!(
-        new_position.is_occupied_by_piece(E2, Piece::WhiteKing),
+        new_position.is_occupied_by_piece(E2, Piece::WHITE_KING),
         true
     );
 }

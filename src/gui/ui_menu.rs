@@ -41,56 +41,56 @@ impl UIMenu {
                 UIButton::new(
                     layout.get(Column::Id13),
                     Icon::WHITE_BISHOP,
-                    UIEvent::PromoteTo(Piece::WhiteBishop),
+                    UIEvent::PromoteTo(Piece::WHITE_BISHOP),
                 )
                 .disabled(true)
                 .group(Group::WhitePromotionButtons),
                 UIButton::new(
                     layout.get(Column::Id14),
                     Icon::WHITE_KNIGHT,
-                    UIEvent::PromoteTo(Piece::WhiteKnight),
+                    UIEvent::PromoteTo(Piece::WHITE_KNIGHT),
                 )
                 .disabled(true)
                 .group(Group::WhitePromotionButtons),
                 UIButton::new(
                     layout.get(Column::Id15),
                     Icon::WHITE_QUEEN,
-                    UIEvent::PromoteTo(Piece::WhiteQueen),
+                    UIEvent::PromoteTo(Piece::WHITE_QUEEN),
                 )
                 .disabled(true)
                 .group(Group::WhitePromotionButtons),
                 UIButton::new(
                     layout.get(Column::Id16),
                     Icon::WHITE_ROOK,
-                    UIEvent::PromoteTo(Piece::WhiteRook),
+                    UIEvent::PromoteTo(Piece::WHITE_ROOK),
                 )
                 .disabled(true)
                 .group(Group::WhitePromotionButtons),
                 UIButton::new(
                     layout.get(Column::Id13),
                     Icon::BLACK_BISHOP,
-                    UIEvent::PromoteTo(Piece::BlackBishop),
+                    UIEvent::PromoteTo(Piece::BLACK_BISHOP),
                 )
                 .group(Group::BlackPromotionButtons)
                 .disabled(true),
                 UIButton::new(
                     layout.get(Column::Id14),
                     Icon::BLACK_KNIGHT,
-                    UIEvent::PromoteTo(Piece::BlackKnight),
+                    UIEvent::PromoteTo(Piece::BLACK_KNIGHT),
                 )
                 .disabled(true)
                 .group(Group::BlackPromotionButtons),
                 UIButton::new(
                     layout.get(Column::Id15),
                     Icon::BLACK_QUEEN,
-                    UIEvent::PromoteTo(Piece::BlackQueen),
+                    UIEvent::PromoteTo(Piece::BLACK_QUEEN),
                 )
                 .disabled(true)
                 .group(Group::BlackPromotionButtons),
                 UIButton::new(
                     layout.get(Column::Id16),
                     Icon::BLACK_ROOK,
-                    UIEvent::PromoteTo(Piece::BlackRook),
+                    UIEvent::PromoteTo(Piece::BLACK_ROOK),
                 )
                 .disabled(true)
                 .group(Group::BlackPromotionButtons),

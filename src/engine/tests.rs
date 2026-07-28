@@ -18,13 +18,13 @@ use crate::engine::{
 #[test]
 fn test_preemtive_game_end() {
     let position = Position::default()
-        .put_piece(Piece::BlackRook, B1)
-        .put_piece(Piece::WhiteKing, G1)
-        .put_piece(Piece::WhitePawn, F2)
-        .put_piece(Piece::WhitePawn, G2)
-        .put_piece(Piece::WhitePawn, H2)
-        .put_piece(Piece::WhiteBishop, A3)
-        .put_piece(Piece::BlackKing, B8);
+        .put_piece(Piece::BLACK_ROOK, B1)
+        .put_piece(Piece::WHITE_KING, G1)
+        .put_piece(Piece::WHITE_PAWN, F2)
+        .put_piece(Piece::WHITE_PAWN, G2)
+        .put_piece(Piece::WHITE_PAWN, H2)
+        .put_piece(Piece::WHITE_BISHOP, A3)
+        .put_piece(Piece::BLACK_KING, B8);
     match engine::get_next_move(&position) {
         engine::MoveOrEnd::Move(chess_move) => println!("Move"),
         engine::MoveOrEnd::GameEnd(game_end) => println!("GameEnd"),
@@ -51,9 +51,9 @@ pub const WHITE_KING_STARTING_POSITION: Square = E1;
 pub const BLACK_KING_STARTING_POSITION: Square = E8;
 
 fn get_castling_moves_fn(square: Square, piece: Piece) -> Option<CastlingMovesFn> {
-    if square == WHITE_KING_STARTING_POSITION && piece == Piece::WhiteKing {
+    if square == WHITE_KING_STARTING_POSITION && piece == Piece::WHITE_KING {
         Some(WHITE_MOVE_CONFIG.castling_move_fn)
-    } else if square == BLACK_KING_STARTING_POSITION && piece == Piece::BlackKing {
+    } else if square == BLACK_KING_STARTING_POSITION && piece == Piece::BLACK_KING {
         use crate::engine::chess_moves::configurations::BLACK_MOVE_CONFIG;
 
         Some(BLACK_MOVE_CONFIG.castling_move_fn)
@@ -62,11 +62,11 @@ fn get_castling_moves_fn(square: Square, piece: Piece) -> Option<CastlingMovesFn
     }
 }
 fn get_moves_fn(piece: Piece) -> MovesFn {
-    let config = match piece.get_color() {
+    let config = match piece.color {
         piece::Color::Black => BLACK_MOVE_CONFIG,
         piece::Color::White => WHITE_MOVE_CONFIG,
     };
-    let moves_fn: MovesFn = match piece.get_type() {
+    let moves_fn: MovesFn = match piece.typ {
         piece::Typ::King => config.king_fn,
         piece::Typ::Queen => config.queen_fn,
         piece::Typ::Rook => config.rook_fn,
@@ -94,8 +94,8 @@ fn test_valid_drop_targets_knight() {
 #[test]
 fn test_valid_drop_targets_castling() {
     let position = Position::default()
-        .put_piece(Piece::WhiteRook, H1)
-        .put_piece(Piece::WhiteKing, E1);
+        .put_piece(Piece::WHITE_ROOK, H1)
+        .put_piece(Piece::WHITE_KING, E1);
     let targets = get_valid_drop_positions(&position, E1);
     assert!(targets.iter().any(|c| c.position.is_occupied(G1)));
 }
@@ -103,9 +103,9 @@ fn test_valid_drop_targets_castling() {
 #[test]
 fn test_valid_drop_targets_en_passant() {
     let position = Position::default()
-        .put_piece(Piece::WhiteKing, E1)
-        .put_piece(Piece::WhitePawn, E4)
-        .put_piece(Piece::BlackPawn, D4)
+        .put_piece(Piece::WHITE_KING, E1)
+        .put_piece(Piece::WHITE_PAWN, E4)
+        .put_piece(Piece::BLACK_PAWN, D4)
         .set_en_passant(E4);
     let targets = get_valid_drop_positions(&position, D4);
     assert!(targets.iter().any(|c| c.position.is_occupied(E3)));

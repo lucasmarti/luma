@@ -18,10 +18,10 @@ pub fn slide(position: &Position, from: Square, path: Vec<Square>, piece: Piece)
     let mut new_chess_moves: Vec<ChessMove> = Vec::new();
 
     for field in path {
-        if position.is_occupied_by_color(field, piece.get_color()) {
+        if position.is_occupied_by_color(field, piece.color) {
             // collision with own
             return new_chess_moves;
-        } else if position.is_occupied_by_color(field, piece.get_color().get_opponent_color()) {
+        } else if position.is_occupied_by_color(field, piece.color.get_opponent_color()) {
             // capture
             new_chess_moves.push(progess(position, piece, from, field));
             return new_chess_moves;

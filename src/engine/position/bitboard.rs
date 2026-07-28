@@ -1,6 +1,6 @@
 use intbits::Bits;
 use iterator::BitboardIterator;
-use std::ops::{BitAnd, BitOr};
+use std::ops::{BitAnd, BitAndAssign, BitOr, BitOrAssign, Not};
 
 use crate::engine::directions::squares::Square;
 
@@ -56,17 +56,37 @@ impl Bitboard {
     }
 }
 impl BitOr for Bitboard {
-    type Output = Bitboard;
+    type Output = Self;
 
     fn bitor(self, rhs: Self) -> Self::Output {
-        Bitboard(self.0.bitor(rhs.0))
+        Self(self.0 | rhs.0)
     }
 }
+
 impl BitAnd for Bitboard {
-    type Output = Bitboard;
+    type Output = Self;
 
     fn bitand(self, rhs: Self) -> Self::Output {
-        Bitboard(self.0.bitand(rhs.0))
+        Self(self.0 & rhs.0)
+    }
+}
+
+impl BitAndAssign for Bitboard {
+    fn bitand_assign(&mut self, rhs: Self) {
+        self.0 &= rhs.0
+    }
+}
+
+impl BitOrAssign for Bitboard {
+    fn bitor_assign(&mut self, rhs: Self) {
+        self.0 |= rhs.0
+    }
+}
+impl Not for Bitboard {
+    type Output = Bitboard;
+
+    fn not(self) -> Self::Output {
+        Bitboard(!self.0)
     }
 }
 

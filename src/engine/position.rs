@@ -12,31 +12,47 @@ use strum::EnumCount;
 #[derive(Clone, Copy, Debug, Eq)]
 pub struct Position {
     boards: [[Bitboard; Typ::COUNT]; Color::COUNT],
+    occupied: [Bitboard; Color::COUNT],
+    all: Bitboard,
     castling_rights: [bool; 4],
     en_passant: Option<Square>,
     player: Color,
 }
 impl Position {
     pub fn new_starting_position() -> Position {
-        let mut position = Position::default();
-
-        position[(Color::White, Typ::King)] = Bitboard::from(E1);
-        position[(Color::White, Typ::Queen)] = Bitboard::from(D1);
-        position[(Color::White, Typ::Rook)] = Bitboard::from_vec(vec![A1, H1]);
-        position[(Color::White, Typ::Bishop)] = Bitboard::from_vec(vec![C1, F1]);
-        position[(Color::White, Typ::Knight)] = Bitboard::from_vec(vec![B1, G1]);
-        position[(Color::White, Typ::Pawn)] =
-            Bitboard::from_vec(vec![A2, B2, C2, D2, E2, F2, G2, H2]);
-
-        position[(Color::Black, Typ::King)] = Bitboard::from(E8);
-        position[(Color::Black, Typ::Queen)] = Bitboard::from(D8);
-        position[(Color::Black, Typ::Rook)] = Bitboard::from_vec(vec![A8, H8]);
-        position[(Color::Black, Typ::Bishop)] = Bitboard::from_vec(vec![C8, F8]);
-        position[(Color::Black, Typ::Knight)] = Bitboard::from_vec(vec![B8, G8]);
-        position[(Color::Black, Typ::Pawn)] =
-            Bitboard::from_vec(vec![A7, B7, C7, D7, E7, F7, G7, H7]);
-
-        position
+        Position::default()
+            .put_piece(Piece::WHITE_KING, E1)
+            .put_piece(Piece::WHITE_QUEEN, D1)
+            .put_piece(Piece::WHITE_ROOK, A1)
+            .put_piece(Piece::WHITE_ROOK, H1)
+            .put_piece(Piece::WHITE_BISHOP, C1)
+            .put_piece(Piece::WHITE_BISHOP, F1)
+            .put_piece(Piece::WHITE_KNIGHT, B1)
+            .put_piece(Piece::WHITE_KNIGHT, G1)
+            .put_piece(Piece::WHITE_PAWN, A2)
+            .put_piece(Piece::WHITE_PAWN, B2)
+            .put_piece(Piece::WHITE_PAWN, C2)
+            .put_piece(Piece::WHITE_PAWN, D2)
+            .put_piece(Piece::WHITE_PAWN, E2)
+            .put_piece(Piece::WHITE_PAWN, F2)
+            .put_piece(Piece::WHITE_PAWN, G2)
+            .put_piece(Piece::WHITE_PAWN, H2)
+            .put_piece(Piece::BLACK_KING, E8)
+            .put_piece(Piece::BLACK_QUEEN, D8)
+            .put_piece(Piece::BLACK_ROOK, A8)
+            .put_piece(Piece::BLACK_ROOK, H8)
+            .put_piece(Piece::BLACK_BISHOP, C8)
+            .put_piece(Piece::BLACK_BISHOP, F8)
+            .put_piece(Piece::BLACK_KNIGHT, B8)
+            .put_piece(Piece::BLACK_KNIGHT, G8)
+            .put_piece(Piece::BLACK_PAWN, A7)
+            .put_piece(Piece::BLACK_PAWN, B7)
+            .put_piece(Piece::BLACK_PAWN, C7)
+            .put_piece(Piece::BLACK_PAWN, D7)
+            .put_piece(Piece::BLACK_PAWN, E7)
+            .put_piece(Piece::BLACK_PAWN, F7)
+            .put_piece(Piece::BLACK_PAWN, G7)
+            .put_piece(Piece::BLACK_PAWN, H7)
     }
 
     pub fn disallow_castling_for_color(mut self, color: Color) -> Position {
@@ -64,14 +80,11 @@ impl Position {
         self
     }
     pub fn is_occupied(&self, square: Square) -> bool {
-        self.get_all().contains(square)
+        self.all.contains(square)
     }
 
     pub fn is_occupied_by_color(&self, square: Square, color: Color) -> bool {
-        match color {
-            Color::Black => self.get_black().contains(square),
-            Color::White => self.get_white().contains(square),
-        }
+        self.occupied[color.idx()].contains(square)
     }
     pub fn is_occupied_by_piece(&self, square: Square, piece: Piece) -> bool {
         self.get_squares(piece).contains(square)
@@ -123,29 +136,10 @@ impl Position {
         }
         self
     }
-    fn get_black(&self) -> Bitboard {
-        self.get_color(Color::Black)
-    }
-
-    fn get_white(&self) -> Bitboard {
-        self.get_color(Color::White)
-    }
-
-    fn get_color(&self, color: Color) -> Bitboard {
-        let mut bitboard = Bitboard::default();
-
-        for typ in Typ::ALL {
-            bitboard = bitboard | self[(color, typ)];
-        }
-        bitboard
-    }
-    fn get_all(&self) -> Bitboard {
-        self.get_black() | self.get_white()
-    }
 
     pub fn get_all_pieces(&self) -> Vec<(Square, Piece)> {
         let mut all_pieces: Vec<(Square, Piece)> = Vec::new();
-        for square in self.get_all().iter() {
+        for square in self.all.iter() {
             if let Some(piece) = self.get_piece_at(square) {
                 all_pieces.push((square, piece));
             }
@@ -154,21 +148,64 @@ impl Position {
     }
 
     pub fn get_squares(&self, piece: Piece) -> Bitboard {
-        self[(piece.get_color(), piece.get_type())]
+        self[(piece.color, piece.typ)]
     }
 
     pub fn put_piece(mut self, piece: Piece, square: Square) -> Position {
-        self[(piece.get_color(), piece.get_type())].set_bit(square);
+        let bit = Bitboard::from(square);
+
+        self[(piece.color, piece.typ)] |= bit;
+        self.occupied[piece.color.idx()] |= bit;
+        self.all |= bit;
+
+        #[cfg(debug_assertions)]
+        self.debug_assert_valid();
+
         self
     }
 
     pub fn remove_piece(mut self, square: Square) -> Position {
+        let bit = Bitboard::from(square);
+        let mask = !bit;
+
         for color in Color::ALL {
             for typ in Typ::ALL {
-                self[(color, typ)].remove_bit(square);
+                self[(color, typ)] &= mask;
             }
+
+            self.occupied[color.idx()] &= mask;
         }
+
+        self.all &= mask;
+
+        #[cfg(debug_assertions)]
+        self.debug_assert_valid();
+
         self
+    }
+
+    #[cfg(debug_assertions)]
+    fn debug_assert_valid(&self) {
+        let mut all = Bitboard::default();
+
+        for color in Color::ALL {
+            let mut occupied = Bitboard::default();
+
+            for typ in Typ::ALL {
+                occupied |= self[(color, typ)];
+            }
+
+            debug_assert_eq!(
+                occupied,
+                self.occupied[color.idx()],
+                "occupied cache incorrect for {:?}",
+                color,
+            );
+
+            all |= occupied;
+        }
+
+        debug_assert_eq!(all, self.all, "all cache incorrect");
     }
     pub fn get_piece_at(&self, square: Square) -> Option<Piece> {
         for color in Color::ALL {
@@ -186,6 +223,8 @@ impl Default for Position {
     fn default() -> Self {
         Self {
             boards: Default::default(),
+            occupied: Default::default(),
+            all: Default::default(),
             castling_rights: [true; 4],
             en_passant: None,
             player: Color::White,

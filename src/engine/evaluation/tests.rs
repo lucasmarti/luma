@@ -1,6 +1,6 @@
 use crate::engine::directions::squares::*;
 use crate::engine::evaluation::pawn_structures::get_passed_pawns;
-use crate::engine::piece::Piece::{self, *};
+use crate::engine::piece::Piece;
 use crate::engine::position::*;
 use crate::engine::{evaluation::*, position};
 
@@ -8,14 +8,14 @@ use crate::engine::{evaluation::*, position};
 fn test_queen_loss() {
     let position = Position::new_starting_position()
         .remove_piece(E2)
-        .put_piece(Piece::WhitePawn, E4)
+        .put_piece(Piece::WHITE_PAWN, E4)
         .remove_piece(C7)
-        .put_piece(Piece::BlackPawn, C6)
+        .put_piece(Piece::BLACK_PAWN, C6)
         .remove_piece(D1)
-        .put_piece(Piece::WhiteQueen, H5)
+        .put_piece(Piece::WHITE_QUEEN, H5)
         .remove_piece(G7)
         .remove_piece(H5)
-        .put_piece(Piece::BlackKnight, H5);
+        .put_piece(Piece::BLACK_KNIGHT, H5);
     let evaluation = Evaluation::new(&position);
     println!("{:?}", evaluation);
 }
@@ -23,24 +23,24 @@ fn test_queen_loss() {
 #[test]
 fn test_isolated_pawns() {
     let position = Position::default()
-        .put_piece(WhitePawn, A1)
-        .put_piece(WhitePawn, C1)
-        .put_piece(WhitePawn, D1)
-        .put_piece(WhitePawn, F1);
+        .put_piece(Piece::WHITE_PAWN, A1)
+        .put_piece(Piece::WHITE_PAWN, C1)
+        .put_piece(Piece::WHITE_PAWN, D1)
+        .put_piece(Piece::WHITE_PAWN, F1);
     assert_eq!(
-        pawn_structures::get_isolated_pawns(&position, WhitePawn),
+        pawn_structures::get_isolated_pawns(&position, Piece::WHITE_PAWN),
         -8.0
     );
 }
 #[test]
 fn test_isolated_pawns_2() {
     let position = Position::default()
-        .put_piece(BlackPawn, A1)
-        .put_piece(BlackPawn, C3)
-        .put_piece(BlackPawn, D4)
-        .put_piece(BlackPawn, F8);
+        .put_piece(Piece::BLACK_PAWN, A1)
+        .put_piece(Piece::BLACK_PAWN, C3)
+        .put_piece(Piece::BLACK_PAWN, D4)
+        .put_piece(Piece::BLACK_PAWN, F8);
     assert_eq!(
-        pawn_structures::get_isolated_pawns(&position, BlackPawn),
+        pawn_structures::get_isolated_pawns(&position, Piece::BLACK_PAWN),
         -8.0
     );
 }
@@ -48,23 +48,23 @@ fn test_isolated_pawns_2() {
 #[test]
 fn test_doubled_pawns() {
     let position = Position::default()
-        .put_piece(BlackPawn, F2)
-        .put_piece(BlackPawn, F3)
-        .put_piece(BlackPawn, F4)
-        .put_piece(WhitePawn, D2)
-        .put_piece(WhitePawn, D4);
+        .put_piece(Piece::BLACK_PAWN, F2)
+        .put_piece(Piece::BLACK_PAWN, F3)
+        .put_piece(Piece::BLACK_PAWN, F4)
+        .put_piece(Piece::WHITE_PAWN, D2)
+        .put_piece(Piece::WHITE_PAWN, D4);
     assert_eq!(
-        pawn_structures::get_doubled_pawns(&position, BlackPawn),
+        pawn_structures::get_doubled_pawns(&position, Piece::BLACK_PAWN),
         -6.0
     );
     assert_eq!(
-        pawn_structures::get_doubled_pawns(&position, WhitePawn),
+        pawn_structures::get_doubled_pawns(&position, Piece::WHITE_PAWN),
         -3.0
     );
 
-    let position_2 = Position::default().put_piece(BlackPawn, F2);
+    let position_2 = Position::default().put_piece(Piece::BLACK_PAWN, F2);
     assert_eq!(
-        pawn_structures::get_doubled_pawns(&position_2, BlackPawn),
+        pawn_structures::get_doubled_pawns(&position_2, Piece::BLACK_PAWN),
         0.0
     );
 }
@@ -101,16 +101,16 @@ fn test_black_queen_missing() {
 
 #[test]
 fn test_get_passed_pawns() {
-    let position1 = Position::default().put_piece(Piece::WhitePawn, A4);
-    assert_eq!(get_passed_pawns(&position1, WhitePawn), 15.0);
+    let position1 = Position::default().put_piece(Piece::WHITE_PAWN, A4);
+    assert_eq!(get_passed_pawns(&position1, Piece::WHITE_PAWN), 15.0);
 
     let position2 = Position::default()
-        .put_piece(Piece::BlackPawn, A4)
-        .put_piece(WhitePawn, A3);
-    assert_eq!(get_passed_pawns(&position2, BlackPawn), 0.0);
+        .put_piece(Piece::BLACK_PAWN, A4)
+        .put_piece(Piece::WHITE_PAWN, A3);
+    assert_eq!(get_passed_pawns(&position2, Piece::BLACK_PAWN), 0.0);
 
     let position3 = Position::default()
-        .put_piece(Piece::BlackPawn, A4)
-        .put_piece(WhitePawn, B3);
-    assert_eq!(get_passed_pawns(&position3, BlackPawn), 0.0);
+        .put_piece(Piece::BLACK_PAWN, A4)
+        .put_piece(Piece::WHITE_PAWN, B3);
+    assert_eq!(get_passed_pawns(&position3, Piece::BLACK_PAWN), 0.0);
 }

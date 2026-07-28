@@ -35,16 +35,8 @@ pub fn get_possible_moves(position: &Position) -> Result<Vec<ChessMove>, GameEnd
 }
 
 pub fn get_check_square(position: &Position) -> Option<Square> {
-    if is_check(position, position.get_player()) {
-        let king = match position.get_player() {
-            piece::Color::Black => Piece::BlackKing,
-            piece::Color::White => Piece::WhiteKing,
-        };
-        if let Some(square) = position.get_squares(king).iter().next() {
-            return Some(square);
-        }
-    }
-    None
+    is_check(position, position.get_player())
+        .then(|| position.get_king_square(position.get_player()))
 }
 #[derive(Debug)]
 pub enum MoveOrEnd {

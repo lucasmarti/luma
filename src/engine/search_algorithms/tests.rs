@@ -9,31 +9,31 @@ use crate::engine::{
 #[test]
 fn test_get_best_move() {
     let position = Position::default()
-        .put_piece(Piece::BlackKing, D7)
-        .put_piece(Piece::WhiteKing, D2)
-        .put_piece(Piece::WhitePawn, B6)
-        .put_piece(Piece::BlackKnight, A7);
+        .put_piece(Piece::BLACK_KING, D7)
+        .put_piece(Piece::WHITE_KING, D2)
+        .put_piece(Piece::WHITE_PAWN, B6)
+        .put_piece(Piece::BLACK_KNIGHT, A7);
     position.print_board();
     if let Some(best_move) = get_best_move(position) {
         best_move.position.print_board();
         assert!(best_move
             .position
-            .is_occupied_by_piece(A7, Piece::WhitePawn));
+            .is_occupied_by_piece(A7, Piece::WHITE_PAWN));
     }
 }
 
 #[test]
 fn test_get_best_move2() {
     let position = Position::default()
-        .put_piece(Piece::BlackKing, D7)
-        .put_piece(Piece::WhiteKing, D2)
-        .put_piece(Piece::BlackPawn, B7)
-        .put_piece(Piece::WhiteKnight, A6)
+        .put_piece(Piece::BLACK_KING, D7)
+        .put_piece(Piece::WHITE_KING, D2)
+        .put_piece(Piece::BLACK_PAWN, B7)
+        .put_piece(Piece::WHITE_KNIGHT, A6)
         .toggle_player();
     position.print_board();
     if let Some(best_move) = get_best_move(position) {
         assert!(best_move
             .position
-            .is_occupied_by_piece(A6, Piece::BlackPawn));
+            .is_occupied_by_piece(A6, Piece::BLACK_PAWN));
     }
 }

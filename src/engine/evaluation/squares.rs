@@ -165,16 +165,16 @@ static BLACK_KING_TABLE: Lazy<Vec<f32>> = Lazy::new(|| {
 });
 
 fn get_table(piece: Piece) -> &'static once_cell::sync::Lazy<Vec<f32>> {
-    match piece.get_type() {
+    match piece.typ {
         crate::engine::piece::Typ::Knight => &KNIGHT_TABLE,
         crate::engine::piece::Typ::Bishop => &BISHOP_TABLE,
         crate::engine::piece::Typ::Queen => &QUEEN_TABLE,
         crate::engine::piece::Typ::Rook => &ROOK_TABLE,
-        crate::engine::piece::Typ::Pawn => match piece.get_color() {
+        crate::engine::piece::Typ::Pawn => match piece.color {
             crate::engine::piece::Color::Black => &BLACK_PAWN_TABLE,
             crate::engine::piece::Color::White => &WHITE_PAWN_TABLE,
         },
-        crate::engine::piece::Typ::King => match piece.get_color() {
+        crate::engine::piece::Typ::King => match piece.color {
             crate::engine::piece::Color::Black => &BLACK_KING_TABLE,
             crate::engine::piece::Color::White => &WHITE_KING_TABLE,
         },
@@ -204,19 +204,19 @@ pub fn count_white(position: &Position) -> f32 {
 }
 
 const WHITE_PIECES: [Piece; 6] = [
-    Piece::WhiteQueen,
-    Piece::WhiteKing,
-    Piece::WhiteBishop,
-    Piece::WhiteKnight,
-    Piece::WhitePawn,
-    Piece::WhiteRook,
+    Piece::WHITE_QUEEN,
+    Piece::WHITE_KING,
+    Piece::WHITE_BISHOP,
+    Piece::WHITE_KNIGHT,
+    Piece::WHITE_PAWN,
+    Piece::WHITE_ROOK,
 ];
 
 const BLACK_PIECES: [Piece; 6] = [
-    Piece::BlackQueen,
-    Piece::BlackKing,
-    Piece::BlackBishop,
-    Piece::BlackKnight,
-    Piece::BlackPawn,
-    Piece::BlackRook,
+    Piece::BLACK_QUEEN,
+    Piece::BLACK_KING,
+    Piece::BLACK_BISHOP,
+    Piece::BLACK_KNIGHT,
+    Piece::BLACK_PAWN,
+    Piece::BLACK_ROOK,
 ];
