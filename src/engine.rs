@@ -2,7 +2,6 @@ use crate::engine::{
     check::is_check,
     chess_moves::{get_current_player_moves, ChessMove},
     directions::squares::Square,
-    piece::Piece::{self},
     position::Position,
     search_algorithms::get_best_move,
 };

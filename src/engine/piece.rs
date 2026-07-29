@@ -6,21 +6,21 @@ pub struct Piece {
     pub color: Color,
     pub typ: Typ,
 }
+pub const BLACK_KING: Piece = Piece::new(Color::Black, Typ::King);
+pub const BLACK_QUEEN: Piece = Piece::new(Color::Black, Typ::Queen);
+pub const BLACK_ROOK: Piece = Piece::new(Color::Black, Typ::Rook);
+pub const BLACK_BISHOP: Piece = Piece::new(Color::Black, Typ::Bishop);
+pub const BLACK_KNIGHT: Piece = Piece::new(Color::Black, Typ::Knight);
+pub const BLACK_PAWN: Piece = Piece::new(Color::Black, Typ::Pawn);
+
+pub const WHITE_KING: Piece = Piece::new(Color::White, Typ::King);
+pub const WHITE_QUEEN: Piece = Piece::new(Color::White, Typ::Queen);
+pub const WHITE_ROOK: Piece = Piece::new(Color::White, Typ::Rook);
+pub const WHITE_BISHOP: Piece = Piece::new(Color::White, Typ::Bishop);
+pub const WHITE_KNIGHT: Piece = Piece::new(Color::White, Typ::Knight);
+pub const WHITE_PAWN: Piece = Piece::new(Color::White, Typ::Pawn);
+
 impl Piece {
-    pub const BLACK_KING: Self = Self::new(Color::Black, Typ::King);
-    pub const BLACK_QUEEN: Self = Self::new(Color::Black, Typ::Queen);
-    pub const BLACK_ROOK: Self = Self::new(Color::Black, Typ::Rook);
-    pub const BLACK_BISHOP: Self = Self::new(Color::Black, Typ::Bishop);
-    pub const BLACK_KNIGHT: Self = Self::new(Color::Black, Typ::Knight);
-    pub const BLACK_PAWN: Self = Self::new(Color::Black, Typ::Pawn);
-
-    pub const WHITE_KING: Self = Self::new(Color::White, Typ::King);
-    pub const WHITE_QUEEN: Self = Self::new(Color::White, Typ::Queen);
-    pub const WHITE_ROOK: Self = Self::new(Color::White, Typ::Rook);
-    pub const WHITE_BISHOP: Self = Self::new(Color::White, Typ::Bishop);
-    pub const WHITE_KNIGHT: Self = Self::new(Color::White, Typ::Knight);
-    pub const WHITE_PAWN: Self = Self::new(Color::White, Typ::Pawn);
-
     pub const fn new(color: Color, typ: Typ) -> Self {
         Self { color, typ }
     }

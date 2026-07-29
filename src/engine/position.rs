@@ -1,6 +1,6 @@
 use crate::engine::{
     directions::squares::*,
-    piece::{Color, Piece, Typ},
+    piece::{Color, Typ, *},
     position::bitboard::Bitboard,
 };
 use std::{
@@ -21,38 +21,38 @@ pub struct Position {
 impl Position {
     pub fn new_starting_position() -> Position {
         Position::default()
-            .put_piece(Piece::WHITE_KING, E1)
-            .put_piece(Piece::WHITE_QUEEN, D1)
-            .put_piece(Piece::WHITE_ROOK, A1)
-            .put_piece(Piece::WHITE_ROOK, H1)
-            .put_piece(Piece::WHITE_BISHOP, C1)
-            .put_piece(Piece::WHITE_BISHOP, F1)
-            .put_piece(Piece::WHITE_KNIGHT, B1)
-            .put_piece(Piece::WHITE_KNIGHT, G1)
-            .put_piece(Piece::WHITE_PAWN, A2)
-            .put_piece(Piece::WHITE_PAWN, B2)
-            .put_piece(Piece::WHITE_PAWN, C2)
-            .put_piece(Piece::WHITE_PAWN, D2)
-            .put_piece(Piece::WHITE_PAWN, E2)
-            .put_piece(Piece::WHITE_PAWN, F2)
-            .put_piece(Piece::WHITE_PAWN, G2)
-            .put_piece(Piece::WHITE_PAWN, H2)
-            .put_piece(Piece::BLACK_KING, E8)
-            .put_piece(Piece::BLACK_QUEEN, D8)
-            .put_piece(Piece::BLACK_ROOK, A8)
-            .put_piece(Piece::BLACK_ROOK, H8)
-            .put_piece(Piece::BLACK_BISHOP, C8)
-            .put_piece(Piece::BLACK_BISHOP, F8)
-            .put_piece(Piece::BLACK_KNIGHT, B8)
-            .put_piece(Piece::BLACK_KNIGHT, G8)
-            .put_piece(Piece::BLACK_PAWN, A7)
-            .put_piece(Piece::BLACK_PAWN, B7)
-            .put_piece(Piece::BLACK_PAWN, C7)
-            .put_piece(Piece::BLACK_PAWN, D7)
-            .put_piece(Piece::BLACK_PAWN, E7)
-            .put_piece(Piece::BLACK_PAWN, F7)
-            .put_piece(Piece::BLACK_PAWN, G7)
-            .put_piece(Piece::BLACK_PAWN, H7)
+            .put_piece(WHITE_KING, E1)
+            .put_piece(WHITE_QUEEN, D1)
+            .put_piece(WHITE_ROOK, A1)
+            .put_piece(WHITE_ROOK, H1)
+            .put_piece(WHITE_BISHOP, C1)
+            .put_piece(WHITE_BISHOP, F1)
+            .put_piece(WHITE_KNIGHT, B1)
+            .put_piece(WHITE_KNIGHT, G1)
+            .put_piece(WHITE_PAWN, A2)
+            .put_piece(WHITE_PAWN, B2)
+            .put_piece(WHITE_PAWN, C2)
+            .put_piece(WHITE_PAWN, D2)
+            .put_piece(WHITE_PAWN, E2)
+            .put_piece(WHITE_PAWN, F2)
+            .put_piece(WHITE_PAWN, G2)
+            .put_piece(WHITE_PAWN, H2)
+            .put_piece(BLACK_KING, E8)
+            .put_piece(BLACK_QUEEN, D8)
+            .put_piece(BLACK_ROOK, A8)
+            .put_piece(BLACK_ROOK, H8)
+            .put_piece(BLACK_BISHOP, C8)
+            .put_piece(BLACK_BISHOP, F8)
+            .put_piece(BLACK_KNIGHT, B8)
+            .put_piece(BLACK_KNIGHT, G8)
+            .put_piece(BLACK_PAWN, A7)
+            .put_piece(BLACK_PAWN, B7)
+            .put_piece(BLACK_PAWN, C7)
+            .put_piece(BLACK_PAWN, D7)
+            .put_piece(BLACK_PAWN, E7)
+            .put_piece(BLACK_PAWN, F7)
+            .put_piece(BLACK_PAWN, G7)
+            .put_piece(BLACK_PAWN, H7)
     }
 
     pub fn disallow_castling_for_color(mut self, color: Color) -> Position {
@@ -87,11 +87,14 @@ impl Position {
         self.occupied[color.idx()].contains(square)
     }
     pub fn is_occupied_by_piece(&self, square: Square, piece: Piece) -> bool {
-        self.get_squares(piece).contains(square)
+        self[(piece.color, piece.typ)].contains(square)
+    }
+    pub fn is_occupied_by(&self, square: Square, color: Color, typ: Typ) -> bool {
+        self[(color, typ)].contains(square)
     }
 
-    pub fn count_pieces(&self, piece: Piece) -> u32 {
-        self.get_squares(piece).count_ones()
+    pub fn count_pieces(&self, color: Color, typ: Typ) -> u32 {
+        self[(color, typ)].count_ones()
     }
 
     pub fn get_king_square(&self, color: Color) -> Square {
@@ -147,8 +150,8 @@ impl Position {
         all_pieces
     }
 
-    pub fn get_squares(&self, piece: Piece) -> Bitboard {
-        self[(piece.color, piece.typ)]
+    pub fn get_squares(&self, color: Color, typ: Typ) -> Bitboard {
+        self[(color, typ)]
     }
 
     pub fn put_piece(mut self, piece: Piece, square: Square) -> Position {

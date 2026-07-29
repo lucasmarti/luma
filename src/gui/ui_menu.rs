@@ -1,7 +1,7 @@
 use flo_canvas::{Draw, GraphicsContext, GraphicsPrimitives};
 
 use crate::{
-    engine::piece::{Color, Piece},
+    engine::piece::{Color, *},
     gui::{
         configuration::*,
         icon::*,
@@ -41,56 +41,56 @@ impl UIMenu {
                 UIButton::new(
                     layout.get(Column::Id13),
                     Icon::WHITE_BISHOP,
-                    UIEvent::PromoteTo(Piece::WHITE_BISHOP),
+                    UIEvent::PromoteTo(WHITE_BISHOP),
                 )
                 .disabled(true)
                 .group(Group::WhitePromotionButtons),
                 UIButton::new(
                     layout.get(Column::Id14),
                     Icon::WHITE_KNIGHT,
-                    UIEvent::PromoteTo(Piece::WHITE_KNIGHT),
+                    UIEvent::PromoteTo(WHITE_KNIGHT),
                 )
                 .disabled(true)
                 .group(Group::WhitePromotionButtons),
                 UIButton::new(
                     layout.get(Column::Id15),
                     Icon::WHITE_QUEEN,
-                    UIEvent::PromoteTo(Piece::WHITE_QUEEN),
+                    UIEvent::PromoteTo(WHITE_QUEEN),
                 )
                 .disabled(true)
                 .group(Group::WhitePromotionButtons),
                 UIButton::new(
                     layout.get(Column::Id16),
                     Icon::WHITE_ROOK,
-                    UIEvent::PromoteTo(Piece::WHITE_ROOK),
+                    UIEvent::PromoteTo(WHITE_ROOK),
                 )
                 .disabled(true)
                 .group(Group::WhitePromotionButtons),
                 UIButton::new(
                     layout.get(Column::Id13),
                     Icon::BLACK_BISHOP,
-                    UIEvent::PromoteTo(Piece::BLACK_BISHOP),
+                    UIEvent::PromoteTo(BLACK_BISHOP),
                 )
                 .group(Group::BlackPromotionButtons)
                 .disabled(true),
                 UIButton::new(
                     layout.get(Column::Id14),
                     Icon::BLACK_KNIGHT,
-                    UIEvent::PromoteTo(Piece::BLACK_KNIGHT),
+                    UIEvent::PromoteTo(BLACK_KNIGHT),
                 )
                 .disabled(true)
                 .group(Group::BlackPromotionButtons),
                 UIButton::new(
                     layout.get(Column::Id15),
                     Icon::BLACK_QUEEN,
-                    UIEvent::PromoteTo(Piece::BLACK_QUEEN),
+                    UIEvent::PromoteTo(BLACK_QUEEN),
                 )
                 .disabled(true)
                 .group(Group::BlackPromotionButtons),
                 UIButton::new(
                     layout.get(Column::Id16),
                     Icon::BLACK_ROOK,
-                    UIEvent::PromoteTo(Piece::BLACK_ROOK),
+                    UIEvent::PromoteTo(BLACK_ROOK),
                 )
                 .disabled(true)
                 .group(Group::BlackPromotionButtons),

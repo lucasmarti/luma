@@ -51,7 +51,7 @@ fn get_moves(position: &Position, config: Config, ignore_checks: bool) -> Vec<Ch
 }
 fn get_new_positions(position: &Position, piece: Piece, get_moves_fn: MovesFn) -> Vec<ChessMove> {
     let mut new_chess_moves: Vec<ChessMove> = Vec::new();
-    for square in position.get_squares(piece).iter() {
+    for square in position.get_squares(piece.color, piece.typ).iter() {
         new_chess_moves.extend(get_moves_fn(position, piece, square));
     }
     new_chess_moves

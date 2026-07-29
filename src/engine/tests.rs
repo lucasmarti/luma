@@ -10,21 +10,17 @@ use crate::engine::{
     get_possible_moves, piece,
     position::{self, print::Print},
 };
-use crate::engine::{
-    directions::squares::*,
-    piece::Piece::{self},
-    position::Position,
-};
+use crate::engine::{directions::squares::*, piece::*, position::Position};
 #[test]
 fn test_preemtive_game_end() {
     let position = Position::default()
-        .put_piece(Piece::BLACK_ROOK, B1)
-        .put_piece(Piece::WHITE_KING, G1)
-        .put_piece(Piece::WHITE_PAWN, F2)
-        .put_piece(Piece::WHITE_PAWN, G2)
-        .put_piece(Piece::WHITE_PAWN, H2)
-        .put_piece(Piece::WHITE_BISHOP, A3)
-        .put_piece(Piece::BLACK_KING, B8);
+        .put_piece(BLACK_ROOK, B1)
+        .put_piece(WHITE_KING, G1)
+        .put_piece(WHITE_PAWN, F2)
+        .put_piece(WHITE_PAWN, G2)
+        .put_piece(WHITE_PAWN, H2)
+        .put_piece(WHITE_BISHOP, A3)
+        .put_piece(BLACK_KING, B8);
     match engine::get_next_move(&position) {
         engine::MoveOrEnd::Move(chess_move) => println!("Move"),
         engine::MoveOrEnd::GameEnd(game_end) => println!("GameEnd"),
@@ -51,9 +47,9 @@ pub const WHITE_KING_STARTING_POSITION: Square = E1;
 pub const BLACK_KING_STARTING_POSITION: Square = E8;
 
 fn get_castling_moves_fn(square: Square, piece: Piece) -> Option<CastlingMovesFn> {
-    if square == WHITE_KING_STARTING_POSITION && piece == Piece::WHITE_KING {
+    if square == WHITE_KING_STARTING_POSITION && piece == WHITE_KING {
         Some(WHITE_MOVE_CONFIG.castling_move_fn)
-    } else if square == BLACK_KING_STARTING_POSITION && piece == Piece::BLACK_KING {
+    } else if square == BLACK_KING_STARTING_POSITION && piece == BLACK_KING {
         use crate::engine::chess_moves::configurations::BLACK_MOVE_CONFIG;
 
         Some(BLACK_MOVE_CONFIG.castling_move_fn)
@@ -94,8 +90,8 @@ fn test_valid_drop_targets_knight() {
 #[test]
 fn test_valid_drop_targets_castling() {
     let position = Position::default()
-        .put_piece(Piece::WHITE_ROOK, H1)
-        .put_piece(Piece::WHITE_KING, E1);
+        .put_piece(WHITE_ROOK, H1)
+        .put_piece(WHITE_KING, E1);
     let targets = get_valid_drop_positions(&position, E1);
     assert!(targets.iter().any(|c| c.position.is_occupied(G1)));
 }
@@ -103,9 +99,9 @@ fn test_valid_drop_targets_castling() {
 #[test]
 fn test_valid_drop_targets_en_passant() {
     let position = Position::default()
-        .put_piece(Piece::WHITE_KING, E1)
-        .put_piece(Piece::WHITE_PAWN, E4)
-        .put_piece(Piece::BLACK_PAWN, D4)
+        .put_piece(WHITE_KING, E1)
+        .put_piece(WHITE_PAWN, E4)
+        .put_piece(BLACK_PAWN, D4)
         .set_en_passant(E4);
     let targets = get_valid_drop_positions(&position, D4);
     assert!(targets.iter().any(|c| c.position.is_occupied(E3)));

@@ -187,7 +187,7 @@ fn get_score_for_pieces(position: &Position, pieces: [Piece; 6]) -> f32 {
     let mut total_score: f32 = 0.0;
     for piece in pieces {
         let mut piece_score: f32 = 0.0;
-        for square in position.get_squares(piece).iter() {
+        for square in position.get_squares(piece.color, piece.typ).iter() {
             piece_score += get_value(piece, square);
         }
         total_score += piece_score;
@@ -204,19 +204,19 @@ pub fn count_white(position: &Position) -> f32 {
 }
 
 const WHITE_PIECES: [Piece; 6] = [
-    Piece::WHITE_QUEEN,
-    Piece::WHITE_KING,
-    Piece::WHITE_BISHOP,
-    Piece::WHITE_KNIGHT,
-    Piece::WHITE_PAWN,
-    Piece::WHITE_ROOK,
+    WHITE_QUEEN,
+    WHITE_KING,
+    WHITE_BISHOP,
+    WHITE_KNIGHT,
+    WHITE_PAWN,
+    WHITE_ROOK,
 ];
 
 const BLACK_PIECES: [Piece; 6] = [
-    Piece::BLACK_QUEEN,
-    Piece::BLACK_KING,
-    Piece::BLACK_BISHOP,
-    Piece::BLACK_KNIGHT,
-    Piece::BLACK_PAWN,
-    Piece::BLACK_ROOK,
+    BLACK_QUEEN,
+    BLACK_KING,
+    BLACK_BISHOP,
+    BLACK_KNIGHT,
+    BLACK_PAWN,
+    BLACK_ROOK,
 ];

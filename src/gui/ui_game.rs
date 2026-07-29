@@ -1,9 +1,7 @@
 use flo_canvas::{Draw, GraphicsContext};
 
 use crate::{
-    engine::{
-        self, chess_moves::ChessMove, directions::squares::Square, piece::Piece, position::Position,
-    },
+    engine::{self, directions::squares::Square, piece::Piece, position::Position},
     gui::{
         configuration::{BACKGROUND_COLOR, FIELD_SIZE, MENU_HEIGHT},
         state_machine::{GameState, SquareSelected},

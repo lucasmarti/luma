@@ -1,6 +1,6 @@
 use crate::engine::{
     directions::{self, squares::Square, DirectionFn},
-    piece::Piece,
+    piece::*,
     position::Position,
 };
 const PAWN_IN_FRONT_SCORE: f32 = -3.0;
@@ -9,26 +9,26 @@ const PASSED_PAWN_SCORE: f32 = 15.0;
 
 pub fn count_black(position: &Position) -> f32 {
     let mut score: f32 = 0.0;
-    score += get_doubled_pawns(position, Piece::BLACK_PAWN);
-    score += get_isolated_pawns(position, Piece::BLACK_PAWN);
-    score += get_passed_pawns(position, Piece::BLACK_PAWN);
+    score += get_doubled_pawns(position, BLACK_PAWN);
+    score += get_isolated_pawns(position, BLACK_PAWN);
+    score += get_passed_pawns(position, BLACK_PAWN);
     score
 }
 pub fn count_white(position: &Position) -> f32 {
     let mut score: f32 = 0.0;
-    score += get_doubled_pawns(position, Piece::WHITE_PAWN);
-    score += get_isolated_pawns(position, Piece::WHITE_PAWN);
-    score += get_passed_pawns(position, Piece::WHITE_PAWN);
+    score += get_doubled_pawns(position, WHITE_PAWN);
+    score += get_isolated_pawns(position, WHITE_PAWN);
+    score += get_passed_pawns(position, WHITE_PAWN);
     score
 }
 
 pub fn get_doubled_pawns(position: &Position, piece: Piece) -> f32 {
     let mut score = 0.0;
-    for mut square in position.get_squares(piece).iter() {
+    for mut square in position.get_squares(piece.color, piece.typ).iter() {
         let mut has_pawn_in_front = false;
 
         while let Some(front_square) = directions::up(square) {
-            if position.is_occupied_by_piece(front_square, piece) {
+            if position.is_occupied_by(front_square, piece.color, piece.typ) {
                 has_pawn_in_front = true;
                 break;
             }
@@ -43,7 +43,7 @@ pub fn get_doubled_pawns(position: &Position, piece: Piece) -> f32 {
 pub fn get_isolated_pawns(position: &Position, pawn: Piece) -> f32 {
     let mut score: f32 = 0.0;
     let mut columns: u32 = 0;
-    for square in position.get_squares(pawn).iter() {
+    for square in position.get_squares(pawn.color, pawn.typ).iter() {
         columns |= 1 << (directions::get_column(square))
     }
 
@@ -64,7 +64,7 @@ fn has_piece_in_direction(
     piece: Piece,
 ) -> bool {
     if let Some(square) = direction_fn(square) {
-        if position.is_occupied_by_piece(square, piece) {
+        if position.is_occupied_by(square, piece.color, piece.typ) {
             return true;
         } else {
             return has_piece_in_direction(position, square, direction_fn, piece);
@@ -76,8 +76,8 @@ fn has_piece_in_direction(
 pub fn get_passed_pawns(position: &Position, pawn: Piece) -> f32 {
     let mut score = 0.0;
     let opponent_pawn = match pawn.color {
-        crate::engine::piece::Color::Black => Piece::WHITE_PAWN,
-        crate::engine::piece::Color::White => Piece::BLACK_PAWN,
+        crate::engine::piece::Color::Black => WHITE_PAWN,
+        crate::engine::piece::Color::White => BLACK_PAWN,
     };
 
     let direction_fn = match pawn.color {
@@ -85,7 +85,7 @@ pub fn get_passed_pawns(position: &Position, pawn: Piece) -> f32 {
         crate::engine::piece::Color::White => directions::up,
     };
 
-    for square in position.get_squares(pawn).iter() {
+    for square in position.get_squares(pawn.color, pawn.typ).iter() {
         let mut has_pawn_in_front_on_left_column = false;
         let mut has_pawn_in_front_on_right_column = false;
 

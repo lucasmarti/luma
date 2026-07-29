@@ -8,21 +8,19 @@ const KNIGHT_SCORE: u32 = 30;
 const PAWN_SCORE: u32 = 10;
 
 pub fn count_black(position: &Position) -> f32 {
-    let black_score = KING_SCORE * position.count_pieces(Piece::BLACK_KING)
-        + QUEEN_SCORE * position.count_pieces(Piece::BLACK_QUEEN)
-        + ROOK_SCORE * position.count_pieces(Piece::BLACK_ROOK)
-        + BISHOP_SCORE * position.count_pieces(Piece::BLACK_BISHOP)
-        + KNIGHT_SCORE * position.count_pieces(Piece::BLACK_KNIGHT)
-        + PAWN_SCORE * position.count_pieces(Piece::BLACK_PAWN);
-    black_score as f32
+    count(position, Color::Black) as f32
 }
 
 pub fn count_white(position: &Position) -> f32 {
-    let white_score = KING_SCORE * position.count_pieces(Piece::WHITE_KING)
-        + QUEEN_SCORE * position.count_pieces(Piece::WHITE_QUEEN)
-        + ROOK_SCORE * position.count_pieces(Piece::WHITE_ROOK)
-        + BISHOP_SCORE * position.count_pieces(Piece::WHITE_BISHOP)
-        + KNIGHT_SCORE * position.count_pieces(Piece::WHITE_KNIGHT)
-        + PAWN_SCORE * position.count_pieces(Piece::WHITE_PAWN);
-    white_score as f32
+    count(position, Color::White) as f32
+}
+
+fn count(position: &Position, color: Color) -> f32 {
+    let score = KING_SCORE * position.count_pieces(color, Typ::King)
+        + QUEEN_SCORE * position.count_pieces(color, Typ::Queen)
+        + ROOK_SCORE * position.count_pieces(color, Typ::Rook)
+        + BISHOP_SCORE * position.count_pieces(color, Typ::Bishop)
+        + KNIGHT_SCORE * position.count_pieces(color, Typ::Knight)
+        + PAWN_SCORE * position.count_pieces(color, Typ::Pawn);
+    score as f32
 }

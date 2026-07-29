@@ -1,7 +1,7 @@
 use crate::engine::{
     chess_moves::{common::progess, ChessMove, MoveType},
     directions::{self, squares::Square, DirectionFn, RowFn},
-    piece::{Color, Piece, Typ},
+    piece::{Color, Piece, Typ, *},
     position::Position,
 };
 
@@ -13,29 +13,29 @@ struct EnPassantConfig {
 }
 
 const WHITE_LEFT_EN_PASSANT: EnPassantConfig = EnPassantConfig {
-    players_pawn: Piece::WHITE_PAWN,
-    opponents_pawn: Piece::BLACK_PAWN,
+    players_pawn: WHITE_PAWN,
+    opponents_pawn: BLACK_PAWN,
     next_fn: directions::left,
     diagonal_fn: directions::up_left,
 };
 
 const WHITE_RIGHT_EN_PASSANT: EnPassantConfig = EnPassantConfig {
-    players_pawn: Piece::WHITE_PAWN,
-    opponents_pawn: Piece::BLACK_PAWN,
+    players_pawn: WHITE_PAWN,
+    opponents_pawn: BLACK_PAWN,
     next_fn: directions::right,
     diagonal_fn: directions::up_right,
 };
 
 const BLACK_LEFT_EN_PASSANT: EnPassantConfig = EnPassantConfig {
-    players_pawn: Piece::BLACK_PAWN,
-    opponents_pawn: Piece::WHITE_PAWN,
+    players_pawn: BLACK_PAWN,
+    opponents_pawn: WHITE_PAWN,
     next_fn: directions::left,
     diagonal_fn: directions::down_left,
 };
 
 const BLACK_RIGHT_EN_PASSANT: EnPassantConfig = EnPassantConfig {
-    players_pawn: Piece::BLACK_PAWN,
-    opponents_pawn: Piece::WHITE_PAWN,
+    players_pawn: BLACK_PAWN,
+    opponents_pawn: WHITE_PAWN,
     next_fn: directions::right,
     diagonal_fn: directions::down_right,
 };
@@ -59,18 +59,8 @@ const BLACK_MOVE_FUNCTIONS: [MoveFn; 6] = [
 
 type MoveFn = fn(&Position, Square) -> Option<ChessMove>;
 
-const WHITE_PROMOTION_PIECES: [Piece; 4] = [
-    Piece::WHITE_QUEEN,
-    Piece::WHITE_ROOK,
-    Piece::WHITE_BISHOP,
-    Piece::WHITE_KNIGHT,
-];
-const BLACK_PROMOTION_PIECES: [Piece; 4] = [
-    Piece::BLACK_QUEEN,
-    Piece::BLACK_ROOK,
-    Piece::BLACK_BISHOP,
-    Piece::BLACK_KNIGHT,
-];
+const WHITE_PROMOTION_PIECES: [Piece; 4] = [WHITE_QUEEN, WHITE_ROOK, WHITE_BISHOP, WHITE_KNIGHT];
+const BLACK_PROMOTION_PIECES: [Piece; 4] = [BLACK_QUEEN, BLACK_ROOK, BLACK_BISHOP, BLACK_KNIGHT];
 
 struct PromotionConfig {
     piece: Piece,
@@ -80,42 +70,42 @@ struct PromotionConfig {
 }
 
 const WHITE_PROMOTION_CONFIG: PromotionConfig = PromotionConfig {
-    piece: Piece::WHITE_PAWN,
+    piece: WHITE_PAWN,
     is_in_row_fn: directions::is_in_row_7,
     direction_fn: directions::up,
     promotion_set: WHITE_PROMOTION_PIECES,
 };
 
 const WHITE_PROMOTION_LEFT_CONFIG: PromotionConfig = PromotionConfig {
-    piece: Piece::WHITE_PAWN,
+    piece: WHITE_PAWN,
     is_in_row_fn: directions::is_in_row_7,
     direction_fn: directions::up_left,
     promotion_set: WHITE_PROMOTION_PIECES,
 };
 
 const WHITE_PROMOTION_RIGHT_CONFIG: PromotionConfig = PromotionConfig {
-    piece: Piece::WHITE_PAWN,
+    piece: WHITE_PAWN,
     is_in_row_fn: directions::is_in_row_7,
     direction_fn: directions::up_right,
     promotion_set: WHITE_PROMOTION_PIECES,
 };
 
 const BLACK_PROMOTION_CONFIG: PromotionConfig = PromotionConfig {
-    piece: Piece::BLACK_PAWN,
+    piece: BLACK_PAWN,
     is_in_row_fn: directions::is_in_row_2,
     direction_fn: directions::down,
     promotion_set: BLACK_PROMOTION_PIECES,
 };
 
 const BLACK_PROMOTION_LEFT_CONFIG: PromotionConfig = PromotionConfig {
-    piece: Piece::BLACK_PAWN,
+    piece: BLACK_PAWN,
     is_in_row_fn: directions::is_in_row_2,
     direction_fn: directions::down_left,
     promotion_set: BLACK_PROMOTION_PIECES,
 };
 
 const BLACK_PROMOTION_RIGHT_CONFIG: PromotionConfig = PromotionConfig {
-    piece: Piece::BLACK_PAWN,
+    piece: BLACK_PAWN,
     is_in_row_fn: directions::is_in_row_2,
     direction_fn: directions::down_right,
     promotion_set: BLACK_PROMOTION_PIECES,
@@ -172,7 +162,7 @@ fn get_move_white_left_capture(position: &Position, from: Square) -> Option<Ches
     if directions::is_in_row_7(from) {
         return None;
     }
-    get_move_capture(position, from, directions::up_left, Piece::WHITE_PAWN)
+    get_move_capture(position, from, directions::up_left, WHITE_PAWN)
 }
 
 fn get_move_white_right_capture(position: &Position, from: Square) -> Option<ChessMove> {
@@ -180,7 +170,7 @@ fn get_move_white_right_capture(position: &Position, from: Square) -> Option<Che
     if directions::is_in_row_7(from) {
         return None;
     }
-    get_move_capture(position, from, directions::up_right, Piece::WHITE_PAWN)
+    get_move_capture(position, from, directions::up_right, WHITE_PAWN)
 }
 
 fn get_move_black_left_capture(position: &Position, from: Square) -> Option<ChessMove> {
@@ -188,7 +178,7 @@ fn get_move_black_left_capture(position: &Position, from: Square) -> Option<Ches
     if directions::is_in_row_2(from) {
         return None;
     }
-    get_move_capture(position, from, directions::down_left, Piece::BLACK_PAWN)
+    get_move_capture(position, from, directions::down_left, BLACK_PAWN)
 }
 
 fn get_move_black_right_capture(position: &Position, from: Square) -> Option<ChessMove> {
@@ -196,7 +186,7 @@ fn get_move_black_right_capture(position: &Position, from: Square) -> Option<Che
     if directions::is_in_row_2(from) {
         return None;
     }
-    get_move_capture(position, from, directions::down_right, Piece::BLACK_PAWN)
+    get_move_capture(position, from, directions::down_right, BLACK_PAWN)
 }
 
 fn get_move_en_passant(
@@ -296,14 +286,14 @@ fn get_promotion_capture(
 
 fn get_move_white_forward(position: &Position, from: Square) -> Option<ChessMove> {
     if !directions::is_in_last_or_second_last_row(from) {
-        return get_move_forward(position, from, Piece::WHITE_PAWN, directions::up);
+        return get_move_forward(position, from, WHITE_PAWN, directions::up);
     }
     None
 }
 
 fn get_move_black_forward(position: &Position, from: Square) -> Option<ChessMove> {
     if !directions::is_in_first_or_second_row(from) {
-        return get_move_forward(position, from, Piece::BLACK_PAWN, directions::down);
+        return get_move_forward(position, from, BLACK_PAWN, directions::down);
     }
     None
 }
@@ -324,14 +314,14 @@ fn get_move_forward(
 
 fn get_move_white_two_forward(position: &Position, from: Square) -> Option<ChessMove> {
     if directions::is_in_row_2(from) {
-        return get_move_two_forward(position, from, Piece::WHITE_PAWN, directions::up);
+        return get_move_two_forward(position, from, WHITE_PAWN, directions::up);
     }
     None
 }
 
 fn get_move_black_two_forward(position: &Position, from: Square) -> Option<ChessMove> {
     if directions::is_in_row_7(from) {
-        return get_move_two_forward(position, from, Piece::BLACK_PAWN, directions::down);
+        return get_move_two_forward(position, from, BLACK_PAWN, directions::down);
     }
     None
 }
@@ -395,8 +385,8 @@ pub fn promote(position: &Position, from: Square, to: Square, new_piece: Piece) 
     ChessMove {
         move_type: tuple.0,
         piece: match new_piece.color {
-            Color::Black => Piece::BLACK_PAWN,
-            Color::White => Piece::WHITE_PAWN,
+            Color::Black => BLACK_PAWN,
+            Color::White => WHITE_PAWN,
         },
         from,
         to,

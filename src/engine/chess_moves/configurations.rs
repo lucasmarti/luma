@@ -10,7 +10,7 @@ use crate::engine::{
         ChessMove,
     },
     directions::{self, squares::Square, DirectionFn},
-    piece::Piece,
+    piece::*,
     position::Position,
 };
 
@@ -81,12 +81,12 @@ pub struct Config {
 }
 
 pub const WHITE_MOVE_CONFIG: Config = Config {
-    king: Piece::WHITE_KING,
-    queen: Piece::WHITE_QUEEN,
-    rook: Piece::WHITE_ROOK,
-    knight: Piece::WHITE_KNIGHT,
-    bishop: Piece::WHITE_BISHOP,
-    pawn: Piece::WHITE_PAWN,
+    king: WHITE_KING,
+    queen: WHITE_QUEEN,
+    rook: WHITE_ROOK,
+    knight: WHITE_KNIGHT,
+    bishop: WHITE_BISHOP,
+    pawn: WHITE_PAWN,
     king_fn: get_moves_for_king_at_square,
     queen_fn: get_moves_for_queen_at_square,
     rook_fn: get_moves_for_rook_at_square,
@@ -97,12 +97,12 @@ pub const WHITE_MOVE_CONFIG: Config = Config {
 };
 
 pub const BLACK_MOVE_CONFIG: Config = Config {
-    king: Piece::BLACK_KING,
-    queen: Piece::BLACK_QUEEN,
-    rook: Piece::BLACK_ROOK,
-    knight: Piece::BLACK_KNIGHT,
-    bishop: Piece::BLACK_BISHOP,
-    pawn: Piece::BLACK_PAWN,
+    king: BLACK_KING,
+    queen: BLACK_QUEEN,
+    rook: BLACK_ROOK,
+    knight: BLACK_KNIGHT,
+    bishop: BLACK_BISHOP,
+    pawn: BLACK_PAWN,
     king_fn: get_moves_for_king_at_square,
     queen_fn: get_moves_for_queen_at_square,
     rook_fn: get_moves_for_rook_at_square,
