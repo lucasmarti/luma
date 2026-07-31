@@ -7,17 +7,78 @@ use std::{
     hash::{Hash, Hasher},
     ops::{Index, IndexMut},
 };
-use strum::EnumCount;
+use strum::{EnumCount, IntoEnumIterator};
+use strum_macros::EnumCount;
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Hash, Default)]
+struct Boards {
+    pub boards: [[Bitboard; Typ::COUNT]; Color::COUNT],
+}
+
+impl Index<(Color, Typ)> for Boards {
+    type Output = Bitboard;
+
+    fn index(&self, (color, typ): (Color, Typ)) -> &Self::Output {
+        &self.boards[color.idx()][typ.idx()]
+    }
+}
+impl IndexMut<(Color, Typ)> for Boards {
+    fn index_mut(&mut self, (color, typ): (Color, Typ)) -> &mut Self::Output {
+        &mut self.boards[color.idx()][typ.idx()]
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Hash)]
+struct CastlingRights {
+    pub castling_rights: [bool; CastlingType::COUNT],
+}
+impl Index<CastlingType> for CastlingRights {
+    type Output = bool;
+
+    fn index(&self, castling_type: CastlingType) -> &Self::Output {
+        &self.castling_rights[castling_type.idx()]
+    }
+}
+impl IndexMut<CastlingType> for CastlingRights {
+    fn index_mut(&mut self, castling_type: CastlingType) -> &mut Self::Output {
+        &mut self.castling_rights[castling_type.idx()]
+    }
+}
+impl Default for CastlingRights {
+    fn default() -> Self {
+        Self {
+            castling_rights: [true; CastlingType::COUNT],
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Default)]
+struct Occupancy {
+    pub occupied: [Bitboard; Color::COUNT],
+}
+
+impl Index<Color> for Occupancy {
+    type Output = Bitboard;
+
+    fn index(&self, color: Color) -> &Self::Output {
+        &self.occupied[color.idx()]
+    }
+}
+impl IndexMut<Color> for Occupancy {
+    fn index_mut(&mut self, color: Color) -> &mut Self::Output {
+        &mut self.occupied[color.idx()]
+    }
+}
 #[derive(Clone, Copy, Debug, Eq)]
 pub struct Position {
-    boards: [[Bitboard; Typ::COUNT]; Color::COUNT],
-    occupied: [Bitboard; Color::COUNT],
+    boards: Boards,
+    occupied: Occupancy,
     all: Bitboard,
-    castling_rights: [bool; 4],
+    castling_rights: CastlingRights,
     en_passant: Option<Square>,
     player: Color,
 }
+
 impl Position {
     pub fn new_starting_position() -> Position {
         Position::default()
@@ -72,11 +133,11 @@ impl Position {
     }
 
     pub fn get_castling_right(&self, castling_type: CastlingType) -> bool {
-        self.castling_rights[castling_type.as_index()]
+        self.castling_rights[castling_type]
     }
 
     pub fn remove_castling_right(mut self, castling_type: CastlingType) -> Position {
-        self.castling_rights[castling_type.as_index()] = false;
+        self.castling_rights[castling_type] = false;
         self
     }
     pub fn is_occupied(&self, square: Square) -> bool {
@@ -84,21 +145,21 @@ impl Position {
     }
 
     pub fn is_occupied_by_color(&self, square: Square, color: Color) -> bool {
-        self.occupied[color.idx()].contains(square)
+        self.occupied[color].contains(square)
     }
     pub fn is_occupied_by_piece(&self, square: Square, piece: Piece) -> bool {
-        self[(piece.color, piece.typ)].contains(square)
+        self.boards[(piece.color, piece.typ)].contains(square)
     }
     pub fn is_occupied_by(&self, square: Square, color: Color, typ: Typ) -> bool {
-        self[(color, typ)].contains(square)
+        self.boards[(color, typ)].contains(square)
     }
 
     pub fn count_pieces(&self, color: Color, typ: Typ) -> u32 {
-        self[(color, typ)].count_ones()
+        self.boards[(color, typ)].count_ones()
     }
 
     pub fn get_king_square(&self, color: Color) -> Square {
-        let king = self[(color, Typ::King)];
+        let king = self.boards[(color, Typ::King)];
         assert_eq!(
             king.count_ones(),
             1,
@@ -151,14 +212,14 @@ impl Position {
     }
 
     pub fn get_squares(&self, color: Color, typ: Typ) -> Bitboard {
-        self[(color, typ)]
+        self.boards[(color, typ)]
     }
 
     pub fn put_piece(mut self, piece: Piece, square: Square) -> Position {
         let bit = Bitboard::from(square);
 
-        self[(piece.color, piece.typ)] |= bit;
-        self.occupied[piece.color.idx()] |= bit;
+        self.boards[(piece.color, piece.typ)] |= bit;
+        self.occupied[piece.color] |= bit;
         self.all |= bit;
 
         #[cfg(debug_assertions)]
@@ -168,15 +229,13 @@ impl Position {
     }
 
     pub fn remove_piece(mut self, square: Square) -> Position {
-        let bit = Bitboard::from(square);
-        let mask = !bit;
-
-        for color in Color::ALL {
-            for typ in Typ::ALL {
-                self[(color, typ)] &= mask;
+        let mask = !Bitboard::from(square);
+        for color in Color::iter() {
+            for typ in Typ::iter() {
+                self.boards[(color, typ)] &= mask;
             }
 
-            self.occupied[color.idx()] &= mask;
+            self.occupied[color] &= mask;
         }
 
         self.all &= mask;
@@ -191,16 +250,15 @@ impl Position {
     fn debug_assert_valid(&self) {
         let mut all = Bitboard::default();
 
-        for color in Color::ALL {
+        for color in Color::iter() {
             let mut occupied = Bitboard::default();
 
-            for typ in Typ::ALL {
-                occupied |= self[(color, typ)];
+            for typ in Typ::iter() {
+                occupied |= self.boards[(color, typ)];
             }
 
             debug_assert_eq!(
-                occupied,
-                self.occupied[color.idx()],
+                occupied, self.occupied[color],
                 "occupied cache incorrect for {:?}",
                 color,
             );
@@ -211,9 +269,9 @@ impl Position {
         debug_assert_eq!(all, self.all, "all cache incorrect");
     }
     pub fn get_piece_at(&self, square: Square) -> Option<Piece> {
-        for color in Color::ALL {
-            for typ in Typ::ALL {
-                if self[(color, typ)].contains(square) {
+        for color in Color::iter() {
+            for typ in Typ::iter() {
+                if self.boards[(color, typ)].contains(square) {
                     return Some(Piece::new(color, typ));
                 }
             }
@@ -228,35 +286,22 @@ impl Default for Position {
             boards: Default::default(),
             occupied: Default::default(),
             all: Default::default(),
-            castling_rights: [true; 4],
+            castling_rights: Default::default(),
             en_passant: None,
             player: Color::White,
         }
     }
 }
-
-impl Index<(Color, Typ)> for Position {
-    type Output = Bitboard;
-
-    fn index(&self, (color, typ): (Color, Typ)) -> &Self::Output {
-        &self.boards[color.idx()][typ.idx()]
-    }
-}
-impl IndexMut<(Color, Typ)> for Position {
-    fn index_mut(&mut self, (color, typ): (Color, Typ)) -> &mut Self::Output {
-        &mut self.boards[color.idx()][typ.idx()]
-    }
-}
-
-#[derive(Clone, Copy, Eq, Hash, PartialEq, Debug)]
+#[repr(u8)]
+#[derive(Clone, Copy, Eq, Hash, PartialEq, Debug, EnumCount)]
 pub enum CastlingType {
-    BlackQueenside = 0,
-    BlackKingside = 1,
-    WhiteQueenside = 2,
-    WhiteKingside = 3,
+    BlackQueenside,
+    BlackKingside,
+    WhiteQueenside,
+    WhiteKingside,
 }
 impl CastlingType {
-    fn as_index(&self) -> usize {
+    fn idx(&self) -> usize {
         *self as usize
     }
 }

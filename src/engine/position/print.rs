@@ -1,3 +1,5 @@
+use strum::IntoEnumIterator;
+
 use crate::engine::{
     piece::{Color, Typ},
     position::bitboard::Bitboard,
@@ -34,9 +36,9 @@ impl Print for Position {
     fn print_board(&self) {
         let mut chars = ['_'; 64];
 
-        for color in Color::ALL {
-            for typ in Typ::ALL {
-                for square in self[(color, typ)].iter() {
+        for color in Color::iter() {
+            for typ in Typ::iter() {
+                for square in self.boards[(color, typ)].iter() {
                     chars[square.as_index() as usize] = self.symbol(color, typ);
                 }
             }

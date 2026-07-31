@@ -28,7 +28,7 @@ fn test_isolated_pawns() {
         .put_piece(WHITE_PAWN, D1)
         .put_piece(WHITE_PAWN, F1);
     assert_eq!(
-        pawn_structures::get_isolated_pawns(&position, WHITE_PAWN),
+        pawn_structures::get_isolated_pawns(&position, Color::White),
         -8.0
     );
 }
@@ -40,7 +40,7 @@ fn test_isolated_pawns_2() {
         .put_piece(BLACK_PAWN, D4)
         .put_piece(BLACK_PAWN, F8);
     assert_eq!(
-        pawn_structures::get_isolated_pawns(&position, BLACK_PAWN),
+        pawn_structures::get_isolated_pawns(&position, Color::Black),
         -8.0
     );
 }
@@ -54,17 +54,17 @@ fn test_doubled_pawns() {
         .put_piece(WHITE_PAWN, D2)
         .put_piece(WHITE_PAWN, D4);
     assert_eq!(
-        pawn_structures::get_doubled_pawns(&position, BLACK_PAWN),
+        pawn_structures::get_doubled_pawns(&position, Color::Black),
         -6.0
     );
     assert_eq!(
-        pawn_structures::get_doubled_pawns(&position, WHITE_PAWN),
+        pawn_structures::get_doubled_pawns(&position, Color::White),
         -3.0
     );
 
     let position_2 = Position::default().put_piece(BLACK_PAWN, F2);
     assert_eq!(
-        pawn_structures::get_doubled_pawns(&position_2, BLACK_PAWN),
+        pawn_structures::get_doubled_pawns(&position_2, Color::Black),
         0.0
     );
 }
@@ -102,15 +102,15 @@ fn test_black_queen_missing() {
 #[test]
 fn test_get_passed_pawns() {
     let position1 = Position::default().put_piece(WHITE_PAWN, A4);
-    assert_eq!(get_passed_pawns(&position1, WHITE_PAWN), 15.0);
+    assert_eq!(get_passed_pawns(&position1, Color::White), 15.0);
 
     let position2 = Position::default()
         .put_piece(BLACK_PAWN, A4)
         .put_piece(WHITE_PAWN, A3);
-    assert_eq!(get_passed_pawns(&position2, BLACK_PAWN), 0.0);
+    assert_eq!(get_passed_pawns(&position2, Color::Black), 0.0);
 
     let position3 = Position::default()
         .put_piece(BLACK_PAWN, A4)
         .put_piece(WHITE_PAWN, B3);
-    assert_eq!(get_passed_pawns(&position3, BLACK_PAWN), 0.0);
+    assert_eq!(get_passed_pawns(&position3, Color::Black), 0.0);
 }

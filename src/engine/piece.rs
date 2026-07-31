@@ -1,5 +1,5 @@
-use strum::EnumCount;
 use strum_macros::EnumCount;
+use strum_macros::EnumIter;
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug, Hash)]
 pub struct Piece {
@@ -27,7 +27,7 @@ impl Piece {
 }
 
 #[repr(u8)]
-#[derive(Clone, Copy, PartialEq, Eq, Debug, EnumCount, Hash)]
+#[derive(Clone, Copy, PartialEq, Eq, Debug, EnumCount, Hash, EnumIter)]
 pub enum Typ {
     King,
     Queen,
@@ -38,29 +38,19 @@ pub enum Typ {
 }
 
 impl Typ {
-    pub const ALL: [Typ; Typ::COUNT] = [
-        Typ::King,
-        Typ::Queen,
-        Typ::Rook,
-        Typ::Pawn,
-        Typ::Knight,
-        Typ::Bishop,
-    ];
     pub fn idx(self) -> usize {
         self as usize
     }
 }
 
 #[repr(u8)]
-#[derive(Clone, Copy, PartialEq, Eq, Debug, Hash, EnumCount)]
+#[derive(Clone, Copy, PartialEq, Eq, Debug, Hash, EnumCount, EnumIter)]
 pub enum Color {
     Black,
     White,
 }
 
 impl Color {
-    pub const ALL: [Color; Color::COUNT] = [Color::Black, Color::White];
-
     pub fn get_opponent_color(self) -> Color {
         match self {
             Color::Black => Color::White,
