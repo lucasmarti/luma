@@ -3,7 +3,7 @@ use crate::engine::{directions::squares::*, piece::*, position::Position};
 
 #[test]
 fn test_starting_position_no_check() {
-    let position = Position::new_starting_position();
+    let position = Position::starting();
     assert!(!is_check(&position, Color::White));
     assert!(!is_check(&position, Color::Black));
 }

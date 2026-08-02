@@ -6,7 +6,7 @@ use crate::engine::position::*;
 
 #[test]
 fn test_queen_loss() {
-    let position = Position::new_starting_position()
+    let position = Position::starting()
         .remove_piece(E2)
         .put_piece(WHITE_PAWN, E4)
         .remove_piece(C7)
@@ -70,20 +70,20 @@ fn test_doubled_pawns() {
 }
 #[test]
 fn test_equal_material() {
-    let position = Position::new_starting_position();
+    let position = Position::starting();
     let score = material::count_white(&position) - material::count_black(&position);
     assert_eq!(score, 0.0);
 }
 
 #[test]
 fn test_white_queen_missing() {
-    let position = Position::new_starting_position().remove_piece(D1);
+    let position = Position::starting().remove_piece(D1);
     assert_eq!(Evaluation::new(&position).score, -89.44995);
 }
 
 #[test]
 fn test_black_queen_missing() {
-    let position = Position::new_starting_position().remove_piece(D8);
+    let position = Position::starting().remove_piece(D8);
     assert_eq!(
         material::count_white(&position) - material::count_black(&position),
         90.0

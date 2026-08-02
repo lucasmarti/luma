@@ -1,7 +1,7 @@
 use crate::engine::{
     directions::squares::*,
     piece::{Color, *},
-    position::CastlingType,
+    position::castling_rights::CastlingType,
 };
 pub struct CastlingConfiguration {
     pub(crate) color: Color,

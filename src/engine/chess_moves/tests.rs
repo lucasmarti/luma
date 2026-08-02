@@ -11,7 +11,7 @@ use crate::engine::{
     },
     directions::squares::*,
     piece::*,
-    position::{CastlingType, Position},
+    position::{castling_rights::CastlingType, Position},
 };
 #[test]
 fn test_progress_white_king() {
@@ -230,7 +230,7 @@ fn test_progess_disallows_castling_for_rook_move() {
 
 #[test]
 fn test_all_moves_from_starting_position() {
-    let position = Position::new_starting_position();
+    let position = Position::starting();
     assert_eq!(get_white_moves(&position).len(), 20);
 }
 #[test]
@@ -330,7 +330,7 @@ fn test_bishop_white_moves() {
 }
 #[test]
 fn test_king_black_moves() {
-    let position: Position = Position::new_starting_position();
+    let position: Position = Position::starting();
     assert!(get_moves_for_king_at_square(&position, BLACK_KING, D8).len() == 0);
     assert!(get_moves_for_king_at_square(&position, BLACK_KING, D3).len() == 8);
     assert!(get_moves_for_king_at_square(&position, BLACK_KING, F6).len() == 5);
@@ -339,7 +339,7 @@ fn test_king_black_moves() {
 
 #[test]
 fn test_king_white_moves() {
-    let position: Position = Position::new_starting_position();
+    let position: Position = Position::starting();
 
     assert!(get_moves_for_king_at_square(&position, WHITE_KING, D8).len() == 5);
     assert!(get_moves_for_king_at_square(&position, WHITE_KING, D3).len() == 5);

@@ -61,7 +61,7 @@ impl Game {
     }
 
     fn new_game_as(&mut self, color: engine::piece::Color) {
-        self.position = Position::new_starting_position();
+        self.position = Position::starting();
 
         let orientation = match color {
             engine::piece::Color::Black => Orientation::WhiteDown,
@@ -71,11 +71,11 @@ impl Game {
         match color {
             engine::piece::Color::Black => {
                 self.state = GameState::Computer;
-                self.position = Position::new_starting_position();
+                self.position = Position::starting();
                 self.execute_computer_move();
             }
             engine::piece::Color::White => {
-                self.position = Position::new_starting_position();
+                self.position = Position::starting();
                 match engine::get_possible_moves(&self.position) {
                     Ok(possible_moves) => {
                         self.state = GameState::Player(SquareSelected::No(NoSquareSelectedData {

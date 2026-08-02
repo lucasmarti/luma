@@ -74,14 +74,14 @@ fn get_moves_fn(piece: Piece) -> MovesFn {
 }
 #[test]
 fn test_valid_drop_targets_pawn() {
-    let position = Position::new_starting_position();
+    let position = Position::starting();
     let targets = get_valid_drop_positions(&position, D2);
     assert!(targets.iter().any(|c| c.position.is_occupied(D3)));
     assert!(targets.iter().any(|c| c.position.is_occupied(D4)));
 }
 #[test]
 fn test_valid_drop_targets_knight() {
-    let position = Position::new_starting_position();
+    let position = Position::starting();
     let targets = get_valid_drop_positions(&position, B8);
     assert!(targets.iter().any(|c| c.position.is_occupied(A6)));
     assert!(targets.iter().any(|c| c.position.is_occupied(C6)));

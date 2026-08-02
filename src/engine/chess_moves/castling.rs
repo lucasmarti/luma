@@ -8,7 +8,7 @@ use crate::engine::{
     },
     directions::squares::Square,
     piece::Color,
-    position::{CastlingType, Position},
+    position::{castling_rights::CastlingType, Position},
 };
 
 pub fn get_black_castling_moves(position: &Position) -> Vec<ChessMove> {

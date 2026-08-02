@@ -3,30 +3,30 @@ use crate::engine::{directions::squares::*, piece::*};
 use super::{print::Print, Position};
 
 #[test]
-fn test_new_starting_position() {
-    let position: Position = Position::new_starting_position();
+fn test_starting() {
+    let position: Position = Position::starting();
     position.print_board();
 }
 #[test]
 fn test_get_black() {
-    let position = Position::new_starting_position();
+    let position = Position::starting();
     assert_eq!(position.occupied[Color::Black].count_ones(), 16);
 }
 #[test]
 fn test_get_white() {
-    let position = Position::new_starting_position();
+    let position = Position::starting();
     assert_eq!(position.occupied[Color::White].count_ones(), 16);
 }
 
 #[test]
 fn test_get_all() {
-    let position = Position::new_starting_position();
+    let position = Position::starting();
     assert_eq!(position.all.count_ones(), 32);
 }
 
 #[test]
 fn test_remove_white_king() {
-    let position = Position::new_starting_position();
+    let position = Position::starting();
     assert_eq!(position.boards[(Color::White, Typ::King)].count_ones(), 1);
     let new_position = position.remove_piece(E1);
     assert_eq!(
@@ -37,7 +37,7 @@ fn test_remove_white_king() {
 
 #[test]
 fn test_put_white_king() {
-    let position = Position::new_starting_position();
+    let position = Position::starting();
     let new_position = position.put_piece(WHITE_KING, E2);
     assert_ne!(position.is_occupied_by_piece(E2, WHITE_KING), true);
     assert_eq!(new_position.is_occupied_by_piece(E2, WHITE_KING), true);

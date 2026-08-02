@@ -7,6 +7,7 @@ use crate::engine::{
     },
     directions::squares::*,
     piece::*,
+    position::castling_rights::*,
     position::*,
 };
 
@@ -325,14 +326,8 @@ fn test_white_kingside_castling() {
         .put_piece(WHITE_ROOK, H1);
     let c = get_castling_move(&position, WHITE_KINGSIDE);
     assert!(c.is_some());
-    assert!(c
-        .unwrap()
-        .position
-        .is_occupied_by_piece(G1, WHITE_KING));
-    assert!(c
-        .unwrap()
-        .position
-        .is_occupied_by_piece(F1, WHITE_ROOK));
+    assert!(c.unwrap().position.is_occupied_by_piece(G1, WHITE_KING));
+    assert!(c.unwrap().position.is_occupied_by_piece(F1, WHITE_ROOK));
 }
 
 #[test]
@@ -342,14 +337,8 @@ fn test_white_queenside_castling() {
         .put_piece(WHITE_ROOK, A1);
     let c = get_castling_move(&position, WHITE_QUEENSIDE);
     assert!(c.is_some());
-    assert!(c
-        .unwrap()
-        .position
-        .is_occupied_by_piece(C1, WHITE_KING));
-    assert!(c
-        .unwrap()
-        .position
-        .is_occupied_by_piece(D1, WHITE_ROOK));
+    assert!(c.unwrap().position.is_occupied_by_piece(C1, WHITE_KING));
+    assert!(c.unwrap().position.is_occupied_by_piece(D1, WHITE_ROOK));
 }
 
 #[test]
@@ -359,14 +348,8 @@ fn test_black_kingside_castling() {
         .put_piece(BLACK_ROOK, H8);
     let c = get_castling_move(&position, BLACK_KINGSIDE);
     assert!(c.is_some());
-    assert!(c
-        .unwrap()
-        .position
-        .is_occupied_by_piece(G8, BLACK_KING));
-    assert!(c
-        .unwrap()
-        .position
-        .is_occupied_by_piece(F8, BLACK_ROOK));
+    assert!(c.unwrap().position.is_occupied_by_piece(G8, BLACK_KING));
+    assert!(c.unwrap().position.is_occupied_by_piece(F8, BLACK_ROOK));
 }
 
 #[test]
@@ -376,14 +359,8 @@ fn test_black_queenside_castling() {
         .put_piece(BLACK_ROOK, A8);
     let c = get_castling_move(&position, BLACK_QUEENSIDE);
     assert!(c.is_some());
-    assert!(c
-        .unwrap()
-        .position
-        .is_occupied_by_piece(C8, BLACK_KING));
-    assert!(c
-        .unwrap()
-        .position
-        .is_occupied_by_piece(D8, BLACK_ROOK));
+    assert!(c.unwrap().position.is_occupied_by_piece(C8, BLACK_KING));
+    assert!(c.unwrap().position.is_occupied_by_piece(D8, BLACK_ROOK));
 }
 
 // Integration tests for castling methods

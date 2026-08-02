@@ -1,74 +1,16 @@
 use crate::engine::{
     directions::squares::*,
     piece::{Color, Typ, *},
-    position::bitboard::Bitboard,
+    position::{
+        bitboard::Bitboard,
+        castling_rights::{CastlingRights, CastlingType},
+        occupancy::Occupancy,
+        starting_config::STARTING_CONFIG,
+    },
 };
-use std::{
-    hash::{Hash, Hasher},
-    ops::{Index, IndexMut},
-};
-use strum::{EnumCount, IntoEnumIterator};
-use strum_macros::EnumCount;
+use std::hash::{Hash, Hasher};
+use strum::IntoEnumIterator;
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Hash, Default)]
-struct Boards {
-    pub boards: [[Bitboard; Typ::COUNT]; Color::COUNT],
-}
-
-impl Index<(Color, Typ)> for Boards {
-    type Output = Bitboard;
-
-    fn index(&self, (color, typ): (Color, Typ)) -> &Self::Output {
-        &self.boards[color.idx()][typ.idx()]
-    }
-}
-impl IndexMut<(Color, Typ)> for Boards {
-    fn index_mut(&mut self, (color, typ): (Color, Typ)) -> &mut Self::Output {
-        &mut self.boards[color.idx()][typ.idx()]
-    }
-}
-
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Hash)]
-struct CastlingRights {
-    pub castling_rights: [bool; CastlingType::COUNT],
-}
-impl Index<CastlingType> for CastlingRights {
-    type Output = bool;
-
-    fn index(&self, castling_type: CastlingType) -> &Self::Output {
-        &self.castling_rights[castling_type.idx()]
-    }
-}
-impl IndexMut<CastlingType> for CastlingRights {
-    fn index_mut(&mut self, castling_type: CastlingType) -> &mut Self::Output {
-        &mut self.castling_rights[castling_type.idx()]
-    }
-}
-impl Default for CastlingRights {
-    fn default() -> Self {
-        Self {
-            castling_rights: [true; CastlingType::COUNT],
-        }
-    }
-}
-
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Default)]
-struct Occupancy {
-    pub occupied: [Bitboard; Color::COUNT],
-}
-
-impl Index<Color> for Occupancy {
-    type Output = Bitboard;
-
-    fn index(&self, color: Color) -> &Self::Output {
-        &self.occupied[color.idx()]
-    }
-}
-impl IndexMut<Color> for Occupancy {
-    fn index_mut(&mut self, color: Color) -> &mut Self::Output {
-        &mut self.occupied[color.idx()]
-    }
-}
 #[derive(Clone, Copy, Debug, Eq)]
 pub struct Position {
     boards: Boards,
@@ -80,40 +22,12 @@ pub struct Position {
 }
 
 impl Position {
-    pub fn new_starting_position() -> Position {
-        Position::default()
-            .put_piece(WHITE_KING, E1)
-            .put_piece(WHITE_QUEEN, D1)
-            .put_piece(WHITE_ROOK, A1)
-            .put_piece(WHITE_ROOK, H1)
-            .put_piece(WHITE_BISHOP, C1)
-            .put_piece(WHITE_BISHOP, F1)
-            .put_piece(WHITE_KNIGHT, B1)
-            .put_piece(WHITE_KNIGHT, G1)
-            .put_piece(WHITE_PAWN, A2)
-            .put_piece(WHITE_PAWN, B2)
-            .put_piece(WHITE_PAWN, C2)
-            .put_piece(WHITE_PAWN, D2)
-            .put_piece(WHITE_PAWN, E2)
-            .put_piece(WHITE_PAWN, F2)
-            .put_piece(WHITE_PAWN, G2)
-            .put_piece(WHITE_PAWN, H2)
-            .put_piece(BLACK_KING, E8)
-            .put_piece(BLACK_QUEEN, D8)
-            .put_piece(BLACK_ROOK, A8)
-            .put_piece(BLACK_ROOK, H8)
-            .put_piece(BLACK_BISHOP, C8)
-            .put_piece(BLACK_BISHOP, F8)
-            .put_piece(BLACK_KNIGHT, B8)
-            .put_piece(BLACK_KNIGHT, G8)
-            .put_piece(BLACK_PAWN, A7)
-            .put_piece(BLACK_PAWN, B7)
-            .put_piece(BLACK_PAWN, C7)
-            .put_piece(BLACK_PAWN, D7)
-            .put_piece(BLACK_PAWN, E7)
-            .put_piece(BLACK_PAWN, F7)
-            .put_piece(BLACK_PAWN, G7)
-            .put_piece(BLACK_PAWN, H7)
+    pub fn starting() -> Position {
+        let mut position = Position::default();
+        for config in STARTING_CONFIG.iter() {
+            position = position.put_piece(config.0, config.1);
+        }
+        position
     }
 
     pub fn disallow_castling_for_color(mut self, color: Color) -> Position {
@@ -194,10 +108,7 @@ impl Position {
     }
 
     pub fn toggle_player(mut self) -> Position {
-        match self.player {
-            Color::Black => self.player = Color::White,
-            Color::White => self.player = Color::Black,
-        }
+        self.player = self.player.get_opponent_color();
         self
     }
 
@@ -292,19 +203,6 @@ impl Default for Position {
         }
     }
 }
-#[repr(u8)]
-#[derive(Clone, Copy, Eq, Hash, PartialEq, Debug, EnumCount)]
-pub enum CastlingType {
-    BlackQueenside,
-    BlackKingside,
-    WhiteQueenside,
-    WhiteKingside,
-}
-impl CastlingType {
-    fn idx(&self) -> usize {
-        *self as usize
-    }
-}
 
 impl Hash for Position {
     fn hash<H: Hasher>(&self, state: &mut H) {
@@ -323,8 +221,13 @@ impl PartialEq for Position {
             && self.player == other.player
     }
 }
+pub(super) use boards::Boards;
 pub mod bitboard;
+mod boards;
+pub mod castling_rights;
+mod occupancy;
 pub mod print;
+mod starting_config;
 
 #[cfg(test)]
 mod tests;
