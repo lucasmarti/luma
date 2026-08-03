@@ -1,10 +1,17 @@
+use boards::Boards;
+mod bitboard;
+mod boards;
+mod castling_rights;
+pub(super) use castling_rights::CastlingType;
+mod occupancy;
+pub(super) mod print;
+mod starting_config;
+
 use crate::engine::{
     movegen::{Square, A4, H5},
     piece::{Color, Typ, *},
     position::{
-        bitboard::Bitboard,
-        castling_rights::{CastlingRights, CastlingType},
-        occupancy::Occupancy,
+        bitboard::Bitboard, castling_rights::CastlingRights, occupancy::Occupancy,
         starting_config::STARTING_CONFIG,
     },
 };
@@ -221,13 +228,6 @@ impl PartialEq for Position {
             && self.player == other.player
     }
 }
-pub(super) use boards::Boards;
-pub mod bitboard;
-mod boards;
-pub mod castling_rights;
-mod occupancy;
-pub mod print;
-mod starting_config;
 
 #[cfg(test)]
 mod tests;

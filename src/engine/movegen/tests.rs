@@ -1,4 +1,3 @@
-use crate::engine::movegen::chess_move::*;
 use crate::engine::{
     movegen::*,
     movegen::{
@@ -11,7 +10,7 @@ use crate::engine::{
         pawn::{en_passant, is_pawn_two_rows_forward, promote, set_en_passant_if_necessary},
     },
     piece::*,
-    position::{castling_rights::CastlingType, Position},
+    position::{CastlingType, Position},
 };
 #[test]
 fn test_progress_white_king() {

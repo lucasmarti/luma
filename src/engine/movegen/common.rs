@@ -1,7 +1,7 @@
 use crate::engine::{
+    chess_move::{ChessMove, MoveType},
     movegen::{
         castling::remove_castling_rights_if_necessary,
-        chess_move::{ChessMove, MoveType},
         config::{
             BISHOP_DIRECTIONS, BISHOP_MAX_DISTANCE, KING_DIRECTIONS, KING_MAX_DISTANCE,
             KNIGHT_DIRECTIONS, KNIGHT_MAX_DISTANCE, QUEEN_DIRECTIONS, QUEEN_MAX_DISTANCE,

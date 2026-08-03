@@ -2,12 +2,10 @@
 use crate::engine::movegen::MovesFn;
 use crate::engine::{
     self, get_possible_moves,
-    movegen::filter_checks,
-    movegen::{
-        ChessMove, *, {CastlingMovesFn, BLACK_MOVE_CONFIG, WHITE_MOVE_CONFIG},
-    },
+    movegen::{filter_checks, CastlingMovesFn, BLACK_MOVE_CONFIG, WHITE_MOVE_CONFIG, *},
     piece,
     position::{self, print::Print},
+    ChessMove,
 };
 use crate::engine::{piece::*, position::Position};
 #[test]

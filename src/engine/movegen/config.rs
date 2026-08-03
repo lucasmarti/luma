@@ -1,7 +1,7 @@
 use crate::engine::{
+    chess_move::ChessMove,
     movegen::{
         castling::{get_black_castling_moves, get_white_castling_moves},
-        chess_move::ChessMove,
         common::{
             get_moves_for_bishop_at_square, get_moves_for_king_at_square,
             get_moves_for_knight_at_square, get_moves_for_queen_at_square,

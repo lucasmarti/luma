@@ -1,13 +1,13 @@
 use crate::engine::movegen::Square;
 
-use crate::engine::movegen::chess_move::{ChessMove, MoveType};
+use crate::engine::chess_move::{ChessMove, MoveType};
 use crate::engine::{
     movegen::castling_config::{
         CastlingConfiguration, BLACK_KINGSIDE, BLACK_QUEENSIDE, WHITE_KINGSIDE, WHITE_QUEENSIDE,
     },
     movegen::check::{is_check, is_under_attack},
     piece::Color,
-    position::{castling_rights::CastlingType, Position},
+    position::{CastlingType, Position},
 };
 
 pub fn get_black_castling_moves(position: &Position) -> Vec<ChessMove> {

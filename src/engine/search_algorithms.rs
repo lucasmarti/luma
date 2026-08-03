@@ -5,7 +5,7 @@ mod node;
 use std::sync::Mutex;
 
 use crate::engine::{
-    movegen::ChessMove,
+    chess_move::ChessMove,
     position::Position,
     search_algorithms::{alpha_beta::alpha_beta, cache::Cache},
 };

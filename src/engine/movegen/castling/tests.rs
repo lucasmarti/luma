@@ -7,7 +7,7 @@ use crate::engine::{
         *,
     },
     piece::*,
-    position::{castling_rights::*, *},
+    position::*,
 };
 
 #[test]

@@ -1,7 +1,7 @@
 use crate::engine::{
     movegen::{Square, *},
     piece::{Color, *},
-    position::castling_rights::CastlingType,
+    position::CastlingType,
 };
 pub struct CastlingConfiguration {
     pub(crate) color: Color,

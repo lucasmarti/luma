@@ -1,11 +1,12 @@
+mod chess_move;
 mod evaluation;
 mod movegen;
 mod piece;
 mod position;
 mod search_algorithms;
 
-pub use movegen::ChessMove;
-pub use movegen::MoveType;
+pub use chess_move::ChessMove;
+pub use chess_move::MoveType;
 pub use movegen::Square;
 pub use piece::*;
 pub use position::Position;

@@ -1,5 +1,6 @@
 use crate::engine::{
-    movegen::{get_black_mobility, get_white_mobility, ChessMove},
+    chess_move::ChessMove,
+    movegen::{get_black_mobility, get_white_mobility},
     piece::{self},
     position::Position,
 };
