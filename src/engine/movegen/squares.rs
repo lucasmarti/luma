@@ -1,5 +1,7 @@
 use std::cmp::Ordering;
 
+use crate::engine::bitboard::Bitboard;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Square(u32);
 impl Square {
@@ -11,6 +13,10 @@ impl Square {
         }
     }
 
+    pub fn intersects(self, bitboard: Bitboard) -> bool {
+        Bitboard::from(self).intersects(bitboard)
+    }
+
     pub const fn new_unchecked(index: u32) -> Self {
         Square(index)
     }
@@ -19,52 +25,6 @@ impl Square {
     }
     pub fn get_column(&self) -> u32 {
         (self.as_index() % 8) + 1
-    }
-    pub fn is_in_first_or_second_column(&self) -> bool {
-        self.get_column() == COLUMN_A || self.get_column() == COLUMN_B
-    }
-
-    pub fn is_in_last_or_second_last_column(&self) -> bool {
-        self.get_column() == COLUMN_H || self.get_column() == COLUMN_G
-    }
-
-    pub fn is_in_first_column(&self) -> bool {
-        self.get_column() == COLUMN_A
-    }
-
-    pub fn is_in_last_column(&self) -> bool {
-        self.get_column() == COLUMN_H
-    }
-
-    pub fn is_in_last_or_second_last_row(self) -> bool {
-        self >= A7
-    }
-
-    pub fn is_in_first_or_second_row(self) -> bool {
-        self <= H2
-    }
-
-    pub fn is_in_first_row(self) -> bool {
-        self < A2
-    }
-
-    pub fn is_in_last_row(self) -> bool {
-        self >= A8
-    }
-
-    pub fn is_in_row_2(self) -> bool {
-        A2 <= self && self <= H2
-    }
-
-    pub fn is_in_row_4(self) -> bool {
-        A4 <= self && self <= H4
-    }
-
-    pub fn is_in_row_5(self) -> bool {
-        A5 <= self && self <= H5
-    }
-    pub fn is_in_row_7(self) -> bool {
-        A7 <= self && self <= H7
     }
 }
 
@@ -97,8 +57,14 @@ define_squares! {
     A7 = 48, B7 = 49, C7 = 50, D7 = 51, E7 = 52, F7 = 53, G7 = 54, H7 = 55,
     A8 = 56, B8 = 57, C8 = 58, D8 = 59, E8 = 60, F8 = 61, G8 = 62, H8 = 63,
 }
+pub const FILE_A: Bitboard = Bitboard::new(0x0101_0101_0101_0101);
+pub const FILE_B: Bitboard = Bitboard::new(0x0202_0202_0202_0202);
+pub const FILE_G: Bitboard = Bitboard::new(0x4040_4040_4040_4040);
+pub const FILE_H: Bitboard = Bitboard::new(0x8080_8080_8080_8080);
 
-const COLUMN_A: u32 = 1;
-const COLUMN_B: u32 = 2;
-const COLUMN_G: u32 = 7;
-const COLUMN_H: u32 = 8;
+pub const RANK_1: Bitboard = Bitboard::new(0x0000_0000_0000_00FF);
+pub const RANK_2: Bitboard = Bitboard::new(0x0000_0000_0000_FF00);
+pub const RANK_4: Bitboard = Bitboard::new(0x0000_0000_FF00_0000);
+pub const RANK_5: Bitboard = Bitboard::new(0x0000_00FF_0000_0000);
+pub const RANK_7: Bitboard = Bitboard::new(0x00FF_0000_0000_0000);
+pub const RANK_8: Bitboard = Bitboard::new(0xFF00_0000_0000_0000);

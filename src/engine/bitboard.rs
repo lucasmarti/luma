@@ -14,6 +14,9 @@ impl Bitboard {
         }
         Bitboard(1 << index)
     }
+    pub const fn new(bits: u64) -> Bitboard {
+        Self(bits)
+    }
     pub fn count_ones(&self) -> u32 {
         self.0.count_ones()
     }
@@ -52,6 +55,9 @@ impl Bitboard {
         let bitboard = Bitboard::from(square);
         let intersection = *self & bitboard;
         intersection.count_ones() > 0
+    }
+    pub const fn intersects(self, other: Bitboard) -> bool {
+        (self.0 & other.0) != 0
     }
 }
 impl BitOr for Bitboard {

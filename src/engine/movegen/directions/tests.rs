@@ -104,10 +104,10 @@ fn test_down_down_right() {
 }
 
 #[test]
-fn test_row_2() {
-    assert!(is_in_row_2(F2));
+fn test_rank_2() {
+    assert!(F2.intersects(RANK_2));
 }
 #[test]
 fn test_row_7() {
-    assert!(is_in_row_7(E7));
+    assert!(E7.intersects(RANK_7));
 }

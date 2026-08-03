@@ -40,7 +40,9 @@ H: left_left_up
 
 */
 
-use crate::engine::movegen::Square;
+use crate::engine::movegen::{
+    Square, FILE_A, FILE_B, FILE_G, FILE_H, RANK_1, RANK_2, RANK_7, RANK_8,
+};
 
 const ONE_ROW: u32 = 8;
 const TWO_ROWS: u32 = 16;
@@ -51,7 +53,7 @@ pub type DirectionFn = fn(Square) -> Option<Square>;
 pub type RowFn = fn(Square) -> bool;
 
 pub fn up(square: Square) -> Option<Square> {
-    if !square.is_in_last_row() {
+    if !square.intersects(RANK_8) {
         Square::new(square.as_index() + ONE_ROW)
     } else {
         None
@@ -60,7 +62,7 @@ pub fn up(square: Square) -> Option<Square> {
 
 pub fn down(square: Square) -> Option<Square> {
     let index = square.as_index();
-    if !square.is_in_first_row() {
+    if !square.intersects(RANK_1) {
         Square::new(index - ONE_ROW)
     } else {
         None
@@ -68,7 +70,7 @@ pub fn down(square: Square) -> Option<Square> {
 }
 
 pub fn left(square: Square) -> Option<Square> {
-    if !square.is_in_first_column() {
+    if !square.intersects(FILE_A) {
         Square::new(square.as_index() - ONE_COLUMN)
     } else {
         None
@@ -76,7 +78,7 @@ pub fn left(square: Square) -> Option<Square> {
 }
 
 pub fn right(square: Square) -> Option<Square> {
-    if !square.is_in_last_column() {
+    if !square.intersects(FILE_H) {
         Square::new(square.as_index() + ONE_COLUMN)
     } else {
         None
@@ -84,28 +86,28 @@ pub fn right(square: Square) -> Option<Square> {
 }
 
 pub fn up_right(square: Square) -> Option<Square> {
-    if !square.is_in_last_row() && !square.is_in_last_column() {
+    if !square.intersects(RANK_8) && !square.intersects(FILE_H) {
         Square::new(square.as_index() + ONE_ROW + ONE_COLUMN)
     } else {
         None
     }
 }
 pub fn up_left(square: Square) -> Option<Square> {
-    if !square.is_in_last_row() && !square.is_in_first_column() {
+    if !square.intersects(RANK_8) && !square.intersects(FILE_A) {
         Square::new(square.as_index() + ONE_ROW - ONE_COLUMN)
     } else {
         None
     }
 }
 pub fn down_right(square: Square) -> Option<Square> {
-    if !square.is_in_first_row() && !square.is_in_last_column() {
+    if !square.intersects(RANK_1) && !square.intersects(FILE_H) {
         Square::new(square.as_index() - ONE_ROW + ONE_COLUMN)
     } else {
         None
     }
 }
 pub fn down_left(square: Square) -> Option<Square> {
-    if !square.is_in_first_row() && !square.is_in_first_column() {
+    if !square.intersects(RANK_1) && !square.intersects(FILE_A) {
         Square::new(square.as_index() - ONE_ROW - ONE_COLUMN)
     } else {
         None
@@ -113,7 +115,7 @@ pub fn down_left(square: Square) -> Option<Square> {
 }
 
 pub fn up_up_right(square: Square) -> Option<Square> {
-    if !square.is_in_last_or_second_last_row() && !square.is_in_last_column() {
+    if !square.intersects(RANK_7 | RANK_8) && !square.intersects(FILE_H) {
         Square::new(square.as_index() + TWO_ROWS + ONE_COLUMN)
     } else {
         None
@@ -121,7 +123,7 @@ pub fn up_up_right(square: Square) -> Option<Square> {
 }
 
 pub fn up_up_left(square: Square) -> Option<Square> {
-    if !square.is_in_last_or_second_last_row() && !square.is_in_first_column() {
+    if !square.intersects(RANK_7 | RANK_8) && !square.intersects(FILE_A) {
         Square::new(square.as_index() + TWO_ROWS - ONE_COLUMN)
     } else {
         None
@@ -129,7 +131,7 @@ pub fn up_up_left(square: Square) -> Option<Square> {
 }
 
 pub fn down_down_right(square: Square) -> Option<Square> {
-    if !square.is_in_first_or_second_row() && !square.is_in_last_column() {
+    if !square.intersects(RANK_1 | RANK_2) && !square.intersects(FILE_H) {
         Square::new(square.as_index() - TWO_ROWS + ONE_COLUMN)
     } else {
         None
@@ -137,7 +139,7 @@ pub fn down_down_right(square: Square) -> Option<Square> {
 }
 
 pub fn down_down_left(square: Square) -> Option<Square> {
-    if !square.is_in_first_or_second_row() && !square.is_in_first_column() {
+    if !square.intersects(RANK_1 | RANK_2) && !square.intersects(FILE_A) {
         Square::new(square.as_index() - TWO_ROWS - ONE_COLUMN)
     } else {
         None
@@ -145,7 +147,7 @@ pub fn down_down_left(square: Square) -> Option<Square> {
 }
 
 pub fn right_right_up(square: Square) -> Option<Square> {
-    if !square.is_in_last_row() && !square.is_in_last_or_second_last_column() {
+    if !square.intersects(RANK_8) && !square.intersects(FILE_G | FILE_H) {
         Square::new(square.as_index() + ONE_ROW + TWO_COLUMNS)
     } else {
         None
@@ -153,7 +155,7 @@ pub fn right_right_up(square: Square) -> Option<Square> {
 }
 
 pub fn right_right_down(square: Square) -> Option<Square> {
-    if !square.is_in_first_row() && !square.is_in_last_or_second_last_column() {
+    if !square.intersects(RANK_1) && !square.intersects(FILE_G | FILE_H) {
         Square::new(square.as_index() - ONE_ROW + TWO_COLUMNS)
     } else {
         None
@@ -161,7 +163,7 @@ pub fn right_right_down(square: Square) -> Option<Square> {
 }
 
 pub fn left_left_up(square: Square) -> Option<Square> {
-    if !square.is_in_last_row() && !square.is_in_first_or_second_column() {
+    if !square.intersects(RANK_8) && !square.intersects(FILE_A | FILE_B) {
         Square::new(square.as_index() + ONE_ROW - TWO_COLUMNS)
     } else {
         None
@@ -169,19 +171,11 @@ pub fn left_left_up(square: Square) -> Option<Square> {
 }
 
 pub fn left_left_down(square: Square) -> Option<Square> {
-    if !square.is_in_first_row() && !square.is_in_first_or_second_column() {
+    if !square.intersects(RANK_1) && !square.intersects(FILE_A | FILE_B) {
         Square::new(square.as_index() - ONE_ROW - TWO_COLUMNS)
     } else {
         None
     }
-}
-
-pub fn is_in_row_7(square: Square) -> bool {
-    square.is_in_row_7()
-}
-
-pub fn is_in_row_2(square: Square) -> bool {
-    square.is_in_row_2()
 }
 #[cfg(test)]
 mod tests;

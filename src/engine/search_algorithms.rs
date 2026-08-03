@@ -2,7 +2,10 @@ mod alpha_beta;
 mod cache;
 mod minimax;
 mod node;
-use std::sync::Mutex;
+use std::{
+    sync::Mutex,
+    time::{Duration, Instant},
+};
 
 use crate::engine::{
     chess_move::ChessMove,
@@ -25,6 +28,7 @@ pub enum Player {
 pub fn get_best_move(position: Position) -> Option<ChessMove> {
     let cache = &mut Cache::new();
     let depth = 4;
+    let mut start = Instant::now();
     //let tree = build_tree(position, depth);
     let minimx_player = match position.get_player() {
         crate::engine::piece::Color::Black => Player::Min,
@@ -36,6 +40,7 @@ pub fn get_best_move(position: Position) -> Option<ChessMove> {
     for evaluation in cache.values() {
         hits += evaluation.hits;
     }
+    println!("Duration = {:?}", start.elapsed());
     println!("Cache size = {:?}", cache.len());
     println!("Number of hits = {:?}", hits);
     best_move

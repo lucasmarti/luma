@@ -3,8 +3,8 @@ use std::ops::{Index, IndexMut};
 use strum::EnumCount;
 
 use crate::engine::{
+    bitboard::Bitboard,
     piece::{Color, Typ},
-    position::bitboard::Bitboard,
 };
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash, Default)]

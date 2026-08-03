@@ -1,5 +1,4 @@
 use boards::Boards;
-mod bitboard;
 mod boards;
 mod castling_rights;
 pub(super) use castling_rights::CastlingType;
@@ -8,11 +7,11 @@ pub(super) mod print;
 mod starting_config;
 
 use crate::engine::{
+    bitboard::Bitboard,
     movegen::{Square, A4, H5},
     piece::{Color, Typ, *},
     position::{
-        bitboard::Bitboard, castling_rights::CastlingRights, occupancy::Occupancy,
-        starting_config::STARTING_CONFIG,
+        castling_rights::CastlingRights, occupancy::Occupancy, starting_config::STARTING_CONFIG,
     },
 };
 use std::hash::{Hash, Hasher};

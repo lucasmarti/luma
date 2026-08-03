@@ -1,3 +1,4 @@
+mod bitboard;
 mod chess_move;
 mod evaluation;
 mod movegen;

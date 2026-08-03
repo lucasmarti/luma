@@ -1,8 +1,8 @@
 use strum::IntoEnumIterator;
 
 use crate::engine::{
+    bitboard::Bitboard,
     piece::{Color, Typ},
-    position::bitboard::Bitboard,
 };
 
 use super::Position;

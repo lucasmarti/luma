@@ -1,4 +1,4 @@
-use crate::engine::{movegen::*, position::bitboard::Bitboard};
+use crate::engine::{bitboard::Bitboard, movegen::*};
 #[test]
 fn test_count_ones() {
     let bits: u64 = 1 << 0 | 1 << 1 | 1 << 2;

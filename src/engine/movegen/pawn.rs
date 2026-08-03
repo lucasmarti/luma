@@ -1,9 +1,10 @@
 use crate::engine::{
+    bitboard::Bitboard,
     chess_move::{ChessMove, MoveType},
     movegen::{
         common::progess,
         directions::{self, DirectionFn, RowFn},
-        Square,
+        Square, FILE_G, FILE_H, RANK_1, RANK_2, RANK_4, RANK_5, RANK_7, RANK_8,
     },
     piece::{Color, Piece, Typ, *},
     position::Position,
@@ -68,49 +69,49 @@ const BLACK_PROMOTION_PIECES: [Piece; 4] = [BLACK_QUEEN, BLACK_ROOK, BLACK_BISHO
 
 struct PromotionConfig {
     piece: Piece,
-    is_in_row_fn: RowFn,
+    from_rank: Bitboard,
     direction_fn: DirectionFn,
     promotion_set: [Piece; 4],
 }
 
 const WHITE_PROMOTION_CONFIG: PromotionConfig = PromotionConfig {
     piece: WHITE_PAWN,
-    is_in_row_fn: directions::is_in_row_7,
+    from_rank: RANK_7,
     direction_fn: directions::up,
     promotion_set: WHITE_PROMOTION_PIECES,
 };
 
 const WHITE_PROMOTION_LEFT_CONFIG: PromotionConfig = PromotionConfig {
     piece: WHITE_PAWN,
-    is_in_row_fn: directions::is_in_row_7,
+    from_rank: RANK_7,
     direction_fn: directions::up_left,
     promotion_set: WHITE_PROMOTION_PIECES,
 };
 
 const WHITE_PROMOTION_RIGHT_CONFIG: PromotionConfig = PromotionConfig {
     piece: WHITE_PAWN,
-    is_in_row_fn: directions::is_in_row_7,
+    from_rank: RANK_7,
     direction_fn: directions::up_right,
     promotion_set: WHITE_PROMOTION_PIECES,
 };
 
 const BLACK_PROMOTION_CONFIG: PromotionConfig = PromotionConfig {
     piece: BLACK_PAWN,
-    is_in_row_fn: directions::is_in_row_2,
+    from_rank: RANK_2,
     direction_fn: directions::down,
     promotion_set: BLACK_PROMOTION_PIECES,
 };
 
 const BLACK_PROMOTION_LEFT_CONFIG: PromotionConfig = PromotionConfig {
     piece: BLACK_PAWN,
-    is_in_row_fn: directions::is_in_row_2,
+    from_rank: RANK_2,
     direction_fn: directions::down_left,
     promotion_set: BLACK_PROMOTION_PIECES,
 };
 
 const BLACK_PROMOTION_RIGHT_CONFIG: PromotionConfig = PromotionConfig {
     piece: BLACK_PAWN,
-    is_in_row_fn: directions::is_in_row_2,
+    from_rank: RANK_2,
     direction_fn: directions::down_right,
     promotion_set: BLACK_PROMOTION_PIECES,
 };
@@ -163,7 +164,7 @@ fn get_move_capture(
 }
 fn get_move_white_left_capture(position: &Position, from: Square) -> Option<ChessMove> {
     // Exclude promotion rank captures (handled by promotion capture functions)
-    if directions::is_in_row_7(from) {
+    if from.intersects(RANK_7) {
         return None;
     }
     get_move_capture(position, from, directions::up_left, WHITE_PAWN)
@@ -171,7 +172,7 @@ fn get_move_white_left_capture(position: &Position, from: Square) -> Option<Ches
 
 fn get_move_white_right_capture(position: &Position, from: Square) -> Option<ChessMove> {
     // Exclude promotion rank captures (handled by promotion capture functions)
-    if directions::is_in_row_7(from) {
+    if from.intersects(RANK_7) {
         return None;
     }
     get_move_capture(position, from, directions::up_right, WHITE_PAWN)
@@ -179,7 +180,7 @@ fn get_move_white_right_capture(position: &Position, from: Square) -> Option<Che
 
 fn get_move_black_left_capture(position: &Position, from: Square) -> Option<ChessMove> {
     // Exclude promotion rank captures (handled by promotion capture functions)
-    if directions::is_in_row_2(from) {
+    if from.intersects(RANK_2) {
         return None;
     }
     get_move_capture(position, from, directions::down_left, BLACK_PAWN)
@@ -187,7 +188,7 @@ fn get_move_black_left_capture(position: &Position, from: Square) -> Option<Ches
 
 fn get_move_black_right_capture(position: &Position, from: Square) -> Option<ChessMove> {
     // Exclude promotion rank captures (handled by promotion capture functions)
-    if directions::is_in_row_2(from) {
+    if from.intersects(RANK_2) {
         return None;
     }
     get_move_capture(position, from, directions::down_right, BLACK_PAWN)
@@ -258,7 +259,7 @@ fn get_moves_black_promotion_right_capture(position: &Position, from: Square) ->
 
 fn get_promotion(position: &Position, from: Square, config: PromotionConfig) -> Vec<ChessMove> {
     let mut chess_moves: Vec<ChessMove> = Vec::new();
-    if (config.is_in_row_fn)(from) {
+    if from.intersects(config.from_rank) {
         if let Some(to) = (config.direction_fn)(from) {
             if !position.is_occupied(to) {
                 for promotion_piece in config.promotion_set {
@@ -276,7 +277,7 @@ fn get_promotion_capture(
     config: PromotionConfig,
 ) -> Vec<ChessMove> {
     let mut chess_moves: Vec<ChessMove> = Vec::new();
-    if (config.is_in_row_fn)(from) {
+    if from.intersects(config.from_rank) {
         if let Some(to) = (config.direction_fn)(from) {
             if position.is_occupied_by_color(to, config.piece.color.get_opponent_color()) {
                 for promotion_piece in config.promotion_set {
@@ -289,14 +290,14 @@ fn get_promotion_capture(
 }
 
 fn get_move_white_forward(position: &Position, from: Square) -> Option<ChessMove> {
-    if !from.is_in_last_or_second_last_row() {
+    if !from.intersects(RANK_7 | RANK_8) {
         return get_move_forward(position, from, WHITE_PAWN, directions::up);
     }
     None
 }
 
 fn get_move_black_forward(position: &Position, from: Square) -> Option<ChessMove> {
-    if !from.is_in_first_or_second_row() {
+    if !from.intersects(RANK_1 | RANK_2) {
         return get_move_forward(position, from, BLACK_PAWN, directions::down);
     }
     None
@@ -317,14 +318,14 @@ fn get_move_forward(
 }
 
 fn get_move_white_two_forward(position: &Position, from: Square) -> Option<ChessMove> {
-    if directions::is_in_row_2(from) {
+    if from.intersects(RANK_2) {
         return get_move_two_forward(position, from, WHITE_PAWN, directions::up);
     }
     None
 }
 
 fn get_move_black_two_forward(position: &Position, from: Square) -> Option<ChessMove> {
-    if directions::is_in_row_7(from) {
+    if from.intersects(RANK_7) {
         return get_move_two_forward(position, from, BLACK_PAWN, directions::down);
     }
     None
@@ -418,12 +419,12 @@ pub fn is_pawn_two_rows_forward(piece: Piece, from: Square, to: Square) -> bool 
     }
     match piece.color {
         Color::White => {
-            if from.is_in_row_2() && to.is_in_row_4() {
+            if from.intersects(RANK_2) && to.intersects(RANK_4) {
                 return true;
             }
         }
         Color::Black => {
-            if from.is_in_row_7() && to.is_in_row_5() {
+            if from.intersects(RANK_7) && to.intersects(RANK_5) {
                 return true;
             }
         }

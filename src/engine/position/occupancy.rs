@@ -2,7 +2,7 @@ use std::ops::{Index, IndexMut};
 
 use strum::EnumCount;
 
-use crate::engine::{piece::Color, position::bitboard::Bitboard};
+use crate::engine::{bitboard::Bitboard, piece::Color};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Default)]
 pub struct Occupancy {
