@@ -1,5 +1,5 @@
 use crate::engine::{
-    directions::squares::*,
+    movegen::{Square, A4, H5},
     piece::{Color, Typ, *},
     position::{
         bitboard::Bitboard,

@@ -1,5 +1,5 @@
 use crate::engine::{
-    directions::squares::*,
+    movegen::{Square, *},
     piece::{Color, *},
     position::castling_rights::CastlingType,
 };

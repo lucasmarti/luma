@@ -1,3 +1,5 @@
+use crate::engine::movegen::Square;
+
 use crate::engine::{
     check::{is_check, is_under_attack},
     chess_moves::{
@@ -6,7 +8,6 @@ use crate::engine::{
         },
         ChessMove, MoveType,
     },
-    directions::squares::Square,
     piece::Color,
     position::{castling_rights::CastlingType, Position},
 };

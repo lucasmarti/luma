@@ -1,8 +1,8 @@
 use flo_canvas::Draw;
 
 use crate::engine::{
-    directions::squares::Square,
     piece::{Color, Piece},
+    Square,
 };
 
 #[derive(Debug, Clone, Copy)]

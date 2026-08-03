@@ -1,4 +1,7 @@
-use crate::engine::{directions::squares::*, piece::*};
+use crate::engine::{
+    movegen::{Square, *},
+    piece::*,
+};
 
 pub const STARTING_CONFIG: &[(Piece, Square)] = &[
     (WHITE_KING, E1),

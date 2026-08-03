@@ -3,7 +3,7 @@ use std::io::Cursor;
 use flo_canvas::{Color, Draw, GraphicsContext, GraphicsPrimitives};
 
 use crate::{
-    engine::directions::squares::Square,
+    engine::Square,
     gui::{
         configuration::{CHECK_COLOR, DROP_TARGET_COLOR, FROM_TO_COLOR, SELECTED_FIELD_COLOR},
         icon::Icon,

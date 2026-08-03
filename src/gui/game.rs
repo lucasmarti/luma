@@ -4,8 +4,8 @@ use crate::{
     engine::{
         self,
         chess_moves::{ChessMove, MoveType},
-        directions::squares::Square,
         position::Position,
+        Square,
     },
     gui::{
         state_machine::{

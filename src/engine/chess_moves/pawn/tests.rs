@@ -1,7 +1,9 @@
-use crate::engine::{chess_moves::pawn::*, directions::squares::*, position::Position};
+use crate::engine::movegen::*;
+use crate::engine::{chess_moves::pawn::*, position::Position};
 
 #[cfg(test)]
 mod test_white_forward {
+
     use super::*;
 
     #[test]
@@ -11,9 +13,7 @@ mod test_white_forward {
 
         assert!(result.is_some());
         let new_position = result.unwrap();
-        assert!(new_position
-            .position
-            .is_occupied_by_piece(E3, WHITE_PAWN));
+        assert!(new_position.position.is_occupied_by_piece(E3, WHITE_PAWN));
         assert!(!new_position.position.is_occupied(E2));
     }
 
@@ -66,9 +66,7 @@ mod test_black_forward {
 
         assert!(result.is_some());
         let new_position = result.unwrap();
-        assert!(new_position
-            .position
-            .is_occupied_by_piece(E6, BLACK_PAWN));
+        assert!(new_position.position.is_occupied_by_piece(E6, BLACK_PAWN));
         assert!(!new_position.position.is_occupied(E7));
     }
 
@@ -121,9 +119,7 @@ mod test_white_two_forward {
 
         assert!(result.is_some());
         let new_position = result.unwrap();
-        assert!(new_position
-            .position
-            .is_occupied_by_piece(E4, WHITE_PAWN));
+        assert!(new_position.position.is_occupied_by_piece(E4, WHITE_PAWN));
         assert!(!new_position.position.is_occupied(E2));
         assert!(!new_position.position.is_occupied(E3));
     }
@@ -183,9 +179,7 @@ mod test_black_two_forward {
 
         assert!(result.is_some());
         let new_position = result.unwrap();
-        assert!(new_position
-            .position
-            .is_occupied_by_piece(E5, BLACK_PAWN));
+        assert!(new_position.position.is_occupied_by_piece(E5, BLACK_PAWN));
         assert!(!new_position.position.is_occupied(E7));
         assert!(!new_position.position.is_occupied(E6));
     }
@@ -237,13 +231,9 @@ mod test_white_captures {
 
         assert!(result.is_some());
         let new_position = result.unwrap();
-        assert!(new_position
-            .position
-            .is_occupied_by_piece(D5, WHITE_PAWN));
+        assert!(new_position.position.is_occupied_by_piece(D5, WHITE_PAWN));
         assert!(!new_position.position.is_occupied(E4));
-        assert!(!new_position
-            .position
-            .is_occupied_by_piece(D5, BLACK_PAWN));
+        assert!(!new_position.position.is_occupied_by_piece(D5, BLACK_PAWN));
     }
 
     #[test]
@@ -256,9 +246,7 @@ mod test_white_captures {
 
         assert!(result.is_some());
         let new_position = result.unwrap();
-        assert!(new_position
-            .position
-            .is_occupied_by_piece(F5, WHITE_PAWN));
+        assert!(new_position.position.is_occupied_by_piece(F5, WHITE_PAWN));
         assert!(!new_position.position.is_occupied(E4));
     }
 
@@ -341,9 +329,7 @@ mod test_black_captures {
 
         assert!(result.is_some());
         let new_position = result.unwrap();
-        assert!(new_position
-            .position
-            .is_occupied_by_piece(D4, BLACK_PAWN));
+        assert!(new_position.position.is_occupied_by_piece(D4, BLACK_PAWN));
         assert!(!new_position.position.is_occupied(E5));
     }
 
@@ -357,9 +343,7 @@ mod test_black_captures {
 
         assert!(result.is_some());
         let new_position = result.unwrap();
-        assert!(new_position
-            .position
-            .is_occupied_by_piece(F4, BLACK_PAWN));
+        assert!(new_position.position.is_occupied_by_piece(F4, BLACK_PAWN));
         assert!(!new_position.position.is_occupied(E5));
     }
 
@@ -393,9 +377,7 @@ mod test_white_en_passant {
 
         assert!(result.is_some());
         let new_position = result.unwrap();
-        assert!(new_position
-            .position
-            .is_occupied_by_piece(D6, WHITE_PAWN));
+        assert!(new_position.position.is_occupied_by_piece(D6, WHITE_PAWN));
         assert!(!new_position.position.is_occupied(E5));
         assert!(!new_position.position.is_occupied(D5)); // Captured pawn removed
     }
@@ -411,9 +393,7 @@ mod test_white_en_passant {
 
         assert!(result.is_some());
         let new_position = result.unwrap();
-        assert!(new_position
-            .position
-            .is_occupied_by_piece(F6, WHITE_PAWN));
+        assert!(new_position.position.is_occupied_by_piece(F6, WHITE_PAWN));
         assert!(!new_position.position.is_occupied(E5));
         assert!(!new_position.position.is_occupied(F5)); // Captured pawn removed
     }
@@ -481,9 +461,7 @@ mod test_black_en_passant {
 
         assert!(result.is_some());
         let new_position = result.unwrap();
-        assert!(new_position
-            .position
-            .is_occupied_by_piece(D3, BLACK_PAWN));
+        assert!(new_position.position.is_occupied_by_piece(D3, BLACK_PAWN));
         assert!(!new_position.position.is_occupied(E4));
         assert!(!new_position.position.is_occupied(D4)); // Captured pawn removed
     }
@@ -499,9 +477,7 @@ mod test_black_en_passant {
 
         assert!(result.is_some());
         let new_position = result.unwrap();
-        assert!(new_position
-            .position
-            .is_occupied_by_piece(F3, BLACK_PAWN));
+        assert!(new_position.position.is_occupied_by_piece(F3, BLACK_PAWN));
         assert!(!new_position.position.is_occupied(E4));
         assert!(!new_position.position.is_occupied(F4)); // Captured pawn removed
     }
@@ -578,9 +554,7 @@ mod test_white_promotions {
         // All should capture on D8
         for position in &results {
             assert!(!position.position.is_occupied(E7));
-            assert!(!position
-                .position
-                .is_occupied_by_piece(D8, BLACK_KNIGHT));
+            assert!(!position.position.is_occupied_by_piece(D8, BLACK_KNIGHT));
         }
 
         let has_queen = results
@@ -614,9 +588,7 @@ mod test_white_promotions {
 
         for position in &results {
             assert!(!position.position.is_occupied(E7));
-            assert!(!position
-                .position
-                .is_occupied_by_piece(F8, BLACK_KNIGHT));
+            assert!(!position.position.is_occupied_by_piece(F8, BLACK_KNIGHT));
         }
     }
 
@@ -693,9 +665,7 @@ mod test_black_promotions {
 
         for position in &results {
             assert!(!position.position.is_occupied(E2));
-            assert!(!position
-                .position
-                .is_occupied_by_piece(D1, WHITE_KNIGHT));
+            assert!(!position.position.is_occupied_by_piece(D1, WHITE_KNIGHT));
         }
     }
 
@@ -711,9 +681,7 @@ mod test_black_promotions {
 
         for position in &results {
             assert!(!position.position.is_occupied(E2));
-            assert!(!position
-                .position
-                .is_occupied_by_piece(F1, WHITE_KNIGHT));
+            assert!(!position.position.is_occupied_by_piece(F1, WHITE_KNIGHT));
         }
     }
 }

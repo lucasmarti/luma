@@ -1,5 +1,8 @@
 use crate::engine::{
-    directions::{self, squares::Square, DirectionFn},
+    movegen::{
+        directions::{self, DirectionFn},
+        Square,
+    },
     piece::*,
     position::Position,
 };

@@ -1,11 +1,9 @@
 use crate::engine::{
     check::is_check,
     chess_moves::{get_current_player_moves, ChessMove},
-    directions::squares::Square,
     position::Position,
     search_algorithms::get_best_move,
 };
-
 pub fn get_next_move(position: &Position) -> MoveOrEnd {
     match get_best_move(*position) {
         Some(chess_move) => MoveOrEnd::Move(chess_move),
@@ -47,13 +45,13 @@ pub enum GameEnd {
     Draw,
     Victory,
 }
-pub mod cache;
 mod check;
 pub mod chess_moves;
-pub mod directions;
 mod evaluation;
+pub mod movegen;
 pub mod piece;
 pub mod position;
 pub mod search_algorithms;
+pub(super) use movegen::Square;
 #[cfg(test)]
 mod tests;

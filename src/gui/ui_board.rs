@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use flo_canvas::Draw;
 
 use crate::{
-    engine::{directions::squares::Square, piece::Piece},
+    engine::{piece::Piece, Square},
     gui::{
         configuration::{BLACK_FIELD_COLOR, WHITE_FIELD_COLOR},
         ui_container::Container,

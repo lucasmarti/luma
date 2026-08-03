@@ -1,7 +1,4 @@
-use crate::engine::{
-    directions::squares::{A1, B1, C1, E1, F1, H3},
-    position::bitboard::Bitboard,
-};
+use crate::engine::{movegen::*, position::bitboard::Bitboard};
 #[test]
 fn test_count_ones() {
     let bits: u64 = 1 << 0 | 1 << 1 | 1 << 2;

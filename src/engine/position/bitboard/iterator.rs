@@ -1,6 +1,5 @@
-use crate::engine::directions::squares::Square;
-
 use super::Bitboard;
+use crate::engine::movegen::Square;
 use intbits::Bits;
 
 pub struct BitboardIterator<'a> {

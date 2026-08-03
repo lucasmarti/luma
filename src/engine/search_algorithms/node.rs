@@ -1,11 +1,10 @@
 use crate::engine::{
-    cache::Cache,
     check::is_check,
     chess_moves::{get_current_player_moves, ChessMove},
     evaluation::Evaluation,
     piece::Color,
     position::Position,
-    search_algorithms::{MAX_VALUE, MIN_VALUE},
+    search_algorithms::{cache::Cache, MAX_VALUE, MIN_VALUE},
 };
 
 pub fn evaluate(position: &Position, cache: &mut Cache) -> f32 {

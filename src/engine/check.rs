@@ -5,7 +5,7 @@ use crate::engine::{
         },
         ChessMove,
     },
-    directions::{self, squares::Square},
+    movegen::{directions, Square},
     piece::{Color, Typ},
     position::Position,
 };

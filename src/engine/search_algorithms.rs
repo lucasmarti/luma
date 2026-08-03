@@ -1,8 +1,9 @@
 use std::sync::Mutex;
 
 use crate::engine::{
-    cache::Cache, chess_moves::ChessMove, position::Position,
-    search_algorithms::alpha_beta::alpha_beta,
+    chess_moves::ChessMove,
+    position::Position,
+    search_algorithms::{alpha_beta::alpha_beta, cache::Cache},
 };
 lazy_static::lazy_static! {
     pub static ref CALL_COUNT: Mutex<u64> = Mutex::new(0);
@@ -36,6 +37,7 @@ pub fn get_best_move(position: Position) -> Option<ChessMove> {
     best_move
 }
 pub mod alpha_beta;
+pub mod cache;
 pub mod minimax;
 pub mod node;
 mod tests;

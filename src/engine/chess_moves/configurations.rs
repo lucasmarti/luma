@@ -9,7 +9,10 @@ use crate::engine::{
         pawn::get_pawn_moves,
         ChessMove,
     },
-    directions::{self, squares::Square, DirectionFn},
+    movegen::{
+        directions::{self, DirectionFn},
+        Square,
+    },
     piece::*,
     position::Position,
 };

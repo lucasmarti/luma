@@ -40,7 +40,7 @@ H: left_left_up
 
 */
 
-use crate::engine::directions::squares::*;
+use crate::engine::movegen::Square;
 
 const ONE_ROW: u32 = 8;
 const TWO_ROWS: u32 = 16;
@@ -183,7 +183,3 @@ pub fn is_in_row_7(square: Square) -> bool {
 pub fn is_in_row_2(square: Square) -> bool {
     square.is_in_row_2()
 }
-
-pub mod squares;
-#[cfg(test)]
-mod tests;

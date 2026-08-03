@@ -7,10 +7,12 @@ use crate::engine::{
         configurations::{CastlingMovesFn, BLACK_MOVE_CONFIG, WHITE_MOVE_CONFIG},
         ChessMove,
     },
-    get_possible_moves, piece,
+    get_possible_moves,
+    movegen::*,
+    piece,
     position::{self, print::Print},
 };
-use crate::engine::{directions::squares::*, piece::*, position::Position};
+use crate::engine::{piece::*, position::Position};
 #[test]
 fn test_preemtive_game_end() {
     let position = Position::default()

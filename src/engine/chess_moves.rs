@@ -1,7 +1,7 @@
 use crate::engine::check::filter_checks;
 use crate::engine::chess_moves::configurations::*;
 use crate::engine::chess_moves::configurations::{MovesFn, BLACK_MOVE_CONFIG, WHITE_MOVE_CONFIG};
-use crate::engine::directions::squares::Square;
+use crate::engine::movegen::Square;
 use crate::engine::piece::{Color, Piece};
 use crate::engine::position::{castling_rights::CastlingType, Position};
 

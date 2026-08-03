@@ -1,8 +1,8 @@
 use crate::engine::{
-    cache::Cache,
     chess_moves::ChessMove,
     position::Position,
     search_algorithms::{
+        cache::Cache,
         node::{evaluate, get_children},
         Player, MAX_VALUE, MIN_VALUE,
     },

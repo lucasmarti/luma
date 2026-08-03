@@ -1,4 +1,4 @@
-use crate::engine::{directions::squares::*, piece::*};
+use crate::engine::{movegen::*, piece::*};
 
 use super::{print::Print, Position};
 

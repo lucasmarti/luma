@@ -1,8 +1,8 @@
 use crate::{
     engine::{
         chess_moves::ChessMove,
-        directions::squares::Square,
         piece::{Color, Piece},
+        Square,
     },
     gui::ui_element::UIEvent,
 };

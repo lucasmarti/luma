@@ -9,7 +9,7 @@ use crate::engine::{
         get_black_moves, get_white_moves,
         pawn::{en_passant, is_pawn_two_rows_forward, promote, set_en_passant_if_necessary},
     },
-    directions::squares::*,
+    movegen::*,
     piece::*,
     position::{castling_rights::CastlingType, Position},
 };

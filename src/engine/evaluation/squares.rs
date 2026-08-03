@@ -1,6 +1,7 @@
 use once_cell::sync::Lazy;
 
-use crate::engine::{directions::squares::Square, piece::*, position::Position};
+use crate::engine::movegen::Square;
+use crate::engine::{piece::*, position::Position};
 
 type PieceSquareRow = [f32; 8];
 

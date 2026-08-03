@@ -8,7 +8,7 @@ use crate::engine::{
         },
         ChessMove,
     },
-    directions::{self, squares::*},
+    movegen::*,
     piece::*,
     position::Position,
 };
@@ -50,9 +50,7 @@ fn test_get_piece_moves_king() {
 #[test]
 fn test_get_piece_moves_king_blocked_by_own_piece() {
     let mut position: Position = Position::default();
-    position = position
-        .put_piece(WHITE_KING, D4)
-        .put_piece(WHITE_PAWN, D5); // Block upward movement
+    position = position.put_piece(WHITE_KING, D4).put_piece(WHITE_PAWN, D5); // Block upward movement
 
     let positions = get_moves_for_king_at_square(&position, WHITE_KING, D4);
     assert_eq!(positions.len(), 7); // One less because D5 is blocked

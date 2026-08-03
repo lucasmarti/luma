@@ -1,6 +1,6 @@
-use crate::engine::directions::squares::*;
 use crate::engine::evaluation::pawn_structures::get_passed_pawns;
 use crate::engine::evaluation::*;
+use crate::engine::movegen::*;
 use crate::engine::piece::*;
 use crate::engine::position::*;
 

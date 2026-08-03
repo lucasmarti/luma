@@ -2,8 +2,7 @@ use intbits::Bits;
 use iterator::BitboardIterator;
 use std::ops::{BitAnd, BitAndAssign, BitOr, BitOrAssign, Not};
 
-use crate::engine::directions::squares::Square;
-
+use crate::engine::movegen::Square;
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq, Default)]
 
 pub struct Bitboard(u64);

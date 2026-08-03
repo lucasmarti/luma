@@ -1,4 +1,5 @@
-use crate::engine::directions::*;
+use super::directions::*;
+use super::*;
 #[test]
 fn test_get_column() {
     assert_eq!(A1.get_column(), 1);

@@ -5,10 +5,9 @@ use crate::engine::{
         configurations::{BLACK_KINGSIDE, BLACK_QUEENSIDE, WHITE_KINGSIDE, WHITE_QUEENSIDE},
         get_black_castling_moves, get_castling_move, get_white_castling_moves,
     },
-    directions::squares::*,
+    movegen::*,
     piece::*,
-    position::castling_rights::*,
-    position::*,
+    position::{castling_rights::*, *},
 };
 
 #[test]
