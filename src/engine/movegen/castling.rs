@@ -1,12 +1,10 @@
 use crate::engine::movegen::Square;
 
+use crate::engine::movegen::chess_move::{ChessMove, MoveType};
 use crate::engine::{
     check::{is_check, is_under_attack},
-    chess_moves::{
-        castling_config::{
-            CastlingConfiguration, BLACK_KINGSIDE, BLACK_QUEENSIDE, WHITE_KINGSIDE, WHITE_QUEENSIDE,
-        },
-        ChessMove, MoveType,
+    movegen::castling_config::{
+        CastlingConfiguration, BLACK_KINGSIDE, BLACK_QUEENSIDE, WHITE_KINGSIDE, WHITE_QUEENSIDE,
     },
     piece::Color,
     position::{castling_rights::CastlingType, Position},

@@ -3,7 +3,7 @@ use flo_canvas::{Draw, DrawingTarget};
 use crate::{
     engine::{
         self,
-        chess_moves::{ChessMove, MoveType},
+        movegen::chess_move::{ChessMove, MoveType},
         position::Position,
         Square,
     },

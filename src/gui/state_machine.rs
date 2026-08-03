@@ -1,6 +1,6 @@
 use crate::{
     engine::{
-        chess_moves::ChessMove,
+        movegen::chess_move::ChessMove,
         piece::{Color, Piece},
         Square,
     },

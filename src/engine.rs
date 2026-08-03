@@ -1,6 +1,6 @@
 use crate::engine::{
     check::is_check,
-    chess_moves::{get_current_player_moves, ChessMove},
+    movegen::chess_move::{get_current_player_moves, ChessMove},
     position::Position,
     search_algorithms::get_best_move,
 };
@@ -46,7 +46,6 @@ pub enum GameEnd {
     Victory,
 }
 mod check;
-pub mod chess_moves;
 mod evaluation;
 pub mod movegen;
 pub mod piece;

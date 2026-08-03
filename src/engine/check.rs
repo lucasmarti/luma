@@ -1,11 +1,11 @@
 use crate::engine::{
-    chess_moves::{
+    movegen::{
+        chess_move::ChessMove,
         config::{
             DIAGONAL_DIRECTIONS, HORIZONTAL_VERTICAL_DIRECTIONS, KING_DIRECTIONS, KNIGHT_DIRECTIONS,
         },
-        ChessMove,
+        directions, Square,
     },
-    movegen::{directions, Square},
     piece::{Color, Typ},
     position::Position,
 };

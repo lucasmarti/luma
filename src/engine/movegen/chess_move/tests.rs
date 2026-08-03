@@ -1,15 +1,15 @@
+use crate::engine::movegen::chess_move::*;
 use crate::engine::{
-    chess_moves::{
+    movegen::*,
+    movegen::{
         castling::remove_castling_rights_if_necessary,
         common::{
             get_moves_for_bishop_at_square, get_moves_for_king_at_square,
             get_moves_for_knight_at_square, get_moves_for_queen_at_square,
             get_moves_for_rook_at_square, progess,
         },
-        get_black_moves, get_white_moves,
         pawn::{en_passant, is_pawn_two_rows_forward, promote, set_en_passant_if_necessary},
     },
-    movegen::*,
     piece::*,
     position::{castling_rights::CastlingType, Position},
 };

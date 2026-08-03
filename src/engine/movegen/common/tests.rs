@@ -1,14 +1,14 @@
 use std::u32;
 
 use crate::engine::{
-    chess_moves::{
+    movegen::{
+        chess_move::ChessMove,
         common::{
             generate_path_with_limit, get_moves_for_king_at_square, get_moves_for_rook_at_square,
             slide,
         },
-        ChessMove,
+        *,
     },
-    movegen::*,
     piece::*,
     position::Position,
 };

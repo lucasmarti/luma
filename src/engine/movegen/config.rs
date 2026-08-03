@@ -1,13 +1,13 @@
 use crate::engine::{
-    chess_moves::{
+    movegen::{
         castling::{get_black_castling_moves, get_white_castling_moves},
+        chess_move::ChessMove,
         common::{
             get_moves_for_bishop_at_square, get_moves_for_king_at_square,
             get_moves_for_knight_at_square, get_moves_for_queen_at_square,
             get_moves_for_rook_at_square,
         },
         pawn::get_pawn_moves,
-        ChessMove,
     },
     movegen::{
         directions::{self, DirectionFn},

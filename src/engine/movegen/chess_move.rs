@@ -1,14 +1,31 @@
-use crate::engine::check::filter_checks;
-use crate::engine::chess_moves::config::{Config, MovesFn, BLACK_MOVE_CONFIG, WHITE_MOVE_CONFIG};
-use crate::engine::movegen::Square;
-use crate::engine::piece::{Color, Piece};
-use crate::engine::position::{castling_rights::CastlingType, Position};
+use crate::engine::{
+    check::filter_checks,
+    movegen::config::*,
+    piece::{Color, Piece},
+    position::{castling_rights::CastlingType, Position},
+    Square,
+};
 
-pub(crate) mod castling;
-pub mod castling_config;
-mod common;
-pub(crate) mod config;
-pub mod pawn;
+#[derive(Clone, Copy, Eq, Hash, PartialEq, Debug)]
+pub struct ChessMove {
+    pub position: Position,
+    pub move_type: MoveType,
+    pub piece: Piece,
+    pub from: Square,
+    pub to: Square,
+    pub capture: Option<Piece>,
+    pub pormotion: Option<Piece>,
+}
+
+#[derive(Clone, Copy, Eq, Hash, PartialEq, Debug)]
+pub enum MoveType {
+    Quiet,
+    Capture,
+    Promotion,
+    PromotionCapture,
+    EnPassant,
+    Castling { castling_type: CastlingType },
+}
 
 pub fn get_current_player_moves(position: &Position) -> Vec<ChessMove> {
     match position.get_player() {
@@ -56,26 +73,5 @@ fn get_new_positions(position: &Position, piece: Piece, get_moves_fn: MovesFn) -
     }
     new_chess_moves
 }
-#[derive(Clone, Copy, Eq, Hash, PartialEq, Debug)]
-pub struct ChessMove {
-    pub position: Position,
-    pub move_type: MoveType,
-    pub piece: Piece,
-    pub from: Square,
-    pub to: Square,
-    pub capture: Option<Piece>,
-    pub pormotion: Option<Piece>,
-}
-
-#[derive(Clone, Copy, Eq, Hash, PartialEq, Debug)]
-pub enum MoveType {
-    Quiet,
-    Capture,
-    Promotion,
-    PromotionCapture,
-    EnPassant,
-    Castling { castling_type: CastlingType },
-}
-
 #[cfg(test)]
 mod tests;

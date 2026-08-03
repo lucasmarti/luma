@@ -1,6 +1,7 @@
 use crate::engine::{
-    chess_moves::{common::progess, ChessMove, MoveType},
     movegen::{
+        chess_move::{ChessMove, MoveType},
+        common::progess,
         directions::{self, DirectionFn, RowFn},
         Square,
     },

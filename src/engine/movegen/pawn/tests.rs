@@ -1,9 +1,9 @@
+use crate::engine::movegen::pawn::get_move_black_forward;
 use crate::engine::movegen::*;
-use crate::engine::{chess_moves::pawn::*, position::Position};
+use crate::engine::{movegen::pawn::get_move_white_forward, piece::*, position::Position};
 
 #[cfg(test)]
 mod test_white_forward {
-
     use super::*;
 
     #[test]
@@ -56,6 +56,7 @@ mod test_white_forward {
 
 #[cfg(test)]
 mod test_black_forward {
+
     use super::*;
 
     #[test]
@@ -109,6 +110,8 @@ mod test_black_forward {
 
 #[cfg(test)]
 mod test_white_two_forward {
+    use crate::engine::movegen::pawn::get_move_white_two_forward;
+
     use super::*;
 
     #[test]
@@ -169,6 +172,8 @@ mod test_white_two_forward {
 
 #[cfg(test)]
 mod test_black_two_forward {
+    use crate::engine::movegen::pawn::get_move_black_two_forward;
+
     use super::*;
 
     #[test]
@@ -219,6 +224,8 @@ mod test_black_two_forward {
 
 #[cfg(test)]
 mod test_white_captures {
+    use crate::engine::movegen::pawn::{get_move_white_left_capture, get_move_white_right_capture};
+
     use super::*;
 
     #[test]
@@ -317,6 +324,8 @@ mod test_white_captures {
 
 #[cfg(test)]
 mod test_black_captures {
+    use crate::engine::movegen::pawn::{get_move_black_left_capture, get_move_black_right_capture};
+
     use super::*;
 
     #[test]
@@ -364,6 +373,10 @@ mod test_black_captures {
 
 #[cfg(test)]
 mod test_white_en_passant {
+    use crate::engine::movegen::pawn::{
+        get_move_white_left_en_passant, get_move_white_right_en_passant,
+    };
+
     use super::*;
 
     #[test]
@@ -448,6 +461,10 @@ mod test_white_en_passant {
 
 #[cfg(test)]
 mod test_black_en_passant {
+    use crate::engine::movegen::pawn::{
+        get_move_black_left_en_passant, get_move_black_right_en_passant,
+    };
+
     use super::*;
 
     #[test]
@@ -485,6 +502,11 @@ mod test_black_en_passant {
 
 #[cfg(test)]
 mod test_white_promotions {
+    use crate::engine::movegen::pawn::{
+        get_moves_white_promotion, get_moves_white_promotion_left_capture,
+        get_moves_white_promotion_right_capture,
+    };
+
     use super::*;
 
     #[test]
@@ -620,6 +642,11 @@ mod test_white_promotions {
 
 #[cfg(test)]
 mod test_black_promotions {
+    use crate::engine::movegen::pawn::{
+        get_moves_black_promotion, get_moves_black_promotion_left_capture,
+        get_moves_black_promotion_right_capture,
+    };
+
     use super::*;
 
     #[test]
@@ -688,7 +715,10 @@ mod test_black_promotions {
 
 #[cfg(test)]
 mod test_aggregate_functions {
-    use crate::engine::position::print::Print;
+    use crate::engine::{
+        movegen::pawn::{get_black_pawn_moves, get_white_pawn_moves},
+        position::print::Print,
+    };
 
     use super::*;
 
@@ -827,7 +857,10 @@ mod test_aggregate_functions {
 #[cfg(test)]
 mod test_public_interface {
 
-    use crate::engine::piece::WHITE_PAWN;
+    use crate::engine::{
+        movegen::pawn::{get_black_pawn_moves, get_white_pawn_moves},
+        piece::WHITE_PAWN,
+    };
 
     use super::*;
 

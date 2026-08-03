@@ -1,7 +1,7 @@
 use std::sync::Mutex;
 
 use crate::engine::{
-    chess_moves::ChessMove,
+    movegen::chess_move::ChessMove,
     position::Position,
     search_algorithms::{alpha_beta::alpha_beta, cache::Cache},
 };

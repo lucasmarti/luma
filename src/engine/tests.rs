@@ -1,14 +1,14 @@
 #[cfg(test)]
-use crate::engine::chess_moves::config::MovesFn;
+use crate::engine::movegen::config::MovesFn;
 use crate::engine::{
     self,
     check::filter_checks,
-    chess_moves::{
-        config::{CastlingMovesFn, BLACK_MOVE_CONFIG, WHITE_MOVE_CONFIG},
-        ChessMove,
-    },
     get_possible_moves,
-    movegen::*,
+    movegen::{
+        chess_move::ChessMove,
+        config::{CastlingMovesFn, BLACK_MOVE_CONFIG, WHITE_MOVE_CONFIG},
+        *,
+    },
     piece,
     position::{self, print::Print},
 };
