@@ -1,9 +1,9 @@
 use crate::engine::directions::*;
 #[test]
 fn test_get_column() {
-    assert_eq!(get_column(A1), 1);
-    assert_eq!(get_column(F1), 6);
-    assert_eq!(get_column(H7), 8);
+    assert_eq!(A1.get_column(), 1);
+    assert_eq!(F1.get_column(), 6);
+    assert_eq!(H7.get_column(), 8);
 }
 
 #[test]

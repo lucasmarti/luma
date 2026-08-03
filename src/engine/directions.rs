@@ -46,16 +46,12 @@ const ONE_ROW: u32 = 8;
 const TWO_ROWS: u32 = 16;
 const ONE_COLUMN: u32 = 1;
 const TWO_COLUMNS: u32 = 2;
-const COLUMN_A: u32 = 1;
-const COLUMN_B: u32 = 2;
-const COLUMN_G: u32 = 7;
-const COLUMN_H: u32 = 8;
 
 pub type DirectionFn = fn(Square) -> Option<Square>;
 pub type RowFn = fn(Square) -> bool;
 
 pub fn up(square: Square) -> Option<Square> {
-    if !is_in_last_row(square) {
+    if !square.is_in_last_row() {
         Square::new(square.as_index() + ONE_ROW)
     } else {
         None
@@ -64,7 +60,7 @@ pub fn up(square: Square) -> Option<Square> {
 
 pub fn down(square: Square) -> Option<Square> {
     let index = square.as_index();
-    if !is_in_first_row(square) {
+    if !square.is_in_first_row() {
         Square::new(index - ONE_ROW)
     } else {
         None
@@ -72,7 +68,7 @@ pub fn down(square: Square) -> Option<Square> {
 }
 
 pub fn left(square: Square) -> Option<Square> {
-    if !is_in_first_column(square) {
+    if !square.is_in_first_column() {
         Square::new(square.as_index() - ONE_COLUMN)
     } else {
         None
@@ -80,7 +76,7 @@ pub fn left(square: Square) -> Option<Square> {
 }
 
 pub fn right(square: Square) -> Option<Square> {
-    if !is_in_last_column(square) {
+    if !square.is_in_last_column() {
         Square::new(square.as_index() + ONE_COLUMN)
     } else {
         None
@@ -88,28 +84,28 @@ pub fn right(square: Square) -> Option<Square> {
 }
 
 pub fn up_right(square: Square) -> Option<Square> {
-    if !is_in_last_row(square) && !is_in_last_column(square) {
+    if !square.is_in_last_row() && !square.is_in_last_column() {
         Square::new(square.as_index() + ONE_ROW + ONE_COLUMN)
     } else {
         None
     }
 }
 pub fn up_left(square: Square) -> Option<Square> {
-    if !is_in_last_row(square) && !is_in_first_column(square) {
+    if !square.is_in_last_row() && !square.is_in_first_column() {
         Square::new(square.as_index() + ONE_ROW - ONE_COLUMN)
     } else {
         None
     }
 }
 pub fn down_right(square: Square) -> Option<Square> {
-    if !is_in_first_row(square) && !is_in_last_column(square) {
+    if !square.is_in_first_row() && !square.is_in_last_column() {
         Square::new(square.as_index() - ONE_ROW + ONE_COLUMN)
     } else {
         None
     }
 }
 pub fn down_left(square: Square) -> Option<Square> {
-    if !is_in_first_row(square) && !is_in_first_column(square) {
+    if !square.is_in_first_row() && !square.is_in_first_column() {
         Square::new(square.as_index() - ONE_ROW - ONE_COLUMN)
     } else {
         None
@@ -117,7 +113,7 @@ pub fn down_left(square: Square) -> Option<Square> {
 }
 
 pub fn up_up_right(square: Square) -> Option<Square> {
-    if !is_in_last_or_second_last_row(square) && !is_in_last_column(square) {
+    if !square.is_in_last_or_second_last_row() && !square.is_in_last_column() {
         Square::new(square.as_index() + TWO_ROWS + ONE_COLUMN)
     } else {
         None
@@ -125,7 +121,7 @@ pub fn up_up_right(square: Square) -> Option<Square> {
 }
 
 pub fn up_up_left(square: Square) -> Option<Square> {
-    if !is_in_last_or_second_last_row(square) && !is_in_first_column(square) {
+    if !square.is_in_last_or_second_last_row() && !square.is_in_first_column() {
         Square::new(square.as_index() + TWO_ROWS - ONE_COLUMN)
     } else {
         None
@@ -133,7 +129,7 @@ pub fn up_up_left(square: Square) -> Option<Square> {
 }
 
 pub fn down_down_right(square: Square) -> Option<Square> {
-    if !is_in_first_or_second_row(square) && !is_in_last_column(square) {
+    if !square.is_in_first_or_second_row() && !square.is_in_last_column() {
         Square::new(square.as_index() - TWO_ROWS + ONE_COLUMN)
     } else {
         None
@@ -141,7 +137,7 @@ pub fn down_down_right(square: Square) -> Option<Square> {
 }
 
 pub fn down_down_left(square: Square) -> Option<Square> {
-    if !is_in_first_or_second_row(square) && !is_in_first_column(square) {
+    if !square.is_in_first_or_second_row() && !square.is_in_first_column() {
         Square::new(square.as_index() - TWO_ROWS - ONE_COLUMN)
     } else {
         None
@@ -149,7 +145,7 @@ pub fn down_down_left(square: Square) -> Option<Square> {
 }
 
 pub fn right_right_up(square: Square) -> Option<Square> {
-    if !is_in_last_row(square) && !is_in_last_or_second_last_column(square) {
+    if !square.is_in_last_row() && !square.is_in_last_or_second_last_column() {
         Square::new(square.as_index() + ONE_ROW + TWO_COLUMNS)
     } else {
         None
@@ -157,7 +153,7 @@ pub fn right_right_up(square: Square) -> Option<Square> {
 }
 
 pub fn right_right_down(square: Square) -> Option<Square> {
-    if !is_in_first_row(square) && !is_in_last_or_second_last_column(square) {
+    if !square.is_in_first_row() && !square.is_in_last_or_second_last_column() {
         Square::new(square.as_index() - ONE_ROW + TWO_COLUMNS)
     } else {
         None
@@ -165,7 +161,7 @@ pub fn right_right_down(square: Square) -> Option<Square> {
 }
 
 pub fn left_left_up(square: Square) -> Option<Square> {
-    if !is_in_last_row(square) && !is_in_first_or_second_column(square) {
+    if !square.is_in_last_row() && !square.is_in_first_or_second_column() {
         Square::new(square.as_index() + ONE_ROW - TWO_COLUMNS)
     } else {
         None
@@ -173,60 +169,19 @@ pub fn left_left_up(square: Square) -> Option<Square> {
 }
 
 pub fn left_left_down(square: Square) -> Option<Square> {
-    if !is_in_first_row(square) && !is_in_first_or_second_column(square) {
+    if !square.is_in_first_row() && !square.is_in_first_or_second_column() {
         Square::new(square.as_index() - ONE_ROW - TWO_COLUMNS)
     } else {
         None
     }
 }
-pub fn get_column(square: Square) -> u32 {
-    (square.as_index() % 8) + 1
-}
-fn is_in_first_or_second_column(square: Square) -> bool {
-    get_column(square) == COLUMN_A || get_column(square) == COLUMN_B
-}
 
-pub fn is_in_last_or_second_last_column(square: Square) -> bool {
-    get_column(square) == COLUMN_H || get_column(square) == COLUMN_G
-}
-
-fn is_in_first_column(square: Square) -> bool {
-    get_column(square) == COLUMN_A
-}
-
-fn is_in_last_column(square: Square) -> bool {
-    get_column(square) == COLUMN_H
-}
-
-pub fn is_in_last_or_second_last_row(square: Square) -> bool {
-    square >= A7
-}
-
-pub fn is_in_first_or_second_row(square: Square) -> bool {
-    square <= H2
-}
-
-pub fn is_in_first_row(square: Square) -> bool {
-    square < A2
-}
-
-pub fn is_in_last_row(square: Square) -> bool {
-    square >= A8
+pub fn is_in_row_7(square: Square) -> bool {
+    square.is_in_row_7()
 }
 
 pub fn is_in_row_2(square: Square) -> bool {
-    A2 <= square && square <= H2
-}
-
-pub fn is_in_row_4(square: Square) -> bool {
-    A4 <= square && square <= H4
-}
-
-pub fn is_in_row_5(square: Square) -> bool {
-    A5 <= square && square <= H5
-}
-pub fn is_in_row_7(square: Square) -> bool {
-    A7 <= square && square <= H7
+    square.is_in_row_2()
 }
 
 pub mod squares;

@@ -285,14 +285,14 @@ fn get_promotion_capture(
 }
 
 fn get_move_white_forward(position: &Position, from: Square) -> Option<ChessMove> {
-    if !directions::is_in_last_or_second_last_row(from) {
+    if !from.is_in_last_or_second_last_row() {
         return get_move_forward(position, from, WHITE_PAWN, directions::up);
     }
     None
 }
 
 fn get_move_black_forward(position: &Position, from: Square) -> Option<ChessMove> {
-    if !directions::is_in_first_or_second_row(from) {
+    if !from.is_in_first_or_second_row() {
         return get_move_forward(position, from, BLACK_PAWN, directions::down);
     }
     None
@@ -414,12 +414,12 @@ pub fn is_pawn_two_rows_forward(piece: Piece, from: Square, to: Square) -> bool 
     }
     match piece.color {
         Color::White => {
-            if directions::is_in_row_2(from) && directions::is_in_row_4(to) {
+            if from.is_in_row_2() && to.is_in_row_4() {
                 return true;
             }
         }
         Color::Black => {
-            if directions::is_in_row_7(from) && directions::is_in_row_5(to) {
+            if from.is_in_row_7() && to.is_in_row_5() {
                 return true;
             }
         }

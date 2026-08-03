@@ -42,7 +42,7 @@ pub fn get_isolated_pawns(position: &Position, color: Color) -> f32 {
     let mut score: f32 = 0.0;
     let mut columns: u32 = 0;
     for square in position.get_squares(color, Typ::Pawn).iter() {
-        columns |= 1 << (directions::get_column(square))
+        columns |= 1 << (square.get_column())
     }
 
     for col in 1..9 {
