@@ -1,9 +1,9 @@
 // White Castling Tests
 
 use crate::engine::{
-    chess_moves::castling::{
-        configurations::{BLACK_KINGSIDE, BLACK_QUEENSIDE, WHITE_KINGSIDE, WHITE_QUEENSIDE},
-        get_black_castling_moves, get_castling_move, get_white_castling_moves,
+    chess_moves::{
+        castling::{get_black_castling_moves, get_castling_move, get_white_castling_moves},
+        castling_config::{BLACK_KINGSIDE, BLACK_QUEENSIDE, WHITE_KINGSIDE, WHITE_QUEENSIDE},
     },
     movegen::*,
     piece::*,

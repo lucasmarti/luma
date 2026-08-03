@@ -1,6 +1,6 @@
 use crate::engine::{
     chess_moves::{
-        configurations::{
+        config::{
             DIAGONAL_DIRECTIONS, HORIZONTAL_VERTICAL_DIRECTIONS, KING_DIRECTIONS, KNIGHT_DIRECTIONS,
         },
         ChessMove,

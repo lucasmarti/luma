@@ -1,13 +1,13 @@
 use crate::engine::check::filter_checks;
-use crate::engine::chess_moves::configurations::*;
-use crate::engine::chess_moves::configurations::{MovesFn, BLACK_MOVE_CONFIG, WHITE_MOVE_CONFIG};
+use crate::engine::chess_moves::config::{Config, MovesFn, BLACK_MOVE_CONFIG, WHITE_MOVE_CONFIG};
 use crate::engine::movegen::Square;
 use crate::engine::piece::{Color, Piece};
 use crate::engine::position::{castling_rights::CastlingType, Position};
 
 pub(crate) mod castling;
+pub mod castling_config;
 mod common;
-pub(crate) mod configurations;
+pub(crate) mod config;
 pub mod pawn;
 
 pub fn get_current_player_moves(position: &Position) -> Vec<ChessMove> {

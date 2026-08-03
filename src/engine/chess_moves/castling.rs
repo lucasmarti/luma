@@ -3,7 +3,7 @@ use crate::engine::movegen::Square;
 use crate::engine::{
     check::{is_check, is_under_attack},
     chess_moves::{
-        castling::configurations::{
+        castling_config::{
             CastlingConfiguration, BLACK_KINGSIDE, BLACK_QUEENSIDE, WHITE_KINGSIDE, WHITE_QUEENSIDE,
         },
         ChessMove, MoveType,
@@ -118,7 +118,5 @@ fn is_empty_path(position: &Position, sqares: &[Square]) -> bool {
     }
     true
 }
-
-mod configurations;
 #[cfg(test)]
 mod tests;

@@ -827,6 +827,8 @@ mod test_aggregate_functions {
 #[cfg(test)]
 mod test_public_interface {
 
+    use crate::engine::piece::WHITE_PAWN;
+
     use super::*;
 
     #[test]

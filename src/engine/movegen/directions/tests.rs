@@ -1,5 +1,5 @@
-use super::directions::*;
-use super::*;
+use crate::engine::movegen::directions::*;
+use crate::engine::movegen::*;
 #[test]
 fn test_get_column() {
     assert_eq!(A1.get_column(), 1);

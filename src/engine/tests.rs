@@ -1,10 +1,10 @@
 #[cfg(test)]
-use crate::engine::chess_moves::configurations::MovesFn;
+use crate::engine::chess_moves::config::MovesFn;
 use crate::engine::{
     self,
     check::filter_checks,
     chess_moves::{
-        configurations::{CastlingMovesFn, BLACK_MOVE_CONFIG, WHITE_MOVE_CONFIG},
+        config::{CastlingMovesFn, BLACK_MOVE_CONFIG, WHITE_MOVE_CONFIG},
         ChessMove,
     },
     get_possible_moves,
@@ -52,7 +52,7 @@ fn get_castling_moves_fn(square: Square, piece: Piece) -> Option<CastlingMovesFn
     if square == WHITE_KING_STARTING_POSITION && piece == WHITE_KING {
         Some(WHITE_MOVE_CONFIG.castling_move_fn)
     } else if square == BLACK_KING_STARTING_POSITION && piece == BLACK_KING {
-        use crate::engine::chess_moves::configurations::BLACK_MOVE_CONFIG;
+        BLACK_MOVE_CONFIG;
 
         Some(BLACK_MOVE_CONFIG.castling_move_fn)
     } else {

@@ -183,3 +183,5 @@ pub fn is_in_row_7(square: Square) -> bool {
 pub fn is_in_row_2(square: Square) -> bool {
     square.is_in_row_2()
 }
+#[cfg(test)]
+mod tests;

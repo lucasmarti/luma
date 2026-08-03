@@ -1,7 +1,7 @@
 use crate::engine::{
     chess_moves::{
         castling::remove_castling_rights_if_necessary,
-        configurations::{
+        config::{
             BISHOP_DIRECTIONS, BISHOP_MAX_DISTANCE, KING_DIRECTIONS, KING_MAX_DISTANCE,
             KNIGHT_DIRECTIONS, KNIGHT_MAX_DISTANCE, QUEEN_DIRECTIONS, QUEEN_MAX_DISTANCE,
             ROOK_DIRECTIONS, ROOK_MAX_DISTANCE,
@@ -105,7 +105,7 @@ fn get_moves_for_piece_at_square(
     }
     new_chess_moves
 }
-fn generate_path_with_limit(
+pub fn generate_path_with_limit(
     from: Square,
     direction_fn: DirectionFn,
     max_distance: u32,
