@@ -1,9 +1,8 @@
 #[cfg(test)]
 use crate::engine::movegen::config::MovesFn;
 use crate::engine::{
-    self,
-    check::filter_checks,
-    get_possible_moves,
+    self, get_possible_moves,
+    movegen::check::filter_checks,
     movegen::{
         chess_move::ChessMove,
         config::{CastlingMovesFn, BLACK_MOVE_CONFIG, WHITE_MOVE_CONFIG},

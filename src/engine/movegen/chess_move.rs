@@ -1,5 +1,5 @@
 use crate::engine::{
-    check::filter_checks,
+    movegen::check::filter_checks,
     movegen::config::*,
     piece::{Color, Piece},
     position::{castling_rights::CastlingType, Position},

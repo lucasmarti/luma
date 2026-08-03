@@ -1,6 +1,6 @@
 use crate::engine::{
-    check::is_check,
     evaluation::Evaluation,
+    movegen::check::is_check,
     movegen::chess_move::{get_current_player_moves, ChessMove},
     piece::Color,
     position::Position,
