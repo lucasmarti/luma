@@ -1,4 +1,4 @@
-use crate::{engine::piece::*, gui::icon::Icon};
+use crate::{engine::*, gui::icon::Icon};
 
 pub fn get_icon(piece: Piece) -> Icon {
     match piece {

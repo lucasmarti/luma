@@ -1,5 +1,5 @@
 use crate::engine::{
-    movegen::chess_move::ChessMove,
+    movegen::ChessMove,
     position::Position,
     search_algorithms::{
         cache::Cache,

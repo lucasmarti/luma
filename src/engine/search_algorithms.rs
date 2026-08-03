@@ -1,7 +1,11 @@
+mod alpha_beta;
+mod cache;
+mod minimax;
+mod node;
 use std::sync::Mutex;
 
 use crate::engine::{
-    movegen::chess_move::ChessMove,
+    movegen::ChessMove,
     position::Position,
     search_algorithms::{alpha_beta::alpha_beta, cache::Cache},
 };
@@ -36,8 +40,5 @@ pub fn get_best_move(position: Position) -> Option<ChessMove> {
     println!("Number of hits = {:?}", hits);
     best_move
 }
-pub mod alpha_beta;
-pub mod cache;
-pub mod minimax;
-pub mod node;
+
 mod tests;

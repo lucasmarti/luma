@@ -1,7 +1,7 @@
 use flo_canvas::{Draw, GraphicsContext};
 
 use crate::{
-    engine::{self, piece::Piece, position::Position, Square},
+    engine::{self, Piece, Position, Square},
     gui::{
         configuration::{BACKGROUND_COLOR, FIELD_SIZE, MENU_HEIGHT},
         state_machine::{GameState, SquareSelected},
@@ -55,10 +55,10 @@ impl UIGame {
                         self.set_selected_square(chess_move.from);
                         self.set_drop_target_square(chess_move.to);
                         match position.get_player() {
-                            crate::engine::piece::Color::Black => {
+                            crate::engine::Color::Black => {
                                 self.set_black_promotion_buttons_disabled(false)
                             }
-                            crate::engine::piece::Color::White => {
+                            crate::engine::Color::White => {
                                 self.set_white_promotion_buttons_disabled(false)
                             }
                         }

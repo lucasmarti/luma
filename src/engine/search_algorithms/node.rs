@@ -1,7 +1,7 @@
 use crate::engine::{
     evaluation::Evaluation,
-    movegen::check::is_check,
-    movegen::chess_move::{get_current_player_moves, ChessMove},
+    movegen::is_check,
+    movegen::{get_current_player_moves, ChessMove},
     piece::Color,
     position::Position,
     search_algorithms::{cache::Cache, MAX_VALUE, MIN_VALUE},

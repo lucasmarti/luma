@@ -1,7 +1,7 @@
 use flo_canvas::{Draw, GraphicsContext, GraphicsPrimitives};
 
 use crate::{
-    engine::piece::{Color, *},
+    engine::*,
     gui::{
         configuration::*,
         icon::*,

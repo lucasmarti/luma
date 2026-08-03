@@ -1,3 +1,7 @@
+mod material;
+mod mobility;
+mod pawn_structures;
+mod squares;
 use crate::engine::position::Position;
 #[derive(Debug, Default, Clone, Copy, PartialEq)]
 pub struct Score {
@@ -47,9 +51,6 @@ impl Evaluation {
         }
     }
 }
-mod material;
-mod mobility;
-mod pawn_structures;
-mod squares;
+
 #[cfg(test)]
 mod tests;

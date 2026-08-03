@@ -1,12 +1,7 @@
 use flo_canvas::{Draw, DrawingTarget};
 
 use crate::{
-    engine::{
-        self,
-        movegen::chess_move::{ChessMove, MoveType},
-        position::Position,
-        Square,
-    },
+    engine::{self, ChessMove, MoveType, Position, Square},
     gui::{
         state_machine::{
             self, FromSquareSelectedData, GameState, NoSquareSelectedData, PromoteFunctionData,
@@ -60,21 +55,21 @@ impl Game {
         }
     }
 
-    fn new_game_as(&mut self, color: engine::piece::Color) {
+    fn new_game_as(&mut self, color: engine::Color) {
         self.position = Position::starting();
 
         let orientation = match color {
-            engine::piece::Color::Black => Orientation::WhiteDown,
-            engine::piece::Color::White => Orientation::WhiteUp,
+            engine::Color::Black => Orientation::WhiteDown,
+            engine::Color::White => Orientation::WhiteUp,
         };
         self.ui.set_orientation(orientation);
         match color {
-            engine::piece::Color::Black => {
+            engine::Color::Black => {
                 self.state = GameState::Computer;
                 self.position = Position::starting();
                 self.execute_computer_move();
             }
-            engine::piece::Color::White => {
+            engine::Color::White => {
                 self.position = Position::starting();
                 match engine::get_possible_moves(&self.position) {
                     Ok(possible_moves) => {

@@ -1,9 +1,6 @@
 use flo_canvas::Draw;
 
-use crate::engine::{
-    piece::{Color, Piece},
-    Square,
-};
+use crate::engine::{Color, Piece, Square};
 
 #[derive(Debug, Clone, Copy)]
 pub struct CanvasCoordinate {

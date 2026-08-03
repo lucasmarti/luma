@@ -1,9 +1,5 @@
 use crate::{
-    engine::{
-        movegen::chess_move::ChessMove,
-        piece::{Color, Piece},
-        Square,
-    },
+    engine::{ChessMove, Color, Piece, Square},
     gui::ui_element::UIEvent,
 };
 #[derive(Debug)]
