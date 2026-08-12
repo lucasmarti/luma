@@ -1,8 +1,4 @@
-use crate::engine::{
-    piece::Piece,
-    position::{CastlingType, Position},
-    Square,
-};
+use crate::engine::{piece::Piece, position::Position, Square};
 
 #[derive(Clone, Copy, Eq, Hash, PartialEq, Debug)]
 pub struct ChessMove {
@@ -22,5 +18,5 @@ pub enum MoveType {
     Promotion,
     PromotionCapture,
     EnPassant,
-    Castling { castling_type: CastlingType },
+    Castling,
 }

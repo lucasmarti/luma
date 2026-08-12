@@ -1,7 +1,7 @@
 use boards::Boards;
 mod boards;
 mod castling_rights;
-pub(super) use castling_rights::CastlingType;
+pub(super) use castling_rights::CastlingRights;
 mod occupancy;
 pub(super) mod print;
 mod starting_config;
@@ -10,9 +10,7 @@ use crate::engine::{
     bitboard::Bitboard,
     movegen::{Square, A4, H5},
     piece::{Color, Typ, *},
-    position::{
-        castling_rights::CastlingRights, occupancy::Occupancy, starting_config::STARTING_CONFIG,
-    },
+    position::{occupancy::Occupancy, starting_config::STARTING_CONFIG},
 };
 use std::hash::{Hash, Hasher};
 use strum::IntoEnumIterator;
@@ -39,25 +37,23 @@ impl Position {
     pub fn disallow_castling_for_color(mut self, color: Color) -> Position {
         match color {
             Color::White => {
-                self = self
-                    .remove_castling_right(CastlingType::WhiteKingside)
-                    .remove_castling_right(CastlingType::WhiteQueenside);
+                self.castling_rights
+                    .remove(CastlingRights::WHITE_KINGSIDE | CastlingRights::WHITE_QUEENSIDE);
             }
             Color::Black => {
-                self = self
-                    .remove_castling_right(CastlingType::BlackKingside)
-                    .remove_castling_right(CastlingType::BlackQueenside);
+                self.castling_rights
+                    .remove(CastlingRights::BLACK_KINGSIDE | CastlingRights::BLACK_QUEENSIDE);
             }
         }
         self
     }
 
-    pub fn get_castling_right(&self, castling_type: CastlingType) -> bool {
-        self.castling_rights[castling_type]
+    pub fn has_castling_rights(&self, rights: CastlingRights) -> bool {
+        self.castling_rights.has(rights)
     }
 
-    pub fn remove_castling_right(mut self, castling_type: CastlingType) -> Position {
-        self.castling_rights[castling_type] = false;
+    pub fn remove_castling_right(mut self, rights: CastlingRights) -> Position {
+        self.castling_rights.remove(rights);
         self
     }
     pub fn is_occupied(&self, square: Square) -> bool {
@@ -203,7 +199,7 @@ impl Default for Position {
             boards: Default::default(),
             occupied: Default::default(),
             all: Default::default(),
-            castling_rights: Default::default(),
+            castling_rights: CastlingRights::all(),
             en_passant: None,
             player: Color::White,
         }

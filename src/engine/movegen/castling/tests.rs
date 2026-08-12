@@ -267,8 +267,8 @@ fn test_castling_rights_false() {
         .put_piece(WHITE_KING, E1)
         .put_piece(WHITE_ROOK, H1)
         .put_piece(WHITE_ROOK, A1)
-        .remove_castling_right(CastlingType::WhiteKingside)
-        .remove_castling_right(CastlingType::WhiteQueenside);
+        .remove_castling_right(CastlingRights::WHITE_KINGSIDE)
+        .remove_castling_right(CastlingRights::WHITE_QUEENSIDE);
 
     let moves = get_white_castling_moves(&position);
     let kingside_castling = moves.iter().find(|c| {
@@ -426,39 +426,39 @@ fn test_castling_methods_disable_castling_rights() {
     assert!(!white_kingside
         .unwrap()
         .position
-        .get_castling_right(CastlingType::WhiteKingside));
+        .has_castling_rights(CastlingRights::WHITE_KINGSIDE));
     assert!(!white_kingside
         .unwrap()
         .position
-        .get_castling_right(CastlingType::WhiteQueenside));
+        .has_castling_rights(CastlingRights::WHITE_QUEENSIDE));
 
     let white_queenside = get_castling_move(&position, WHITE_QUEENSIDE);
     assert!(!white_queenside
         .unwrap()
         .position
-        .get_castling_right(CastlingType::WhiteKingside));
+        .has_castling_rights(CastlingRights::WHITE_KINGSIDE));
     assert!(!white_queenside
         .unwrap()
         .position
-        .get_castling_right(CastlingType::WhiteQueenside));
+        .has_castling_rights(CastlingRights::WHITE_QUEENSIDE));
 
     let black_kingside = get_castling_move(&position, BLACK_KINGSIDE);
     assert!(!black_kingside
         .unwrap()
         .position
-        .get_castling_right(CastlingType::BlackKingside));
+        .has_castling_rights(CastlingRights::BLACK_KINGSIDE));
     assert!(!black_kingside
         .unwrap()
         .position
-        .get_castling_right(CastlingType::BlackQueenside));
+        .has_castling_rights(CastlingRights::BLACK_QUEENSIDE));
 
     let black_queenside = get_castling_move(&position, BLACK_QUEENSIDE);
     assert!(!black_queenside
         .unwrap()
         .position
-        .get_castling_right(CastlingType::BlackKingside));
+        .has_castling_rights(CastlingRights::BLACK_KINGSIDE));
     assert!(!black_queenside
         .unwrap()
         .position
-        .get_castling_right(CastlingType::BlackQueenside));
+        .has_castling_rights(CastlingRights::BLACK_QUEENSIDE));
 }

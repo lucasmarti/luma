@@ -1,7 +1,7 @@
 use crate::engine::{
     movegen::{Square, *},
     piece::{Color, *},
-    position::CastlingType,
+    position::CastlingRights,
 };
 pub struct CastlingConfiguration {
     pub(crate) color: Color,
@@ -12,7 +12,7 @@ pub struct CastlingConfiguration {
     pub(crate) rook_from: Square,
     pub(crate) rook_to: Square,
     pub(crate) empty_path_squares: &'static [Square],
-    pub(crate) castling_type: CastlingType,
+    pub(crate) castling_rights: CastlingRights,
 }
 
 // White Kingside Castling
@@ -25,7 +25,7 @@ pub const WHITE_KINGSIDE: CastlingConfiguration = CastlingConfiguration {
     empty_path_squares: &[F1, G1],
     king: WHITE_KING,
     rook: WHITE_ROOK,
-    castling_type: CastlingType::WhiteKingside,
+    castling_rights: CastlingRights::WHITE_KINGSIDE,
 };
 
 // White Queenside Castling
@@ -38,7 +38,7 @@ pub const WHITE_QUEENSIDE: CastlingConfiguration = CastlingConfiguration {
     empty_path_squares: &[B1, C1, D1],
     king: WHITE_KING,
     rook: WHITE_ROOK,
-    castling_type: CastlingType::WhiteQueenside,
+    castling_rights: CastlingRights::WHITE_QUEENSIDE,
 };
 
 // Black Kingside Castling
@@ -51,7 +51,7 @@ pub const BLACK_KINGSIDE: CastlingConfiguration = CastlingConfiguration {
     empty_path_squares: &[F8, G8],
     king: BLACK_KING,
     rook: BLACK_ROOK,
-    castling_type: CastlingType::BlackKingside,
+    castling_rights: CastlingRights::BLACK_KINGSIDE,
 };
 
 // Black Queenside Castling
@@ -64,5 +64,5 @@ pub const BLACK_QUEENSIDE: CastlingConfiguration = CastlingConfiguration {
     empty_path_squares: &[B8, C8, D8],
     king: BLACK_KING,
     rook: BLACK_ROOK,
-    castling_type: CastlingType::BlackQueenside,
+    castling_rights: CastlingRights::BLACK_QUEENSIDE,
 };

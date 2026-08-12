@@ -1,13 +1,14 @@
 use crate::engine::movegen::Square;
 
 use crate::engine::chess_move::{ChessMove, MoveType};
+use crate::engine::position::CastlingRights;
 use crate::engine::{
     movegen::castling_config::{
         CastlingConfiguration, BLACK_KINGSIDE, BLACK_QUEENSIDE, WHITE_KINGSIDE, WHITE_QUEENSIDE,
     },
     movegen::check::{is_check, is_under_attack},
     piece::Color,
-    position::{CastlingType, Position},
+    position::Position,
 };
 
 pub fn get_black_castling_moves(position: &Position) -> Vec<ChessMove> {
@@ -35,7 +36,7 @@ pub fn get_castling_move(
     position: &Position,
     castling: CastlingConfiguration,
 ) -> Option<ChessMove> {
-    if !position.get_castling_right(castling.castling_type) {
+    if !position.has_castling_rights(castling.castling_rights) {
         return None;
     }
 
@@ -67,9 +68,7 @@ pub fn get_castling_move(
 
     if !is_check(&new_position, castling.color) {
         let chess_move: ChessMove = ChessMove {
-            move_type: MoveType::Castling {
-                castling_type: castling.castling_type,
-            },
+            move_type: MoveType::Castling,
             piece: castling.king,
             from: castling.king_from,
             to: castling.king_to,
@@ -85,16 +84,16 @@ pub fn get_castling_move(
 pub fn remove_castling_rights_if_necessary(position: Position, from: Square) -> Position {
     let mut new_position = position;
     if from == WHITE_QUEENSIDE.king_from || from == WHITE_QUEENSIDE.rook_from {
-        new_position = new_position.remove_castling_right(CastlingType::WhiteQueenside);
+        new_position = new_position.remove_castling_right(CastlingRights::WHITE_QUEENSIDE);
     }
     if from == WHITE_KINGSIDE.king_from || from == WHITE_KINGSIDE.rook_from {
-        new_position = new_position.remove_castling_right(CastlingType::WhiteKingside);
+        new_position = new_position.remove_castling_right(CastlingRights::WHITE_KINGSIDE);
     }
     if from == BLACK_QUEENSIDE.king_from || from == BLACK_QUEENSIDE.rook_from {
-        new_position = new_position.remove_castling_right(CastlingType::BlackQueenside);
+        new_position = new_position.remove_castling_right(CastlingRights::BLACK_QUEENSIDE);
     }
     if from == BLACK_KINGSIDE.king_from || from == BLACK_KINGSIDE.rook_from {
-        new_position = new_position.remove_castling_right(CastlingType::BlackKingside);
+        new_position = new_position.remove_castling_right(CastlingRights::BLACK_KINGSIDE);
     }
     new_position
 }
