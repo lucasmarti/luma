@@ -81,23 +81,6 @@ pub fn get_castling_move(
     None
 }
 
-pub fn remove_castling_rights_if_necessary(position: Position, from: Square) -> Position {
-    let mut new_position = position;
-    if from == WHITE_QUEENSIDE.king_from || from == WHITE_QUEENSIDE.rook_from {
-        new_position = new_position.remove_castling_right(CastlingRights::WHITE_QUEENSIDE);
-    }
-    if from == WHITE_KINGSIDE.king_from || from == WHITE_KINGSIDE.rook_from {
-        new_position = new_position.remove_castling_right(CastlingRights::WHITE_KINGSIDE);
-    }
-    if from == BLACK_QUEENSIDE.king_from || from == BLACK_QUEENSIDE.rook_from {
-        new_position = new_position.remove_castling_right(CastlingRights::BLACK_QUEENSIDE);
-    }
-    if from == BLACK_KINGSIDE.king_from || from == BLACK_KINGSIDE.rook_from {
-        new_position = new_position.remove_castling_right(CastlingRights::BLACK_KINGSIDE);
-    }
-    new_position
-}
-
 fn is_save_passage(position: &Position, sqares: &[Square], color: Color) -> bool {
     for square in sqares {
         if is_under_attack(position, *square, color) {

@@ -1,7 +1,6 @@
 use crate::engine::{
     chess_move::{ChessMove, MoveType},
     movegen::{
-        castling::remove_castling_rights_if_necessary,
         config::{
             BISHOP_DIRECTIONS, BISHOP_MAX_DISTANCE, KING_DIRECTIONS, KING_MAX_DISTANCE,
             KNIGHT_DIRECTIONS, KNIGHT_MAX_DISTANCE, QUEEN_DIRECTIONS, QUEEN_MAX_DISTANCE,
@@ -12,7 +11,7 @@ use crate::engine::{
         Square,
     },
     piece::Piece,
-    position::Position,
+    position::{CastlingRights, Position},
 };
 
 pub fn slide(position: &Position, from: Square, path: Vec<Square>, piece: Piece) -> Vec<ChessMove> {
@@ -139,7 +138,7 @@ pub fn progess(position: &Position, piece: Piece, from: Square, to: Square) -> C
         .put_piece(piece, to)
         .toggle_player();
     new_position = set_en_passant_if_necessary(new_position, piece, from, to);
-    new_position = remove_castling_rights_if_necessary(new_position, from);
+    new_position.remove_castling_right(CastlingRights::from(from));
     ChessMove {
         move_type: tuple.0,
         piece,

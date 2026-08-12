@@ -52,9 +52,8 @@ impl Position {
         self.castling_rights.has(rights)
     }
 
-    pub fn remove_castling_right(mut self, rights: CastlingRights) -> Position {
+    pub fn remove_castling_right(&mut self, rights: CastlingRights) {
         self.castling_rights.remove(rights);
-        self
     }
     pub fn is_occupied(&self, square: Square) -> bool {
         self.all.contains(square)

@@ -263,12 +263,12 @@ fn test_black_castling_not_allowed_through_check() {
 #[test]
 fn test_castling_rights_false() {
     // White with pieces in position but no rights
-    let position = Position::default()
+    let mut position = Position::default()
         .put_piece(WHITE_KING, E1)
         .put_piece(WHITE_ROOK, H1)
-        .put_piece(WHITE_ROOK, A1)
-        .remove_castling_right(CastlingRights::WHITE_KINGSIDE)
-        .remove_castling_right(CastlingRights::WHITE_QUEENSIDE);
+        .put_piece(WHITE_ROOK, A1);
+    position.remove_castling_right(CastlingRights::WHITE_KINGSIDE);
+    position.remove_castling_right(CastlingRights::WHITE_QUEENSIDE);
 
     let moves = get_white_castling_moves(&position);
     let kingside_castling = moves.iter().find(|c| {

@@ -1,6 +1,5 @@
 use crate::engine::{
     movegen::{
-        castling::remove_castling_rights_if_necessary,
         common::{
             get_moves_for_bishop_at_square, get_moves_for_king_at_square,
             get_moves_for_knight_at_square, get_moves_for_queen_at_square,
@@ -108,83 +107,87 @@ fn test_set_en_passant_if_necessary_non_pawn() {
 // Tests for disallow_castling_if_necessary function
 #[test]
 fn test_disallow_castling_if_necessary_white_king_move() {
-    let position = Position::default();
-    let new_position = remove_castling_rights_if_necessary(position, E1);
-    assert!(!new_position.has_castling_rights(CastlingRights::WHITE_KINGSIDE));
-    assert!(!new_position.has_castling_rights(CastlingRights::WHITE_QUEENSIDE));
+    let mut position = Position::default();
+    position.remove_castling_right(CastlingRights::from(E1));
+    assert!(!position.has_castling_rights(CastlingRights::WHITE_KINGSIDE));
+    assert!(!position.has_castling_rights(CastlingRights::WHITE_QUEENSIDE));
     // Black castling rights should remain unchanged
-    assert!(new_position.has_castling_rights(CastlingRights::BLACK_KINGSIDE));
-    assert!(new_position.has_castling_rights(CastlingRights::BLACK_QUEENSIDE));
+    assert!(position.has_castling_rights(CastlingRights::BLACK_KINGSIDE));
+    assert!(position.has_castling_rights(CastlingRights::BLACK_QUEENSIDE));
 }
 
 #[test]
 fn test_disallow_castling_if_necessary_white_kingside_rook_move() {
-    let position = Position::default();
-    let new_position = remove_castling_rights_if_necessary(position, H1);
-    assert!(!new_position.has_castling_rights(CastlingRights::WHITE_KINGSIDE));
+    let mut position = Position::default();
+    position.remove_castling_right(CastlingRights::from(H1));
+    assert!(!position.has_castling_rights(CastlingRights::WHITE_KINGSIDE));
     // White queenside should remain allowed
-    assert!(new_position.has_castling_rights(CastlingRights::WHITE_QUEENSIDE));
+    assert!(position.has_castling_rights(CastlingRights::WHITE_QUEENSIDE));
     // Black castling rights should remain unchanged
-    assert!(new_position.has_castling_rights(CastlingRights::BLACK_KINGSIDE));
-    assert!(new_position.has_castling_rights(CastlingRights::BLACK_QUEENSIDE));
+    assert!(position.has_castling_rights(CastlingRights::BLACK_KINGSIDE));
+    assert!(position.has_castling_rights(CastlingRights::BLACK_QUEENSIDE));
 }
 
 #[test]
 fn test_disallow_castling_if_necessary_white_queenside_rook_move() {
-    let position = Position::default();
-    let new_position = remove_castling_rights_if_necessary(position, A1);
-    assert!(!new_position.has_castling_rights(CastlingRights::WHITE_QUEENSIDE));
+    let mut position = Position::default();
+    position.remove_castling_right(CastlingRights::from(A1));
+
+    assert!(!position.has_castling_rights(CastlingRights::WHITE_QUEENSIDE));
     // White kingside should remain allowed
-    assert!(new_position.has_castling_rights(CastlingRights::WHITE_KINGSIDE));
+    assert!(position.has_castling_rights(CastlingRights::WHITE_KINGSIDE));
     // Black castling rights should remain unchanged
-    assert!(new_position.has_castling_rights(CastlingRights::BLACK_KINGSIDE));
-    assert!(new_position.has_castling_rights(CastlingRights::BLACK_QUEENSIDE));
+    assert!(position.has_castling_rights(CastlingRights::BLACK_KINGSIDE));
+    assert!(position.has_castling_rights(CastlingRights::BLACK_QUEENSIDE));
 }
 
 #[test]
 fn test_disallow_castling_if_necessary_black_king_move() {
-    let position = Position::default();
-    let new_position = remove_castling_rights_if_necessary(position, E8);
-    assert!(!new_position.has_castling_rights(CastlingRights::BLACK_KINGSIDE));
-    assert!(!new_position.has_castling_rights(CastlingRights::BLACK_QUEENSIDE));
+    let mut position = Position::default();
+    position.remove_castling_right(CastlingRights::from(E8));
+
+    assert!(!position.has_castling_rights(CastlingRights::BLACK_KINGSIDE));
+    assert!(!position.has_castling_rights(CastlingRights::BLACK_QUEENSIDE));
     // White castling rights should remain unchanged
-    assert!(new_position.has_castling_rights(CastlingRights::WHITE_KINGSIDE));
-    assert!(new_position.has_castling_rights(CastlingRights::WHITE_QUEENSIDE));
+    assert!(position.has_castling_rights(CastlingRights::WHITE_KINGSIDE));
+    assert!(position.has_castling_rights(CastlingRights::WHITE_QUEENSIDE));
 }
 
 #[test]
 fn test_disallow_castling_if_necessary_black_kingside_rook_move() {
-    let position = Position::default();
-    let new_position = remove_castling_rights_if_necessary(position, H8);
-    assert!(!new_position.has_castling_rights(CastlingRights::BLACK_KINGSIDE));
+    let mut position = Position::default();
+    position.remove_castling_right(CastlingRights::from(H8));
+    assert!(!position.has_castling_rights(CastlingRights::BLACK_KINGSIDE));
     // Black queenside should remain allowed
-    assert!(new_position.has_castling_rights(CastlingRights::BLACK_QUEENSIDE));
+    assert!(position.has_castling_rights(CastlingRights::BLACK_QUEENSIDE));
     // White castling rights should remain unchanged
-    assert!(new_position.has_castling_rights(CastlingRights::WHITE_KINGSIDE));
-    assert!(new_position.has_castling_rights(CastlingRights::WHITE_QUEENSIDE));
+    assert!(position.has_castling_rights(CastlingRights::WHITE_KINGSIDE));
+    assert!(position.has_castling_rights(CastlingRights::WHITE_QUEENSIDE));
 }
 
 #[test]
 fn test_disallow_castling_if_necessary_black_queenside_rook_move() {
-    let position = Position::default();
-    let new_position = remove_castling_rights_if_necessary(position, A8);
-    assert!(!new_position.has_castling_rights(CastlingRights::BLACK_QUEENSIDE));
+    let mut position = Position::default();
+    position.remove_castling_right(CastlingRights::from(A8));
+
+    assert!(!position.has_castling_rights(CastlingRights::BLACK_QUEENSIDE));
     // Black kingside should remain allowed
-    assert!(new_position.has_castling_rights(CastlingRights::BLACK_KINGSIDE));
+    assert!(position.has_castling_rights(CastlingRights::BLACK_KINGSIDE));
     // White castling rights should remain unchanged
-    assert!(new_position.has_castling_rights(CastlingRights::WHITE_KINGSIDE));
-    assert!(new_position.has_castling_rights(CastlingRights::WHITE_QUEENSIDE));
+    assert!(position.has_castling_rights(CastlingRights::WHITE_KINGSIDE));
+    assert!(position.has_castling_rights(CastlingRights::WHITE_QUEENSIDE));
 }
 
 #[test]
 fn test_disallow_castling_if_necessary_other_piece_move() {
-    let position = Position::default();
-    let new_position = remove_castling_rights_if_necessary(position, D4);
+    let mut position = Position::default();
+    position.remove_castling_right(CastlingRights::from(D4));
+
     // Moving a piece from D4 should not affect castling rights
-    assert!(new_position.has_castling_rights(CastlingRights::WHITE_KINGSIDE));
-    assert!(new_position.has_castling_rights(CastlingRights::WHITE_QUEENSIDE));
-    assert!(new_position.has_castling_rights(CastlingRights::BLACK_KINGSIDE));
-    assert!(new_position.has_castling_rights(CastlingRights::BLACK_QUEENSIDE));
+    assert!(position.has_castling_rights(CastlingRights::WHITE_KINGSIDE));
+    assert!(position.has_castling_rights(CastlingRights::WHITE_QUEENSIDE));
+    assert!(position.has_castling_rights(CastlingRights::BLACK_KINGSIDE));
+    assert!(position.has_castling_rights(CastlingRights::BLACK_QUEENSIDE));
 }
 
 // Integration tests for progess function
