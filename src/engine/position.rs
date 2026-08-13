@@ -2,13 +2,14 @@ use boards::Boards;
 mod boards;
 mod castling_rights;
 pub(super) use castling_rights::CastlingRights;
+mod move_api;
 mod occupancy;
 pub(super) mod print;
 mod starting_config;
 
 use crate::engine::{
     bitboard::Bitboard,
-    movegen::{Square, A4, H5},
+    movegen::Square,
     piece::{Color, Typ, *},
     position::{occupancy::Occupancy, starting_config::STARTING_CONFIG},
 };
@@ -85,18 +86,8 @@ impl Position {
         king.iter().next().unwrap()
     }
 
-    pub fn set_en_passant(mut self, square: Square) -> Position {
-        assert!(
-            A4 <= square && square <= H5,
-            "Invalid en passant square {:?}",
-            square
-        );
-        self.en_passant = Some(square);
-        self
-    }
-
-    pub fn reset_en_passant(mut self) -> Position {
-        self.en_passant = None;
+    pub fn set_en_passant(mut self, square: Option<Square>) -> Position {
+        self.en_passant = square;
         self
     }
 

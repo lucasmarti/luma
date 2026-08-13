@@ -1,3 +1,7 @@
+use std::assert_ne;
+#[cfg(debug_assertions)]
+use std::debug_assert_ne;
+
 use crate::engine::{
     chess_move::{ChessMove, MoveType},
     movegen::{
@@ -7,11 +11,11 @@ use crate::engine::{
             ROOK_DIRECTIONS, ROOK_MAX_DISTANCE,
         },
         directions::DirectionFn,
-        pawn::set_en_passant_if_necessary,
         Square,
     },
     piece::Piece,
     position::{CastlingRights, Position},
+    Typ,
 };
 
 pub fn slide(position: &Position, from: Square, path: Vec<Square>, piece: Piece) -> Vec<ChessMove> {
@@ -23,11 +27,11 @@ pub fn slide(position: &Position, from: Square, path: Vec<Square>, piece: Piece)
             return new_chess_moves;
         } else if position.is_occupied_by_color(field, piece.color.get_opponent_color()) {
             // capture
-            new_chess_moves.push(progess(position, piece, from, field));
+            new_chess_moves.push(progress(position, piece, from, field));
             return new_chess_moves;
         } else {
             // empty field
-            new_chess_moves.push(progess(position, piece, from, field));
+            new_chess_moves.push(progress(position, piece, from, field));
         }
     }
     new_chess_moves
@@ -127,7 +131,8 @@ pub fn generate_path_with_limit(
     path
 }
 
-pub fn progess(position: &Position, piece: Piece, from: Square, to: Square) -> ChessMove {
+pub fn progress(position: &Position, piece: Piece, from: Square, to: Square) -> ChessMove {
+    debug_assert_ne!(piece.typ, Typ::Pawn);
     let tuple = match position.get_piece_at(to) {
         Some(piece) => (MoveType::Capture, Some(piece)),
         None => (MoveType::Quiet, None),
@@ -136,9 +141,8 @@ pub fn progess(position: &Position, piece: Piece, from: Square, to: Square) -> C
         .remove_piece(from)
         .remove_piece(to)
         .put_piece(piece, to)
-        .reset_en_passant()
+        .set_en_passant(None)
         .toggle_player();
-    new_position = set_en_passant_if_necessary(new_position, piece, from, to);
     new_position.remove_castling_right(CastlingRights::from(from));
     ChessMove {
         move_type: tuple.0,

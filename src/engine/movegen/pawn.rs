@@ -2,12 +2,11 @@ use crate::engine::{
     bitboard::Bitboard,
     chess_move::{ChessMove, MoveType},
     movegen::{
-        common::progess,
         directions::{self, DirectionFn, RowFn},
         Square, FILE_G, FILE_H, RANK_1, RANK_2, RANK_4, RANK_5, RANK_7, RANK_8,
     },
     piece::{Color, Piece, Typ, *},
-    position::Position,
+    position::{CastlingRights, Position},
 };
 
 struct EnPassantConfig {
@@ -157,7 +156,7 @@ fn get_move_capture(
 ) -> Option<ChessMove> {
     if let Some(to) = direction(from) {
         if position.is_occupied_by_color(to, piece.color.get_opponent_color()) {
-            return Some(progess(position, piece, from, to));
+            return Some(progress(position, piece, from, to));
         }
     }
     None
@@ -311,7 +310,7 @@ fn get_move_forward(
 ) -> Option<ChessMove> {
     if let Some(to) = direction(from) {
         if !position.is_occupied(to) {
-            return Some(progess(position, piece, from, to));
+            return Some(progress(position, piece, from, to));
         }
     }
     None
@@ -341,12 +340,31 @@ fn get_move_two_forward(
         if !position.is_occupied(one_forward) {
             if let Some(two_forward) = direction(one_forward) {
                 if !position.is_occupied(two_forward) {
-                    return Some(progess(position, piece, from, two_forward));
+                    return Some(progress(position, piece, from, two_forward));
                 }
             }
         }
     }
     None
+}
+
+pub fn progress(position: &Position, piece: Piece, from: Square, to: Square) -> ChessMove {
+    let mut new_position = position
+        .remove_piece(from)
+        .remove_piece(to)
+        .put_piece(piece, to)
+        .set_en_passant(get_en_passant(from, to))
+        .toggle_player();
+    new_position.remove_castling_right(CastlingRights::from(from));
+    ChessMove {
+        move_type: MoveType::Quiet,
+        piece,
+        from,
+        to,
+        capture: None,
+        pormotion: None,
+        position: new_position,
+    }
 }
 
 pub fn en_passant(
@@ -362,7 +380,7 @@ pub fn en_passant(
         .remove_piece(to)
         .put_piece(piece, to)
         .toggle_player()
-        .reset_en_passant();
+        .set_en_passant(None);
 
     ChessMove {
         move_type: MoveType::EnPassant,
@@ -385,7 +403,7 @@ pub fn promote(position: &Position, from: Square, to: Square, new_piece: Piece) 
         .remove_piece(to)
         .put_piece(new_piece, to)
         .toggle_player()
-        .reset_en_passant();
+        .set_en_passant(None);
 
     ChessMove {
         move_type: tuple.0,
@@ -400,36 +418,14 @@ pub fn promote(position: &Position, from: Square, to: Square, new_piece: Piece) 
         position: new_position,
     }
 }
-
-pub fn set_en_passant_if_necessary(
-    position: Position,
-    piece: Piece,
-    from: Square,
-    to: Square,
-) -> Position {
-    if is_pawn_two_rows_forward(piece, from, to) {
-        return position.set_en_passant(to);
+pub fn get_en_passant(from: Square, to: Square) -> Option<Square> {
+    if (from.intersects(RANK_2) && to.intersects(RANK_4))
+        || (from.intersects(RANK_7) && to.intersects(RANK_5))
+    {
+        Some(to)
+    } else {
+        None
     }
-    position
-}
-
-pub fn is_pawn_two_rows_forward(piece: Piece, from: Square, to: Square) -> bool {
-    if !(piece.typ == Typ::Pawn) {
-        return false;
-    }
-    match piece.color {
-        Color::White => {
-            if from.intersects(RANK_2) && to.intersects(RANK_4) {
-                return true;
-            }
-        }
-        Color::Black => {
-            if from.intersects(RANK_7) && to.intersects(RANK_5) {
-                return true;
-            }
-        }
-    }
-    false
 }
 
 #[cfg(test)]

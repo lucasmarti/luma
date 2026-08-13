@@ -1,11 +1,12 @@
 use crate::engine::{
+    self,
     movegen::{
         common::{
             get_moves_for_bishop_at_square, get_moves_for_king_at_square,
             get_moves_for_knight_at_square, get_moves_for_queen_at_square,
-            get_moves_for_rook_at_square, progess,
+            get_moves_for_rook_at_square, progress,
         },
-        pawn::{en_passant, is_pawn_two_rows_forward, promote, set_en_passant_if_necessary},
+        pawn::{en_passant, promote},
         *,
     },
     piece::*,
@@ -14,7 +15,7 @@ use crate::engine::{
 #[test]
 fn test_progress_white_king() {
     let position = Position::default();
-    let new_position = progess(&position, WHITE_KING, E1, E2);
+    let new_position = progress(&position, WHITE_KING, E1, E2);
     assert!(!new_position.position.is_occupied_by_piece(E1, WHITE_KING));
     assert!(new_position.position.is_occupied_by_piece(E2, WHITE_KING));
 }
@@ -37,73 +38,6 @@ fn test_en_passant() {
     assert!(!new_position.position.is_occupied_by_piece(E4, BLACK_PAWN));
     assert!(new_position.position.is_occupied_by_piece(D3, BLACK_PAWN));
 }
-
-// Tests for is_pawn_two_rows_forward function
-#[test]
-fn test_is_pawn_two_rows_forward_white_valid() {
-    // White pawn moving from row 2 to row 4
-    assert!(is_pawn_two_rows_forward(WHITE_PAWN, E2, E4));
-    assert!(is_pawn_two_rows_forward(WHITE_PAWN, A2, A4));
-    assert!(is_pawn_two_rows_forward(WHITE_PAWN, H2, H4));
-}
-
-#[test]
-fn test_is_pawn_two_rows_forward_white_invalid() {
-    // White pawn not moving two rows
-    assert!(!is_pawn_two_rows_forward(WHITE_PAWN, E2, E3));
-    assert!(!is_pawn_two_rows_forward(WHITE_PAWN, E3, E4));
-    assert!(!is_pawn_two_rows_forward(WHITE_PAWN, E4, E5));
-}
-
-#[test]
-fn test_is_pawn_two_rows_forward_black_valid() {
-    // Black pawn moving from row 7 to row 5
-    assert!(is_pawn_two_rows_forward(BLACK_PAWN, E7, E5));
-    assert!(is_pawn_two_rows_forward(BLACK_PAWN, A7, A5));
-    assert!(is_pawn_two_rows_forward(BLACK_PAWN, H7, H5));
-}
-
-#[test]
-fn test_is_pawn_two_rows_forward_black_invalid() {
-    // Black pawn not moving two rows
-    assert!(!is_pawn_two_rows_forward(BLACK_PAWN, E7, E6));
-    assert!(!is_pawn_two_rows_forward(BLACK_PAWN, E6, E5));
-    assert!(!is_pawn_two_rows_forward(BLACK_PAWN, E5, E4));
-}
-
-// Tests for set_en_passant_if_necessary function
-#[test]
-fn test_set_en_passant_if_necessary_white_pawn_two_squares() {
-    let position = Position::default();
-    let new_position = set_en_passant_if_necessary(position, WHITE_PAWN, E2, E4);
-    // En passant should be set to E4 (the destination square)
-    assert_eq!(new_position.get_en_passant(), Some(E4));
-}
-
-#[test]
-fn test_set_en_passant_if_necessary_black_pawn_two_squares() {
-    let position = Position::default();
-    let new_position = set_en_passant_if_necessary(position, BLACK_PAWN, E7, E5);
-    // En passant should be set to E5 (the destination square)
-    assert_eq!(new_position.get_en_passant(), Some(E5));
-}
-
-#[test]
-fn test_set_en_passant_if_necessary_white_pawn_one_square() {
-    let position = Position::default();
-    let new_position = set_en_passant_if_necessary(position, WHITE_PAWN, E2, E3);
-    // En passant should not be set for one square moves
-    assert_eq!(new_position.get_en_passant(), None);
-}
-
-#[test]
-fn test_set_en_passant_if_necessary_non_pawn() {
-    let position = Position::default();
-    let new_position = set_en_passant_if_necessary(position, WHITE_KING, E1, E2);
-    // En passant should not be set for non-pawn moves
-    assert_eq!(new_position.get_en_passant(), None);
-}
-
 // Tests for disallow_castling_if_necessary function
 #[test]
 fn test_disallow_castling_if_necessary_white_king_move() {
@@ -190,25 +124,18 @@ fn test_disallow_castling_if_necessary_other_piece_move() {
     assert!(position.has_castling_rights(CastlingRights::BLACK_QUEENSIDE));
 }
 
-// Integration tests for progess function
+// Integration tests for progress function
 #[test]
-fn test_progess_toggles_player() {
+fn test_progress_toggles_player() {
     let position = Position::default(); // White to move
-    let new_position = progess(&position, WHITE_PAWN, E2, E3);
+    let new_position = engine::movegen::pawn::progress(&position, WHITE_PAWN, E2, E3);
     assert_eq!(new_position.position.get_player(), Color::Black);
 }
 
 #[test]
-fn test_progess_sets_en_passant_for_pawn_two_squares() {
+fn test_progress_disallows_castling_for_king_move() {
     let position = Position::default();
-    let new_position = progess(&position, WHITE_PAWN, E2, E4);
-    assert_eq!(new_position.position.get_en_passant(), Some(E4));
-}
-
-#[test]
-fn test_progess_disallows_castling_for_king_move() {
-    let position = Position::default();
-    let new_position = progess(&position, WHITE_KING, E1, E2);
+    let new_position = progress(&position, WHITE_KING, E1, E2);
     assert!(!new_position
         .position
         .has_castling_rights(CastlingRights::WHITE_KINGSIDE));
@@ -218,9 +145,9 @@ fn test_progess_disallows_castling_for_king_move() {
 }
 
 #[test]
-fn test_progess_disallows_castling_for_rook_move() {
+fn test_progress_disallows_castling_for_rook_move() {
     let position = Position::default();
-    let new_position = progess(&position, WHITE_ROOK, H1, H2);
+    let new_position = progress(&position, WHITE_ROOK, H1, H2);
     assert!(!new_position
         .position
         .has_castling_rights(CastlingRights::WHITE_KINGSIDE));

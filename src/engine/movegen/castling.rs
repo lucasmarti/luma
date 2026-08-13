@@ -1,7 +1,6 @@
 use crate::engine::movegen::Square;
 
 use crate::engine::chess_move::{ChessMove, MoveType};
-use crate::engine::position::CastlingRights;
 use crate::engine::{
     movegen::castling_config::{
         CastlingConfiguration, BLACK_KINGSIDE, BLACK_QUEENSIDE, WHITE_KINGSIDE, WHITE_QUEENSIDE,
@@ -63,7 +62,7 @@ pub fn get_castling_move(
         .put_piece(castling.king, castling.king_to)
         .put_piece(castling.rook, castling.rook_to)
         .toggle_player()
-        .reset_en_passant()
+        .set_en_passant(None)
         .disallow_castling_for_color(castling.color);
 
     if !is_check(&new_position, castling.color) {

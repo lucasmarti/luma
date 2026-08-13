@@ -1,3 +1,5 @@
+use std::assert_eq;
+
 use crate::engine::{movegen::*, piece::*};
 
 use super::{print::Print, Position};
@@ -41,4 +43,14 @@ fn test_put_white_king() {
     let new_position = position.put_piece(WHITE_KING, E2);
     assert_ne!(position.is_occupied_by_piece(E2, WHITE_KING), true);
     assert_eq!(new_position.is_occupied_by_piece(E2, WHITE_KING), true);
+}
+
+#[test]
+fn test_en_passant() {
+    let mut position = Position::starting();
+    assert_eq!(position.get_en_passant(), None);
+    position = position.set_en_passant(Some(E4));
+    assert_eq!(position.en_passant, Some(E4));
+    position = position.set_en_passant(None);
+    assert_eq!(position.get_en_passant(), None);
 }

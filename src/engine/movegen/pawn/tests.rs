@@ -384,7 +384,7 @@ mod test_white_en_passant {
         let position = Position::default()
             .put_piece(WHITE_PAWN, E5)
             .put_piece(BLACK_PAWN, D5)
-            .set_en_passant(D5);
+            .set_en_passant(Some(D5));
 
         let result = get_move_white_left_en_passant(&position, E5);
 
@@ -400,7 +400,7 @@ mod test_white_en_passant {
         let position = Position::default()
             .put_piece(WHITE_PAWN, E5)
             .put_piece(BLACK_PAWN, F5)
-            .set_en_passant(F5);
+            .set_en_passant(Some(F5));
 
         let result = get_move_white_right_en_passant(&position, E5);
 
@@ -430,7 +430,7 @@ mod test_white_en_passant {
     fn test_en_passant_not_adjacent() {
         let position = Position::default()
             .put_piece(WHITE_PAWN, E5)
-            .set_en_passant(C5); // Not adjacent
+            .set_en_passant(Some(C5)); // Not adjacent
 
         let left_result = get_move_white_left_en_passant(&position, E5);
         let right_result = get_move_white_right_en_passant(&position, E5);
@@ -444,7 +444,7 @@ mod test_white_en_passant {
         // A-file can't en passant left
         let position = Position::default()
             .put_piece(WHITE_PAWN, A5)
-            .set_en_passant(B5);
+            .set_en_passant(Some(B5));
 
         let a_left = get_move_white_left_en_passant(&position, A5);
         assert!(a_left.is_none());
@@ -452,7 +452,7 @@ mod test_white_en_passant {
         // H-file can't en passant right
         let position2 = Position::default()
             .put_piece(WHITE_PAWN, H5)
-            .set_en_passant(G5);
+            .set_en_passant(Some(G5));
 
         let h_right = get_move_white_right_en_passant(&position2, H5);
         assert!(h_right.is_none());
@@ -472,7 +472,7 @@ mod test_black_en_passant {
         let position = Position::default()
             .put_piece(BLACK_PAWN, E4)
             .put_piece(WHITE_PAWN, D4)
-            .set_en_passant(D4);
+            .set_en_passant(Some(D4));
 
         let result = get_move_black_left_en_passant(&position, E4);
 
@@ -488,7 +488,7 @@ mod test_black_en_passant {
         let position = Position::default()
             .put_piece(BLACK_PAWN, E4)
             .put_piece(WHITE_PAWN, F4)
-            .set_en_passant(F4);
+            .set_en_passant(Some(F4));
 
         let result = get_move_black_right_en_passant(&position, E4);
 
@@ -785,7 +785,7 @@ mod test_aggregate_functions {
         let position = Position::default()
             .put_piece(WHITE_PAWN, E5)
             .put_piece(WHITE_PAWN, D5)
-            .set_en_passant(D5);
+            .set_en_passant(Some(D5));
 
         let moves = get_white_pawn_moves(&position, E5);
 
@@ -804,7 +804,7 @@ mod test_aggregate_functions {
         let position = Position::default()
             .put_piece(WHITE_PAWN, E5)
             .put_piece(BLACK_PAWN, D5)
-            .set_en_passant(D5);
+            .set_en_passant(Some(D5));
 
         let moves = get_white_pawn_moves(&position, E5);
 
@@ -910,7 +910,7 @@ mod test_public_interface {
             .put_piece(BLACK_PAWN, D5)
             .put_piece(BLACK_PAWN, F5)
             .put_piece(BLACK_KNIGHT, E6)
-            .set_en_passant(D5);
+            .set_en_passant(Some(D5));
 
         let moves = get_white_pawn_moves(&position, E5);
         // White pawn on E5 with:
@@ -925,5 +925,46 @@ mod test_public_interface {
         });
 
         assert!(has_en_passant);
+    }
+}
+mod en_passant_if_necessary {
+    use crate::engine::{
+        movegen::{
+            pawn::{get_en_passant, progress},
+            *,
+        },
+        Position, WHITE_PAWN,
+    };
+
+    // Tests for set_en_passant_if_necessary function
+    #[test]
+    fn test_set_en_passant_if_necessary_white_pawn_two_squares() {
+        let position = Position::default();
+        let new_position = position.set_en_passant(get_en_passant(E2, E4));
+        // En passant should be set to E4 (the destination square)
+        assert_eq!(new_position.get_en_passant(), Some(E4));
+    }
+
+    #[test]
+    fn test_set_en_passant_if_necessary_black_pawn_two_squares() {
+        let position = Position::default();
+        let new_position = position.set_en_passant(get_en_passant(E7, E5));
+        // En passant should be set to E5 (the destination square)
+        assert_eq!(new_position.get_en_passant(), Some(E5));
+    }
+
+    #[test]
+    fn test_set_en_passant_if_necessary_white_pawn_one_square() {
+        let position = Position::default();
+        let new_position = position.set_en_passant(get_en_passant(E2, E3));
+        // En passant should not be set for one square moves
+        assert_eq!(new_position.get_en_passant(), None);
+    }
+
+    #[test]
+    fn test_progress_sets_en_passant_for_pawn_two_squares() {
+        let position = Position::default();
+        let new_position = progress(&position, WHITE_PAWN, E2, E4);
+        assert_eq!(new_position.position.get_en_passant(), Some(E4));
     }
 }
