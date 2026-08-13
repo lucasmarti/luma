@@ -1,9 +1,6 @@
-use std::ops::BitOr;
-
-use strum_macros::EnumCount;
-
 use crate::engine::movegen::{A1, A8, E1, E8, H1, H8};
-use crate::engine::Square;
+use crate::engine::{Color, Square};
+use std::ops::BitOr;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct CastlingRights(u8);
@@ -39,6 +36,12 @@ impl CastlingRights {
 
     pub fn has(&self, rights: Self) -> bool {
         (self.0 & rights.0) == rights.0
+    }
+    pub fn get(color: Color) -> CastlingRights {
+        match color {
+            Color::Black => CastlingRights::BLACK_KINGSIDE | CastlingRights::BLACK_QUEENSIDE,
+            Color::White => CastlingRights::WHITE_KINGSIDE | CastlingRights::WHITE_QUEENSIDE,
+        }
     }
 }
 

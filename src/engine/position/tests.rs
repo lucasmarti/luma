@@ -28,19 +28,16 @@ fn test_get_all() {
 
 #[test]
 fn test_remove_white_king() {
-    let position = Position::starting();
+    let mut position = Position::starting();
     assert_eq!(position.boards[(Color::White, Typ::King)].count_ones(), 1);
-    let new_position = position.remove_piece(E1);
-    assert_eq!(
-        new_position.boards[(Color::White, Typ::King)].count_ones(),
-        0
-    );
+    position.remove_piece(E1);
+    assert_eq!(position.boards[(Color::White, Typ::King)].count_ones(), 0);
 }
 
 #[test]
 fn test_put_white_king() {
     let position = Position::starting();
-    let new_position = position.put_piece(WHITE_KING, E2);
+    let new_position = position.with_piece(WHITE_KING, E2);
     assert_ne!(position.is_occupied_by_piece(E2, WHITE_KING), true);
     assert_eq!(new_position.is_occupied_by_piece(E2, WHITE_KING), true);
 }
@@ -49,8 +46,8 @@ fn test_put_white_king() {
 fn test_en_passant() {
     let mut position = Position::starting();
     assert_eq!(position.get_en_passant(), None);
-    position = position.set_en_passant(Some(E4));
+    position = position.with_en_passant(Some(E4));
     assert_eq!(position.en_passant, Some(E4));
-    position = position.set_en_passant(None);
+    position = position.with_en_passant(None);
     assert_eq!(position.get_en_passant(), None);
 }

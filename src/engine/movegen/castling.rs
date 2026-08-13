@@ -1,6 +1,7 @@
 use crate::engine::movegen::Square;
 
 use crate::engine::chess_move::{ChessMove, MoveType};
+use crate::engine::position::CastlingRights;
 use crate::engine::{
     movegen::castling_config::{
         CastlingConfiguration, BLACK_KINGSIDE, BLACK_QUEENSIDE, WHITE_KINGSIDE, WHITE_QUEENSIDE,
@@ -56,16 +57,16 @@ pub fn get_castling_move(
         return None;
     }
 
-    let new_position = position
-        .remove_piece(castling.king_from)
-        .remove_piece(castling.rook_from)
-        .put_piece(castling.king, castling.king_to)
-        .put_piece(castling.rook, castling.rook_to)
-        .toggle_player()
-        .set_en_passant(None)
-        .disallow_castling_for_color(castling.color);
+    let mut new_pos = *position;
+    new_pos.remove_piece(castling.king_from);
+    new_pos.remove_piece(castling.rook_from);
+    new_pos.put_piece(castling.king, castling.king_to);
+    new_pos.put_piece(castling.rook, castling.rook_to);
+    new_pos.toggle_player();
+    new_pos.set_en_passant(None);
+    new_pos.remove_castling_right(CastlingRights::get(castling.color));
 
-    if !is_check(&new_position, castling.color) {
+    if !is_check(&new_pos, castling.color) {
         let chess_move: ChessMove = ChessMove {
             move_type: MoveType::Castling,
             piece: castling.king,
@@ -73,7 +74,7 @@ pub fn get_castling_move(
             to: castling.king_to,
             capture: None,
             pormotion: None,
-            position: new_position,
+            position: new_pos,
         };
         return Some(chess_move);
     }

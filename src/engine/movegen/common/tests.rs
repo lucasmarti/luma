@@ -17,8 +17,8 @@ use crate::engine::{
 fn test_slide1() {
     let mut position: Position = Position::default();
     position = position
-        .put_piece(WHITE_QUEEN, G4)
-        .put_piece(WHITE_PAWN, G7);
+        .with_piece(WHITE_QUEEN, G4)
+        .with_piece(WHITE_PAWN, G7);
 
     let path = generate_path_with_limit(G4, directions::up, u32::MAX);
     let positions = slide(&position, G4, path, WHITE_QUEEN);
@@ -35,7 +35,7 @@ fn test_slide1() {
 #[test]
 fn test_get_piece_moves_king() {
     let mut position: Position = Position::default();
-    position = position.put_piece(WHITE_KING, D4);
+    position = position.with_piece(WHITE_KING, D4);
     let chess_move = get_moves_for_king_at_square(&position, WHITE_KING, D4);
 
     assert_eq!(chess_move.len(), 8);
@@ -50,7 +50,9 @@ fn test_get_piece_moves_king() {
 #[test]
 fn test_get_piece_moves_king_blocked_by_own_piece() {
     let mut position: Position = Position::default();
-    position = position.put_piece(WHITE_KING, D4).put_piece(WHITE_PAWN, D5); // Block upward movement
+    position = position
+        .with_piece(WHITE_KING, D4)
+        .with_piece(WHITE_PAWN, D5); // Block upward movement
 
     let positions = get_moves_for_king_at_square(&position, WHITE_KING, D4);
     assert_eq!(positions.len(), 7); // One less because D5 is blocked
@@ -61,7 +63,7 @@ fn test_get_piece_moves_king_blocked_by_own_piece() {
 
 #[test]
 fn test_get_piece_moves_rook() {
-    let position: Position = Position::default().put_piece(WHITE_ROOK, D4);
+    let position: Position = Position::default().with_piece(WHITE_ROOK, D4);
 
     // Test rook directions (4 directions)
     let moves = get_moves_for_rook_at_square(&position, WHITE_ROOK, D4);
@@ -75,11 +77,11 @@ fn test_get_piece_moves_rook() {
 
 #[test]
 fn test_get_piece_moves_rook_with_obstacles() {
-    let mut position: Position = Position::default().put_piece(WHITE_KING, A1);
+    let mut position: Position = Position::default().with_piece(WHITE_KING, A1);
     position = position
-        .put_piece(WHITE_ROOK, D4)
-        .put_piece(WHITE_PAWN, D6) // Block upward at D6
-        .put_piece(BLACK_PAWN, F4); // Enemy piece at F4 (can capture)
+        .with_piece(WHITE_ROOK, D4)
+        .with_piece(WHITE_PAWN, D6) // Block upward at D6
+        .with_piece(BLACK_PAWN, F4); // Enemy piece at F4 (can capture)
 
     let positions = get_moves_for_rook_at_square(&position, WHITE_ROOK, D4);
     // Up: only D5 (blocked by own pawn at D6)
@@ -105,8 +107,8 @@ fn contains_move(chess_moves: &Vec<ChessMove>, piece: Piece, field: Square) -> b
 fn test_slide2() {
     let mut position: Position = Position::default();
     position = position
-        .put_piece(WHITE_QUEEN, G4)
-        .put_piece(BLACK_PAWN, G7);
+        .with_piece(WHITE_QUEEN, G4)
+        .with_piece(BLACK_PAWN, G7);
     let path = generate_path_with_limit(G4, directions::up, u32::MAX);
 
     let positions = slide(&position, G4, path, WHITE_QUEEN);
@@ -128,7 +130,7 @@ fn test_slide2() {
 #[test]
 fn test_slide3() {
     let mut position: Position = Position::default();
-    position = position.put_piece(WHITE_QUEEN, G4);
+    position = position.with_piece(WHITE_QUEEN, G4);
     let path = generate_path_with_limit(G4, directions::up, u32::MAX);
 
     let positions = slide(&position, G4, path, WHITE_QUEEN);

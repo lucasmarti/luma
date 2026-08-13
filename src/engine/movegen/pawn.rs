@@ -349,13 +349,13 @@ fn get_move_two_forward(
 }
 
 pub fn progress(position: &Position, piece: Piece, from: Square, to: Square) -> ChessMove {
-    let mut new_position = position
-        .remove_piece(from)
-        .remove_piece(to)
-        .put_piece(piece, to)
-        .set_en_passant(get_en_passant(from, to))
-        .toggle_player();
-    new_position.remove_castling_right(CastlingRights::from(from));
+    let mut new_pos = *position;
+    new_pos.remove_piece(from);
+    new_pos.remove_piece(to);
+    new_pos.put_piece(piece, to);
+    new_pos.set_en_passant(get_en_passant(from, to));
+    new_pos.toggle_player();
+    new_pos.remove_castling_right(CastlingRights::from(from));
     ChessMove {
         move_type: MoveType::Quiet,
         piece,
@@ -363,7 +363,7 @@ pub fn progress(position: &Position, piece: Piece, from: Square, to: Square) -> 
         to,
         capture: None,
         pormotion: None,
-        position: new_position,
+        position: new_pos,
     }
 }
 
@@ -374,13 +374,13 @@ pub fn en_passant(
     to: Square,
     capture: Square,
 ) -> ChessMove {
-    let new_position = position
-        .remove_piece(from)
-        .remove_piece(capture)
-        .remove_piece(to)
-        .put_piece(piece, to)
-        .toggle_player()
-        .set_en_passant(None);
+    let mut new_pos = *position;
+    new_pos.remove_piece(from);
+    new_pos.remove_piece(capture);
+    new_pos.remove_piece(to);
+    new_pos.put_piece(piece, to);
+    new_pos.toggle_player();
+    new_pos.set_en_passant(None);
 
     ChessMove {
         move_type: MoveType::EnPassant,
@@ -389,7 +389,7 @@ pub fn en_passant(
         to,
         capture: position.get_piece_at(capture),
         pormotion: None,
-        position: new_position,
+        position: new_pos,
     }
 }
 
@@ -398,12 +398,12 @@ pub fn promote(position: &Position, from: Square, to: Square, new_piece: Piece) 
         Some(piece) => (MoveType::PromotionCapture, Some(piece)),
         None => (MoveType::Promotion, None),
     };
-    let new_position = position
-        .remove_piece(from)
-        .remove_piece(to)
-        .put_piece(new_piece, to)
-        .toggle_player()
-        .set_en_passant(None);
+    let mut new_pos = *position;
+    new_pos.remove_piece(from);
+    new_pos.remove_piece(to);
+    new_pos.put_piece(new_piece, to);
+    new_pos.toggle_player();
+    new_pos.set_en_passant(None);
 
     ChessMove {
         move_type: tuple.0,
@@ -415,7 +415,7 @@ pub fn promote(position: &Position, from: Square, to: Square, new_piece: Piece) 
         to,
         capture: tuple.1,
         pormotion: Some(new_piece),
-        position: new_position,
+        position: new_pos,
     }
 }
 pub fn get_en_passant(from: Square, to: Square) -> Option<Square> {

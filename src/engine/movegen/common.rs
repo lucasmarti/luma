@@ -137,13 +137,13 @@ pub fn progress(position: &Position, piece: Piece, from: Square, to: Square) -> 
         Some(piece) => (MoveType::Capture, Some(piece)),
         None => (MoveType::Quiet, None),
     };
-    let mut new_position = position
-        .remove_piece(from)
-        .remove_piece(to)
-        .put_piece(piece, to)
-        .set_en_passant(None)
-        .toggle_player();
-    new_position.remove_castling_right(CastlingRights::from(from));
+    let mut new_pos = *position;
+    new_pos.remove_piece(from);
+    new_pos.remove_piece(to);
+    new_pos.put_piece(piece, to);
+    new_pos.set_en_passant(None);
+    new_pos.toggle_player();
+    new_pos.remove_castling_right(CastlingRights::from(from));
     ChessMove {
         move_type: tuple.0,
         piece,
@@ -151,7 +151,7 @@ pub fn progress(position: &Position, piece: Piece, from: Square, to: Square) -> 
         to,
         capture: tuple.1,
         pormotion: None,
-        position: new_position,
+        position: new_pos,
     }
 }
 #[cfg(test)]

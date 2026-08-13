@@ -13,8 +13,8 @@ use crate::engine::{
 #[test]
 fn test_white_kingside_castling_allowed() {
     let position = Position::default()
-        .put_piece(WHITE_KING, E1)
-        .put_piece(WHITE_ROOK, H1);
+        .with_piece(WHITE_KING, E1)
+        .with_piece(WHITE_ROOK, H1);
 
     let moves = get_white_castling_moves(&position);
 
@@ -32,8 +32,8 @@ fn test_white_kingside_castling_allowed() {
 #[test]
 fn test_white_queenside_castling_allowed() {
     let position = Position::default()
-        .put_piece(WHITE_KING, E1)
-        .put_piece(WHITE_ROOK, A1);
+        .with_piece(WHITE_KING, E1)
+        .with_piece(WHITE_ROOK, A1);
 
     let moves = get_white_castling_moves(&position);
 
@@ -51,9 +51,9 @@ fn test_white_queenside_castling_allowed() {
 fn test_white_castling_blocked_by_pieces() {
     // Kingside blocked
     let position = Position::default()
-        .put_piece(WHITE_KING, E1)
-        .put_piece(WHITE_ROOK, H1)
-        .put_piece(WHITE_QUEEN, F1); // Blocking piece
+        .with_piece(WHITE_KING, E1)
+        .with_piece(WHITE_ROOK, H1)
+        .with_piece(WHITE_QUEEN, F1); // Blocking piece
 
     let moves = get_white_castling_moves(&position);
     let castling_move = moves.iter().find(|c| {
@@ -67,9 +67,9 @@ fn test_white_castling_blocked_by_pieces() {
 
     // Queenside blocked
     let position = Position::default()
-        .put_piece(WHITE_KING, E1)
-        .put_piece(WHITE_ROOK, A1)
-        .put_piece(WHITE_QUEEN, D1); // Blocking piece
+        .with_piece(WHITE_KING, E1)
+        .with_piece(WHITE_ROOK, A1)
+        .with_piece(WHITE_QUEEN, D1); // Blocking piece
 
     let moves = get_white_castling_moves(&position);
     let castling_move = moves.iter().find(|c| {
@@ -85,9 +85,9 @@ fn test_white_castling_blocked_by_pieces() {
 #[test]
 fn test_white_castling_not_allowed_when_in_check() {
     let position = Position::default()
-        .put_piece(WHITE_KING, E1)
-        .put_piece(WHITE_ROOK, H1)
-        .put_piece(BLACK_ROOK, E8); // Attacking the king
+        .with_piece(WHITE_KING, E1)
+        .with_piece(WHITE_ROOK, H1)
+        .with_piece(BLACK_ROOK, E8); // Attacking the king
 
     let moves = get_white_castling_moves(&position);
     let castling_move = moves.iter().find(|c| {
@@ -104,9 +104,9 @@ fn test_white_castling_not_allowed_when_in_check() {
 fn test_white_castling_not_allowed_through_check() {
     // Kingside - F1 under attack
     let position = Position::default()
-        .put_piece(WHITE_KING, E1)
-        .put_piece(WHITE_ROOK, H1)
-        .put_piece(BLACK_ROOK, F8); // Attacking F1
+        .with_piece(WHITE_KING, E1)
+        .with_piece(WHITE_ROOK, H1)
+        .with_piece(BLACK_ROOK, F8); // Attacking F1
 
     let moves = get_white_castling_moves(&position);
     let castling_move = moves.iter().find(|c| {
@@ -120,9 +120,9 @@ fn test_white_castling_not_allowed_through_check() {
 
     // Queenside - D1 under attack
     let position = Position::default()
-        .put_piece(WHITE_KING, E1)
-        .put_piece(WHITE_ROOK, A1)
-        .put_piece(BLACK_ROOK, D8); // Attacking D1
+        .with_piece(WHITE_KING, E1)
+        .with_piece(WHITE_ROOK, A1)
+        .with_piece(BLACK_ROOK, D8); // Attacking D1
 
     let moves = get_white_castling_moves(&position);
     let castling_move = moves.iter().find(|c| {
@@ -140,8 +140,8 @@ fn test_white_castling_not_allowed_through_check() {
 #[test]
 fn test_black_kingside_castling_allowed() {
     let position = Position::default()
-        .put_piece(BLACK_KING, E8)
-        .put_piece(BLACK_ROOK, H8);
+        .with_piece(BLACK_KING, E8)
+        .with_piece(BLACK_ROOK, H8);
 
     let moves = get_black_castling_moves(&position);
 
@@ -158,8 +158,8 @@ fn test_black_kingside_castling_allowed() {
 #[test]
 fn test_black_queenside_castling_allowed() {
     let position = Position::default()
-        .put_piece(BLACK_KING, E8)
-        .put_piece(BLACK_ROOK, A8);
+        .with_piece(BLACK_KING, E8)
+        .with_piece(BLACK_ROOK, A8);
     let moves = get_black_castling_moves(&position);
 
     let castling_move = moves.iter().find(|c| {
@@ -176,9 +176,9 @@ fn test_black_queenside_castling_allowed() {
 fn test_black_castling_blocked_by_pieces() {
     // Kingside blocked
     let position = Position::default()
-        .put_piece(BLACK_KING, E8)
-        .put_piece(BLACK_ROOK, H8)
-        .put_piece(BLACK_QUEEN, F8); // Blocking piece
+        .with_piece(BLACK_KING, E8)
+        .with_piece(BLACK_ROOK, H8)
+        .with_piece(BLACK_QUEEN, F8); // Blocking piece
 
     let moves = get_black_castling_moves(&position);
     let castling_move = moves.iter().find(|c| {
@@ -192,9 +192,9 @@ fn test_black_castling_blocked_by_pieces() {
 
     // Queenside blocked
     let position = Position::default()
-        .put_piece(BLACK_KING, E8)
-        .put_piece(BLACK_ROOK, A8)
-        .put_piece(BLACK_QUEEN, B8); // Blocking piece
+        .with_piece(BLACK_KING, E8)
+        .with_piece(BLACK_ROOK, A8)
+        .with_piece(BLACK_QUEEN, B8); // Blocking piece
 
     let moves = get_black_castling_moves(&position);
     let castling_move = moves.iter().find(|c| {
@@ -210,9 +210,9 @@ fn test_black_castling_blocked_by_pieces() {
 #[test]
 fn test_black_castling_not_allowed_when_in_check() {
     let position = Position::default()
-        .put_piece(BLACK_KING, E8)
-        .put_piece(BLACK_ROOK, H8)
-        .put_piece(WHITE_ROOK, E1); // Attacking the king
+        .with_piece(BLACK_KING, E8)
+        .with_piece(BLACK_ROOK, H8)
+        .with_piece(WHITE_ROOK, E1); // Attacking the king
 
     let moves = get_black_castling_moves(&position);
     let castling_move = moves.iter().find(|c| {
@@ -229,9 +229,9 @@ fn test_black_castling_not_allowed_when_in_check() {
 fn test_black_castling_not_allowed_through_check() {
     // Kingside - F8 under attack
     let position = Position::default()
-        .put_piece(BLACK_KING, E8)
-        .put_piece(BLACK_ROOK, H8)
-        .put_piece(WHITE_ROOK, F1); // Attacking F8
+        .with_piece(BLACK_KING, E8)
+        .with_piece(BLACK_ROOK, H8)
+        .with_piece(WHITE_ROOK, F1); // Attacking F8
 
     let moves = get_black_castling_moves(&position);
     let castling_move = moves.iter().find(|c| {
@@ -245,9 +245,9 @@ fn test_black_castling_not_allowed_through_check() {
 
     // Queenside - D8 under attack
     let position = Position::default()
-        .put_piece(BLACK_KING, E8)
-        .put_piece(BLACK_ROOK, A8)
-        .put_piece(WHITE_ROOK, D1); // Attacking D8
+        .with_piece(BLACK_KING, E8)
+        .with_piece(BLACK_ROOK, A8)
+        .with_piece(WHITE_ROOK, D1); // Attacking D8
 
     let moves = get_black_castling_moves(&position);
     let castling_move = moves.iter().find(|c| {
@@ -264,9 +264,9 @@ fn test_black_castling_not_allowed_through_check() {
 fn test_castling_rights_false() {
     // White with pieces in position but no rights
     let mut position = Position::default()
-        .put_piece(WHITE_KING, E1)
-        .put_piece(WHITE_ROOK, H1)
-        .put_piece(WHITE_ROOK, A1);
+        .with_piece(WHITE_KING, E1)
+        .with_piece(WHITE_ROOK, H1)
+        .with_piece(WHITE_ROOK, A1);
     position.remove_castling_right(CastlingRights::WHITE_KINGSIDE);
     position.remove_castling_right(CastlingRights::WHITE_QUEENSIDE);
 
@@ -293,9 +293,9 @@ fn test_castling_rights_false() {
 #[test]
 fn test_both_castlings_available() {
     let position = Position::default()
-        .put_piece(WHITE_KING, E1)
-        .put_piece(WHITE_ROOK, H1)
-        .put_piece(WHITE_ROOK, A1);
+        .with_piece(WHITE_KING, E1)
+        .with_piece(WHITE_ROOK, H1)
+        .with_piece(WHITE_ROOK, A1);
 
     let moves = get_white_castling_moves(&position);
 
@@ -321,8 +321,8 @@ fn test_both_castlings_available() {
 #[test]
 fn test_white_kingside_castling() {
     let position = Position::default()
-        .put_piece(WHITE_KING, E1)
-        .put_piece(WHITE_ROOK, H1);
+        .with_piece(WHITE_KING, E1)
+        .with_piece(WHITE_ROOK, H1);
     let c = get_castling_move(&position, WHITE_KINGSIDE);
     assert!(c.is_some());
     assert!(c.unwrap().position.is_occupied_by_piece(G1, WHITE_KING));
@@ -332,8 +332,8 @@ fn test_white_kingside_castling() {
 #[test]
 fn test_white_queenside_castling() {
     let position = Position::default()
-        .put_piece(WHITE_KING, E1)
-        .put_piece(WHITE_ROOK, A1);
+        .with_piece(WHITE_KING, E1)
+        .with_piece(WHITE_ROOK, A1);
     let c = get_castling_move(&position, WHITE_QUEENSIDE);
     assert!(c.is_some());
     assert!(c.unwrap().position.is_occupied_by_piece(C1, WHITE_KING));
@@ -343,8 +343,8 @@ fn test_white_queenside_castling() {
 #[test]
 fn test_black_kingside_castling() {
     let position = Position::default()
-        .put_piece(BLACK_KING, E8)
-        .put_piece(BLACK_ROOK, H8);
+        .with_piece(BLACK_KING, E8)
+        .with_piece(BLACK_ROOK, H8);
     let c = get_castling_move(&position, BLACK_KINGSIDE);
     assert!(c.is_some());
     assert!(c.unwrap().position.is_occupied_by_piece(G8, BLACK_KING));
@@ -354,8 +354,8 @@ fn test_black_kingside_castling() {
 #[test]
 fn test_black_queenside_castling() {
     let position = Position::default()
-        .put_piece(BLACK_KING, E8)
-        .put_piece(BLACK_ROOK, A8);
+        .with_piece(BLACK_KING, E8)
+        .with_piece(BLACK_ROOK, A8);
     let c = get_castling_move(&position, BLACK_QUEENSIDE);
     assert!(c.is_some());
     assert!(c.unwrap().position.is_occupied_by_piece(C8, BLACK_KING));
@@ -366,12 +366,12 @@ fn test_black_queenside_castling() {
 #[test]
 fn test_castling_methods_toggle_player() {
     let position = Position::default()
-        .put_piece(WHITE_ROOK, A1)
-        .put_piece(WHITE_ROOK, H1)
-        .put_piece(WHITE_KING, E1)
-        .put_piece(BLACK_ROOK, A8)
-        .put_piece(BLACK_ROOK, H8)
-        .put_piece(BLACK_KING, E8);
+        .with_piece(WHITE_ROOK, A1)
+        .with_piece(WHITE_ROOK, H1)
+        .with_piece(WHITE_KING, E1)
+        .with_piece(BLACK_ROOK, A8)
+        .with_piece(BLACK_ROOK, H8)
+        .with_piece(BLACK_KING, E8);
     // White to move
 
     let white_kingside = get_castling_move(&position, WHITE_KINGSIDE);
@@ -380,7 +380,8 @@ fn test_castling_methods_toggle_player() {
     let white_queenside = get_castling_move(&position, WHITE_QUEENSIDE);
     assert_eq!(white_queenside.unwrap().position.get_player(), Color::Black);
 
-    let position_black = position.toggle_player(); // Black to move
+    let mut position_black = position;
+    position_black.toggle_player(); // Black to move
     let black_kingside = get_castling_move(&position_black, BLACK_KINGSIDE);
     assert_eq!(black_kingside.unwrap().position.get_player(), Color::White);
 
@@ -390,14 +391,15 @@ fn test_castling_methods_toggle_player() {
 
 #[test]
 fn test_castling_methods_reset_en_passant() {
-    let position = Position::default()
-        .put_piece(WHITE_ROOK, A1)
-        .put_piece(WHITE_ROOK, H1)
-        .put_piece(WHITE_KING, E1)
-        .put_piece(BLACK_ROOK, A8)
-        .put_piece(BLACK_ROOK, H8)
-        .put_piece(BLACK_KING, E8)
-        .set_en_passant(Some(E4));
+    let mut position = Position::default()
+        .with_piece(WHITE_ROOK, A1)
+        .with_piece(WHITE_ROOK, H1)
+        .with_piece(WHITE_KING, E1)
+        .with_piece(BLACK_ROOK, A8)
+        .with_piece(BLACK_ROOK, H8)
+        .with_piece(BLACK_KING, E8);
+
+    position.set_en_passant(Some(E4));
 
     let white_kingside = get_castling_move(&position, WHITE_KINGSIDE);
     assert_eq!(white_kingside.unwrap().position.get_en_passant(), None);
@@ -415,12 +417,12 @@ fn test_castling_methods_reset_en_passant() {
 #[test]
 fn test_castling_methods_disable_castling_rights() {
     let position = Position::default()
-        .put_piece(WHITE_ROOK, A1)
-        .put_piece(WHITE_ROOK, H1)
-        .put_piece(WHITE_KING, E1)
-        .put_piece(BLACK_ROOK, A8)
-        .put_piece(BLACK_ROOK, H8)
-        .put_piece(BLACK_KING, E8);
+        .with_piece(WHITE_ROOK, A1)
+        .with_piece(WHITE_ROOK, H1)
+        .with_piece(WHITE_KING, E1)
+        .with_piece(BLACK_ROOK, A8)
+        .with_piece(BLACK_ROOK, H8)
+        .with_piece(BLACK_KING, E8);
 
     let white_kingside = get_castling_move(&position, WHITE_KINGSIDE);
     assert!(!white_kingside

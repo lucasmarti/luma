@@ -30,23 +30,9 @@ impl Position {
     pub fn starting() -> Position {
         let mut position = Position::default();
         for config in STARTING_CONFIG.iter() {
-            position = position.put_piece(config.0, config.1);
+            position.put_piece(config.0, config.1);
         }
         position
-    }
-
-    pub fn disallow_castling_for_color(mut self, color: Color) -> Position {
-        match color {
-            Color::White => {
-                self.castling_rights
-                    .remove(CastlingRights::WHITE_KINGSIDE | CastlingRights::WHITE_QUEENSIDE);
-            }
-            Color::Black => {
-                self.castling_rights
-                    .remove(CastlingRights::BLACK_KINGSIDE | CastlingRights::BLACK_QUEENSIDE);
-            }
-        }
-        self
     }
 
     pub fn has_castling_rights(&self, rights: CastlingRights) -> bool {
@@ -86,9 +72,8 @@ impl Position {
         king.iter().next().unwrap()
     }
 
-    pub fn set_en_passant(mut self, square: Option<Square>) -> Position {
+    pub fn set_en_passant(&mut self, square: Option<Square>) {
         self.en_passant = square;
-        self
     }
 
     pub fn get_player(&self) -> Color {
@@ -99,9 +84,8 @@ impl Position {
         self.en_passant
     }
 
-    pub fn toggle_player(mut self) -> Position {
+    pub fn toggle_player(&mut self) {
         self.player = self.player.get_opponent_color();
-        self
     }
 
     pub fn get_all_pieces(&self) -> Vec<(Square, Piece)> {
@@ -118,7 +102,7 @@ impl Position {
         self.boards[(color, typ)]
     }
 
-    pub fn put_piece(mut self, piece: Piece, square: Square) -> Position {
+    pub fn put_piece(&mut self, piece: Piece, square: Square) {
         let bit = Bitboard::from(square);
 
         self.boards[(piece.color, piece.typ)] |= bit;
@@ -127,11 +111,19 @@ impl Position {
 
         #[cfg(debug_assertions)]
         self.debug_assert_valid();
+    }
 
+    pub fn with_piece(mut self, piece: Piece, square: Square) -> Position {
+        self.put_piece(piece, square);
         self
     }
 
-    pub fn remove_piece(mut self, square: Square) -> Position {
+    pub fn with_en_passant(mut self, square: Option<Square>) -> Position {
+        self.set_en_passant(square);
+        self
+    }
+
+    pub fn remove_piece(&mut self, square: Square) {
         let mask = !Bitboard::from(square);
         for color in Color::iter() {
             for typ in Typ::iter() {
@@ -145,8 +137,6 @@ impl Position {
 
         #[cfg(debug_assertions)]
         self.debug_assert_valid();
-
-        self
     }
 
     #[cfg(debug_assertions)]

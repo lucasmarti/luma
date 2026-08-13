@@ -22,7 +22,7 @@ fn test_progress_white_king() {
 
 #[test]
 fn test_promotion() {
-    let position = Position::default().put_piece(WHITE_PAWN, A7);
+    let position = Position::default().with_piece(WHITE_PAWN, A7);
     let new_position = promote(&position, A7, A8, WHITE_QUEEN);
     assert!(new_position.position.is_occupied_by_piece(A8, WHITE_QUEEN));
     assert!(!new_position.position.is_occupied_by_piece(A7, WHITE_PAWN));
@@ -30,8 +30,8 @@ fn test_promotion() {
 #[test]
 fn test_en_passant() {
     let position = Position::default()
-        .put_piece(WHITE_PAWN, D4)
-        .put_piece(BLACK_PAWN, E4);
+        .with_piece(WHITE_PAWN, D4)
+        .with_piece(BLACK_PAWN, E4);
 
     let new_position = en_passant(&position, BLACK_PAWN, E4, D3, D4);
     assert!(!new_position.position.is_occupied_by_piece(D4, WHITE_PAWN));
@@ -165,66 +165,66 @@ fn test_all_moves_from_starting_position() {
 #[test]
 fn test_position1() {
     let white = Position::default()
-        .put_piece(WHITE_PAWN, A2)
-        .put_piece(WHITE_PAWN, C3)
-        .put_piece(WHITE_PAWN, C4)
-        .put_piece(WHITE_QUEEN, D3)
-        .put_piece(WHITE_ROOK, F1)
-        .put_piece(WHITE_PAWN, F2)
-        .put_piece(WHITE_KNIGHT, F3)
-        .put_piece(WHITE_KING, G1)
-        .put_piece(WHITE_BISHOP, G2)
-        .put_piece(WHITE_PAWN, G3)
-        .put_piece(WHITE_PAWN, H2);
+        .with_piece(WHITE_PAWN, A2)
+        .with_piece(WHITE_PAWN, C3)
+        .with_piece(WHITE_PAWN, C4)
+        .with_piece(WHITE_QUEEN, D3)
+        .with_piece(WHITE_ROOK, F1)
+        .with_piece(WHITE_PAWN, F2)
+        .with_piece(WHITE_KNIGHT, F3)
+        .with_piece(WHITE_KING, G1)
+        .with_piece(WHITE_BISHOP, G2)
+        .with_piece(WHITE_PAWN, G3)
+        .with_piece(WHITE_PAWN, H2);
     let positions = get_white_moves(&white);
     assert_eq!(positions.len(), 35);
-    let black = Position::default()
-        .put_piece(BLACK_PAWN, A7)
-        .put_piece(BLACK_PAWN, B7)
-        .put_piece(BLACK_PAWN, D6)
-        .put_piece(BLACK_PAWN, F7)
-        .put_piece(BLACK_PAWN, G7)
-        .put_piece(BLACK_PAWN, H6)
-        .put_piece(BLACK_BISHOP, B6)
-        .put_piece(BLACK_ROOK, E4)
-        .put_piece(BLACK_BISHOP, G4)
-        .put_piece(BLACK_QUEEN, G6)
-        .put_piece(BLACK_KING, G8)
-        .toggle_player();
+    let mut black = Position::default()
+        .with_piece(BLACK_PAWN, A7)
+        .with_piece(BLACK_PAWN, B7)
+        .with_piece(BLACK_PAWN, D6)
+        .with_piece(BLACK_PAWN, F7)
+        .with_piece(BLACK_PAWN, G7)
+        .with_piece(BLACK_PAWN, H6)
+        .with_piece(BLACK_BISHOP, B6)
+        .with_piece(BLACK_ROOK, E4)
+        .with_piece(BLACK_BISHOP, G4)
+        .with_piece(BLACK_QUEEN, G6)
+        .with_piece(BLACK_KING, G8);
+    black.toggle_player();
     let positions = get_black_moves(&black);
     assert_eq!(positions.len(), 44);
     let mut all = Position::default()
-        .put_piece(WHITE_PAWN, A2)
-        .put_piece(WHITE_PAWN, C3)
-        .put_piece(WHITE_PAWN, C4)
-        .put_piece(WHITE_QUEEN, D3)
-        .put_piece(WHITE_ROOK, F1)
-        .put_piece(WHITE_PAWN, F2)
-        .put_piece(WHITE_KNIGHT, F3)
-        .put_piece(WHITE_KING, G1)
-        .put_piece(WHITE_BISHOP, G2)
-        .put_piece(WHITE_PAWN, G3)
-        .put_piece(WHITE_PAWN, H2)
-        .put_piece(BLACK_PAWN, A7)
-        .put_piece(BLACK_PAWN, B7)
-        .put_piece(BLACK_PAWN, D6)
-        .put_piece(BLACK_PAWN, F7)
-        .put_piece(BLACK_PAWN, G7)
-        .put_piece(BLACK_PAWN, H6)
-        .put_piece(BLACK_BISHOP, B6)
-        .put_piece(BLACK_ROOK, E4)
-        .put_piece(BLACK_BISHOP, G4)
-        .put_piece(BLACK_QUEEN, G6)
-        .put_piece(BLACK_KING, G8);
+        .with_piece(WHITE_PAWN, A2)
+        .with_piece(WHITE_PAWN, C3)
+        .with_piece(WHITE_PAWN, C4)
+        .with_piece(WHITE_QUEEN, D3)
+        .with_piece(WHITE_ROOK, F1)
+        .with_piece(WHITE_PAWN, F2)
+        .with_piece(WHITE_KNIGHT, F3)
+        .with_piece(WHITE_KING, G1)
+        .with_piece(WHITE_BISHOP, G2)
+        .with_piece(WHITE_PAWN, G3)
+        .with_piece(WHITE_PAWN, H2)
+        .with_piece(BLACK_PAWN, A7)
+        .with_piece(BLACK_PAWN, B7)
+        .with_piece(BLACK_PAWN, D6)
+        .with_piece(BLACK_PAWN, F7)
+        .with_piece(BLACK_PAWN, G7)
+        .with_piece(BLACK_PAWN, H6)
+        .with_piece(BLACK_BISHOP, B6)
+        .with_piece(BLACK_ROOK, E4)
+        .with_piece(BLACK_BISHOP, G4)
+        .with_piece(BLACK_QUEEN, G6)
+        .with_piece(BLACK_KING, G8);
 
     assert_eq!(get_white_moves(&all).len(), 29);
-    all = all.toggle_player();
+    all.toggle_player();
     assert_eq!(get_black_moves(&all).len(), 39);
 }
 
 #[test]
 fn test_bishop_white_moves() {
-    let position = Position::default().put_piece(WHITE_BISHOP, G4);
+    let position = Position::default().with_piece(WHITE_BISHOP, G4);
     let positions = get_moves_for_bishop_at_square(&position, WHITE_BISHOP, G4);
     assert_eq!(positions.len(), 9);
     let mut left_up = false;
@@ -280,9 +280,9 @@ fn test_king_white_moves() {
 fn test_knight_moves() {
     let mut position = Position::default();
     position = position
-        .put_piece(WHITE_KNIGHT, E4)
-        .put_piece(WHITE_PAWN, C5)
-        .put_piece(BLACK_PAWN, G2);
+        .with_piece(WHITE_KNIGHT, E4)
+        .with_piece(WHITE_PAWN, C5)
+        .with_piece(BLACK_PAWN, G2);
 
     let positions = get_moves_for_knight_at_square(&position, WHITE_KNIGHT, E4);
 
