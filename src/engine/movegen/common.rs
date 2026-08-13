@@ -136,6 +136,7 @@ pub fn progess(position: &Position, piece: Piece, from: Square, to: Square) -> C
         .remove_piece(from)
         .remove_piece(to)
         .put_piece(piece, to)
+        .reset_en_passant()
         .toggle_player();
     new_position = set_en_passant_if_necessary(new_position, piece, from, to);
     new_position.remove_castling_right(CastlingRights::from(from));
