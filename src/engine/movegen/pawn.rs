@@ -355,7 +355,7 @@ pub fn progress(position: &Position, piece: Piece, from: Square, to: Square) -> 
     new_pos.put_piece(piece, to);
     new_pos.set_en_passant(get_en_passant(from, to));
     new_pos.toggle_player();
-    new_pos.remove_castling_right(CastlingRights::from(from));
+    // new_pos.remove_castling_right(CastlingRights::from(from));
     ChessMove {
         move_type: MoveType::Quiet,
         piece,
@@ -383,7 +383,7 @@ pub fn en_passant(
     new_pos.set_en_passant(None);
 
     ChessMove {
-        move_type: MoveType::EnPassant,
+        move_type: MoveType::EnPassant(capture),
         piece,
         from,
         to,
@@ -395,8 +395,8 @@ pub fn en_passant(
 
 pub fn promote(position: &Position, from: Square, to: Square, new_piece: Piece) -> ChessMove {
     let tuple = match position.get_piece_at(to) {
-        Some(piece) => (MoveType::PromotionCapture, Some(piece)),
-        None => (MoveType::Promotion, None),
+        Some(piece) => (MoveType::PromotionCapture(new_piece), Some(piece)),
+        None => (MoveType::Promotion(new_piece), None),
     };
     let mut new_pos = *position;
     new_pos.remove_piece(from);

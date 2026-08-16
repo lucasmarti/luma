@@ -68,7 +68,7 @@ pub fn get_castling_move(
 
     if !is_check(&new_pos, castling.color) {
         let chess_move: ChessMove = ChessMove {
-            move_type: MoveType::Castling,
+            move_type: MoveType::Castling(castling.castling_type),
             piece: castling.king,
             from: castling.king_from,
             to: castling.king_to,

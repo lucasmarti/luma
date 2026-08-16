@@ -1,5 +1,6 @@
 mod castling;
 mod castling_config;
+pub(super) use castling_config::*;
 mod check;
 mod common;
 mod config;

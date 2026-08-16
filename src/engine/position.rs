@@ -3,6 +3,7 @@ mod boards;
 mod castling_rights;
 pub(super) use castling_rights::CastlingRights;
 mod move_api;
+pub(super) use move_api::*;
 mod occupancy;
 pub(super) mod print;
 mod starting_config;
