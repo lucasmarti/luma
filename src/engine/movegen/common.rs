@@ -14,7 +14,7 @@ use crate::engine::{
         Square,
     },
     piece::Piece,
-    position::{CastlingRights, Position},
+    position::{CastlingRights, Mve, Position},
     Typ,
 };
 
@@ -133,9 +133,10 @@ pub fn generate_path_with_limit(
 
 pub fn progress(position: &Position, piece: Piece, from: Square, to: Square) -> ChessMove {
     debug_assert_ne!(piece.typ, Typ::Pawn);
-    let tuple = match position.get_piece_at(to) {
-        Some(piece) => (MoveType::Capture, Some(piece)),
-        None => (MoveType::Quiet, None),
+
+    let move_type = match position.get_piece_at(to) {
+        Some(_) => MoveType::Capture,
+        None => MoveType::Quiet,
     };
     let mut new_pos = *position;
     new_pos.remove_piece(from);
@@ -144,14 +145,21 @@ pub fn progress(position: &Position, piece: Piece, from: Square, to: Square) -> 
     new_pos.set_en_passant(None);
     new_pos.toggle_player();
     new_pos.remove_castling_right(CastlingRights::from(from));
-    ChessMove {
-        move_type: tuple.0,
+    let mve = Mve {
         piece,
         from,
         to,
-        capture: tuple.1,
+        move_type: move_type,
+    };
+    ChessMove {
+        move_type: move_type,
+        piece,
+        from,
+        to,
+        capture: position.get_piece_at(to),
         pormotion: None,
         position: new_pos,
+        mve,
     }
 }
 #[cfg(test)]

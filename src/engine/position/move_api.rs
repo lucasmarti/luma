@@ -13,17 +13,25 @@ impl Position {
             player: self.player,
         };
 
+        self.en_passant = None;
+
         self.remove_castling_right(CastlingRights::from(mve.from));
         if let Some(capture) = undo.capture {
             if capture.typ == Typ::Rook {
                 self.remove_castling_right(CastlingRights::from(mve.to));
             }
         }
-
-        self.en_passant = mve.en_passant;
-
         match mve.move_type {
-            MoveType::Quiet | MoveType::Capture => {
+            MoveType::DoublePawnPush(en_passant) => {
+                self.remove_piece(mve.from);
+                self.put_piece(mve.piece, mve.to);
+                self.en_passant = Some(en_passant);
+            }
+            MoveType::Quiet => {
+                self.remove_piece(mve.from);
+                self.put_piece(mve.piece, mve.to);
+            }
+            MoveType::Capture => {
                 self.remove_piece(mve.from);
                 self.remove_piece(mve.to);
                 self.put_piece(mve.piece, mve.to);
@@ -58,13 +66,22 @@ impl Position {
         self.player = undo.player;
 
         match mve.move_type {
-            MoveType::Quiet | MoveType::Capture => {
+            MoveType::Quiet => {
+                self.remove_piece(mve.to);
+                self.put_piece(mve.piece, mve.from);
+            }
+            MoveType::DoublePawnPush(_) => {
+                self.remove_piece(mve.to);
+                self.put_piece(mve.piece, mve.from);
+            }
+            MoveType::Capture => {
                 self.remove_piece(mve.to);
                 self.put_piece(mve.piece, mve.from);
 
-                if let Some(capture) = undo.capture {
-                    self.put_piece(capture, mve.to);
-                }
+                let capture = undo
+                    .capture
+                    .expect("MoveType::Capture muss ein Capture haben");
+                self.put_piece(capture, mve.to);
             }
 
             MoveType::Castling(castling_type) => {
@@ -77,7 +94,7 @@ impl Position {
                 self.put_piece(mve.piece, mve.from);
             }
 
-            MoveType::Promotion(piece) | MoveType::PromotionCapture(piece) => {
+            MoveType::Promotion(_) | MoveType::PromotionCapture(_) => {
                 self.remove_piece(mve.to);
                 self.put_piece(mve.piece, mve.from);
 
@@ -103,11 +120,10 @@ pub struct Undo {
     player: Color,
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub struct Mve {
     pub piece: Piece,
     pub from: Square,
     pub to: Square,
     pub move_type: MoveType,
-    pub en_passant: Option<Square>,
 }

@@ -99,7 +99,7 @@ fn test_valid_drop_targets_en_passant() {
         .with_piece(WHITE_KING, E1)
         .with_piece(WHITE_PAWN, E4)
         .with_piece(BLACK_PAWN, D4)
-        .with_en_passant(Some(E4));
+        .with_en_passant(Some(E3));
     let targets = get_valid_drop_positions(&position, D4);
     assert!(targets.iter().any(|c| c.position.is_occupied(E3)));
 }

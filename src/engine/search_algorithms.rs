@@ -27,7 +27,7 @@ pub enum Player {
 
 pub fn get_best_move(position: Position) -> Option<ChessMove> {
     let cache = &mut Cache::new();
-    let depth = 4;
+    let depth = 2;
     let mut start = Instant::now();
     //let tree = build_tree(position, depth);
     let minimx_player = match position.get_player() {

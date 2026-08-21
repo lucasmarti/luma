@@ -6,7 +6,7 @@ use crate::engine::{
         Square, FILE_G, FILE_H, RANK_1, RANK_2, RANK_4, RANK_5, RANK_7, RANK_8,
     },
     piece::{Color, Piece, Typ, *},
-    position::{CastlingRights, Position},
+    position::{CastlingRights, Mve, Position},
 };
 
 struct EnPassantConfig {
@@ -203,7 +203,7 @@ fn get_move_en_passant(
         (config.diagonal_fn)(from),
         position.get_en_passant(),
     ) {
-        if next_square == en_passant_square
+        if diagonal_square == en_passant_square
             && position.is_occupied_by_piece(next_square, config.opponents_pawn)
         {
             return Some(en_passant(
@@ -355,15 +355,32 @@ pub fn progress(position: &Position, piece: Piece, from: Square, to: Square) -> 
     new_pos.put_piece(piece, to);
     new_pos.set_en_passant(get_en_passant(from, to));
     new_pos.toggle_player();
-    // new_pos.remove_castling_right(CastlingRights::from(from));
-    ChessMove {
-        move_type: MoveType::Quiet,
+
+    let capture = position.get_piece_at(to);
+
+    let move_type = match get_en_passant(from, to) {
+        Some(square) => MoveType::DoublePawnPush(square),
+        None => match capture {
+            Some(_) => MoveType::Capture,
+            None => MoveType::Quiet,
+        },
+    };
+
+    let mve = Mve {
         piece,
         from,
         to,
-        capture: None,
+        move_type,
+    };
+    ChessMove {
+        move_type,
+        piece,
+        from,
+        to,
+        capture: capture,
         pormotion: None,
         position: new_pos,
+        mve,
     }
 }
 
@@ -382,6 +399,12 @@ pub fn en_passant(
     new_pos.toggle_player();
     new_pos.set_en_passant(None);
 
+    let mve = Mve {
+        piece,
+        from,
+        to,
+        move_type: MoveType::EnPassant(capture),
+    };
     ChessMove {
         move_type: MoveType::EnPassant(capture),
         piece,
@@ -390,6 +413,7 @@ pub fn en_passant(
         capture: position.get_piece_at(capture),
         pormotion: None,
         position: new_pos,
+        mve,
     }
 }
 
@@ -405,6 +429,15 @@ pub fn promote(position: &Position, from: Square, to: Square, new_piece: Piece) 
     new_pos.toggle_player();
     new_pos.set_en_passant(None);
 
+    let mve = Mve {
+        piece: match new_piece.color {
+            Color::Black => BLACK_PAWN,
+            Color::White => WHITE_PAWN,
+        },
+        from,
+        to,
+        move_type: tuple.0,
+    };
     ChessMove {
         move_type: tuple.0,
         piece: match new_piece.color {
@@ -416,16 +449,31 @@ pub fn promote(position: &Position, from: Square, to: Square, new_piece: Piece) 
         capture: tuple.1,
         pormotion: Some(new_piece),
         position: new_pos,
+        mve,
     }
 }
 pub fn get_en_passant(from: Square, to: Square) -> Option<Square> {
-    if (from.intersects(RANK_2) && to.intersects(RANK_4))
-        || (from.intersects(RANK_7) && to.intersects(RANK_5))
-    {
-        Some(to)
-    } else {
-        None
+    if from.intersects(RANK_2) {
+        if let Some(one) = directions::up(from) {
+            if let Some(two) = directions::up(one) {
+                if to == two {
+                    return Some(one);
+                }
+            }
+        }
     }
+
+    if from.intersects(RANK_7) {
+        if let Some(one) = directions::down(from) {
+            if let Some(two) = directions::down(one) {
+                if to == two {
+                    return Some(one);
+                }
+            }
+        }
+    }
+
+    None
 }
 
 #[cfg(test)]

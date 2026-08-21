@@ -384,7 +384,7 @@ mod test_white_en_passant {
         let position = Position::default()
             .with_piece(WHITE_PAWN, E5)
             .with_piece(BLACK_PAWN, D5)
-            .with_en_passant(Some(D5));
+            .with_en_passant(Some(D6));
 
         let result = get_move_white_left_en_passant(&position, E5);
 
@@ -400,15 +400,18 @@ mod test_white_en_passant {
         let position = Position::default()
             .with_piece(WHITE_PAWN, E5)
             .with_piece(BLACK_PAWN, F5)
-            .with_en_passant(Some(F5));
+            .with_en_passant(Some(F6));
 
         let result = get_move_white_right_en_passant(&position, E5);
 
-        assert!(result.is_some());
+        assert!(result.is_some(), "Result must me some");
         let new_position = result.unwrap();
-        assert!(new_position.position.is_occupied_by_piece(F6, WHITE_PAWN));
-        assert!(!new_position.position.is_occupied(E5));
-        assert!(!new_position.position.is_occupied(F5)); // Captured pawn removed
+        assert!(
+            new_position.position.is_occupied_by_piece(F6, WHITE_PAWN),
+            "F6, WHITE_PAWN"
+        );
+        assert!(!new_position.position.is_occupied(E5), "Not occupied E5");
+        assert!(!new_position.position.is_occupied(F5), "Not occupied F5"); // Captured pawn removed
     }
 
     #[test]
@@ -472,7 +475,7 @@ mod test_black_en_passant {
         let position = Position::default()
             .with_piece(BLACK_PAWN, E4)
             .with_piece(WHITE_PAWN, D4)
-            .with_en_passant(Some(D4));
+            .with_en_passant(Some(D3));
 
         let result = get_move_black_left_en_passant(&position, E4);
 
@@ -488,7 +491,7 @@ mod test_black_en_passant {
         let position = Position::default()
             .with_piece(BLACK_PAWN, E4)
             .with_piece(WHITE_PAWN, F4)
-            .with_en_passant(Some(F4));
+            .with_en_passant(Some(F3));
 
         let result = get_move_black_right_en_passant(&position, E4);
 
@@ -785,7 +788,7 @@ mod test_aggregate_functions {
         let mut position = Position::default()
             .with_piece(WHITE_PAWN, E5)
             .with_piece(WHITE_PAWN, D5);
-        position.with_en_passant(Some(D5));
+        position.with_en_passant(Some(D6));
 
         let moves = get_white_pawn_moves(&position, E5);
 
@@ -804,7 +807,7 @@ mod test_aggregate_functions {
         let position = Position::default()
             .with_piece(WHITE_PAWN, E5)
             .with_piece(BLACK_PAWN, D5)
-            .with_en_passant(Some(D5));
+            .with_en_passant(Some(D6));
 
         let moves = get_white_pawn_moves(&position, E5);
 
@@ -910,7 +913,7 @@ mod test_public_interface {
             .with_piece(BLACK_PAWN, D5)
             .with_piece(BLACK_PAWN, F5)
             .with_piece(BLACK_KNIGHT, E6)
-            .with_en_passant(Some(D5));
+            .with_en_passant(Some(D6));
 
         let moves = get_white_pawn_moves(&position, E5);
         // White pawn on E5 with:
@@ -941,15 +944,13 @@ mod en_passant_if_necessary {
     fn test_with_en_passant_if_necessary_white_pawn_two_squares() {
         let mut position = Position::default();
         position = position.with_en_passant(get_en_passant(E2, E4));
-        // En passant should be set to E4 (the destination square)
-        assert_eq!(position.get_en_passant(), Some(E4));
+        assert_eq!(position.get_en_passant(), Some(E3));
     }
 
     #[test]
     fn test_set_en_passant_if_necessary_black_pawn_two_squares() {
         let position = Position::default().with_en_passant(get_en_passant(E7, E5));
-        // En passant should be set to E5 (the destination square)
-        assert_eq!(position.get_en_passant(), Some(E5));
+        assert_eq!(position.get_en_passant(), Some(E6));
     }
 
     #[test]
@@ -963,6 +964,6 @@ mod en_passant_if_necessary {
     fn test_progress_sets_en_passant_for_pawn_two_squares() {
         let position = Position::default();
         let new_position = progress(&position, WHITE_PAWN, E2, E4);
-        assert_eq!(new_position.position.get_en_passant(), Some(E4));
+        assert_eq!(new_position.position.get_en_passant(), Some(E3));
     }
 }

@@ -1,7 +1,7 @@
 use crate::engine::movegen::Square;
 
 use crate::engine::chess_move::{ChessMove, MoveType};
-use crate::engine::position::CastlingRights;
+use crate::engine::position::{CastlingRights, Mve};
 use crate::engine::{
     movegen::castling_config::{
         CastlingConfiguration, BLACK_KINGSIDE, BLACK_QUEENSIDE, WHITE_KINGSIDE, WHITE_QUEENSIDE,
@@ -67,6 +67,12 @@ pub fn get_castling_move(
     new_pos.remove_castling_right(CastlingRights::get(castling.color));
 
     if !is_check(&new_pos, castling.color) {
+        let mve = Mve {
+            piece: castling.king,
+            from: castling.king_from,
+            to: castling.king_to,
+            move_type: MoveType::Castling(castling.castling_type),
+        };
         let chess_move: ChessMove = ChessMove {
             move_type: MoveType::Castling(castling.castling_type),
             piece: castling.king,
@@ -75,6 +81,7 @@ pub fn get_castling_move(
             capture: None,
             pormotion: None,
             position: new_pos,
+            mve,
         };
         return Some(chess_move);
     }
