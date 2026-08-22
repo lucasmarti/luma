@@ -8,8 +8,8 @@ use std::{
 };
 
 use crate::engine::{
-    chess_move::ChessMove,
-    position::Position,
+    chess_move::{self, ChessMove},
+    position::{print::Print, Position},
     search_algorithms::{alpha_beta::alpha_beta, cache::Cache},
 };
 lazy_static::lazy_static! {
@@ -43,6 +43,9 @@ pub fn get_best_move(position: Position) -> Option<ChessMove> {
     println!("Duration = {:?}", start.elapsed());
     println!("Cache size = {:?}", cache.len());
     println!("Number of hits = {:?}", hits);
+    if let Some(chess_move) = best_move {
+        chess_move.position.print_board();
+    }
     best_move
 }
 

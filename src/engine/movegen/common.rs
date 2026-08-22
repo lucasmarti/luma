@@ -134,17 +134,24 @@ pub fn generate_path_with_limit(
 pub fn progress(position: &Position, piece: Piece, from: Square, to: Square) -> ChessMove {
     debug_assert_ne!(piece.typ, Typ::Pawn);
 
-    let move_type = match position.get_piece_at(to) {
+    let capture = position.get_piece_at(to);
+    let move_type = match capture {
         Some(_) => MoveType::Capture,
         None => MoveType::Quiet,
     };
+    let mut castling_rights = CastlingRights::from(from);
+    if let Some(capture) = capture {
+        if capture.typ == Typ::Rook {
+            castling_rights = castling_rights | CastlingRights::from(to);
+        }
+    }
     let mut new_pos = *position;
     new_pos.remove_piece(from);
     new_pos.remove_piece(to);
     new_pos.put_piece(piece, to);
     new_pos.set_en_passant(None);
     new_pos.toggle_player();
-    new_pos.remove_castling_right(CastlingRights::from(from));
+    new_pos.remove_castling_right(castling_rights);
     let mve = Mve {
         piece,
         from,

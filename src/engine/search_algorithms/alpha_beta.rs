@@ -1,5 +1,8 @@
+use std::assert_eq;
+
 use crate::engine::{
-    chess_move::ChessMove,
+    chess_move::{self, ChessMove},
+    position::test_make_unmake,
     position::Position,
     search_algorithms::{
         cache::Cache,
@@ -22,6 +25,10 @@ pub fn alpha_beta(
     cache: &mut Cache,
 ) -> AlphaBetaResult {
     let children = get_children(position);
+    // Test make unmake
+    for chess_move in children.iter() {
+        test_make_unmake(position, chess_move);
+    }
     if depth == 0 || children.is_empty() {
         AlphaBetaResult {
             value: evaluate(position, cache),

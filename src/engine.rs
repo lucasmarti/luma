@@ -6,16 +6,21 @@ mod piece;
 mod position;
 mod search_algorithms;
 
+use std::println;
+
 pub use chess_move::ChessMove;
 pub use chess_move::MoveType;
 pub use movegen::Square;
 pub use piece::*;
 pub use position::Position;
 
+use crate::engine::position::print::Print;
 use crate::engine::{
     movegen::get_current_player_moves, movegen::is_check, search_algorithms::get_best_move,
 };
 pub fn get_next_move(position: &Position) -> MoveOrEnd {
+    println!("get_next_move");
+    position.print_board();
     match get_best_move(*position) {
         Some(chess_move) => MoveOrEnd::Move(chess_move),
         None => {
