@@ -3,7 +3,7 @@ use std::matches;
 use flo_canvas::{Draw, DrawingTarget};
 
 use crate::{
-    engine::{self, ChessMove, MoveType, Position, Square},
+    engine::{self, MoveType, Mve, Position, Square},
     gui::{
         state_machine::{
             self, FromSquareSelectedData, GameState, NoSquareSelectedData, PromoteFunctionData,
@@ -110,7 +110,7 @@ impl Game {
     fn select_to_square(&mut self, data: SelectToSquareFunctionData) {
         match get_selected_moves_to(data.possible_moves_from, data.to) {
             Some(SimpleMoveOrPromotions::SimpleMove(ui_move)) => {
-                self.execute_player_move(ui_move.position);
+                self.execute_player_move(ui_move);
             }
             Some(SimpleMoveOrPromotions::Promotions(possible_promotion_moves)) => {
                 self.enable_promotion_buttons(possible_promotion_moves);
@@ -128,18 +128,20 @@ impl Game {
     fn promote(&mut self, data: PromoteFunctionData) {
         self.ui.disabled_promotion_buttons();
         if let Some(promotion_move) = data.possible_promotion_moves.iter().find(|promotion_move| {
-            (matches!(
-                promotion_move.move_type,
-                MoveType::Promotion(_) | MoveType::PromotionCapture(_)
-            ) && promotion_move.pormotion == Some(data.piece))
+            match promotion_move.move_type {
+                MoveType::Promotion(piece) | MoveType::PromotionCapture(piece) => {
+                    piece == data.piece
+                }
+                _ => false,
+            }
         }) {
-            self.position = promotion_move.position;
+            self.position.make_move(*promotion_move);
             self.state = GameState::Computer;
             self.execute_computer_move();
         }
     }
 
-    fn enable_promotion_buttons(&mut self, possible_promotion_moves: Vec<ChessMove>) {
+    fn enable_promotion_buttons(&mut self, possible_promotion_moves: Vec<Mve>) {
         self.state = GameState::Player(SquareSelected::Promotion(
             PromotionSquareSelectedData::from(possible_promotion_moves),
         ));
@@ -149,7 +151,7 @@ impl Game {
     fn execute_computer_move(&mut self) {
         match engine::get_next_move(&self.position) {
             engine::MoveOrEnd::Move(chess_move) => {
-                self.position = chess_move.position;
+                self.position.make_move(chess_move);
                 match engine::get_possible_moves(&self.position) {
                     Ok(possible_moves) => {
                         self.state = GameState::Player(SquareSelected::No(NoSquareSelectedData {
@@ -170,26 +172,23 @@ impl Game {
         self.update_ui();
     }
 
-    fn execute_player_move(&mut self, position: Position) {
-        self.position = position;
+    fn execute_player_move(&mut self, mve: Mve) {
+        self.position.make_move(mve);
         self.state = GameState::Computer;
         self.update_ui();
         self.execute_computer_move();
     }
 }
 
-fn get_selected_moves_from(possible_moves: Vec<ChessMove>, from: Square) -> Vec<ChessMove> {
+fn get_selected_moves_from(possible_moves: Vec<Mve>, from: Square) -> Vec<Mve> {
     possible_moves
         .into_iter()
         .filter(|ui_move| from == ui_move.from)
         .collect()
 }
 
-fn get_selected_moves_to(
-    possible_moves: Vec<ChessMove>,
-    to: Square,
-) -> Option<SimpleMoveOrPromotions> {
-    let mut moves_from_to: Vec<ChessMove> = possible_moves
+fn get_selected_moves_to(possible_moves: Vec<Mve>, to: Square) -> Option<SimpleMoveOrPromotions> {
+    let mut moves_from_to: Vec<Mve> = possible_moves
         .into_iter()
         .filter(|ui_move| to == ui_move.to)
         .collect();
@@ -201,6 +200,6 @@ fn get_selected_moves_to(
 }
 
 enum SimpleMoveOrPromotions {
-    SimpleMove(ChessMove),
-    Promotions(Vec<ChessMove>),
+    SimpleMove(Mve),
+    Promotions(Vec<Mve>),
 }

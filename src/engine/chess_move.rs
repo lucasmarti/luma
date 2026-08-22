@@ -19,6 +19,12 @@ pub struct ChessMove {
     pub mve: Mve,
 }
 
+impl Into<Mve> for ChessMove {
+    fn into(self) -> Mve {
+        self.mve
+    }
+}
+
 #[derive(Clone, Copy, Eq, Hash, PartialEq, Debug)]
 pub enum MoveType {
     Quiet,

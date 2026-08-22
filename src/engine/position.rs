@@ -3,7 +3,8 @@ mod boards;
 mod castling_rights;
 pub(super) use castling_rights::CastlingRights;
 mod move_api;
-pub(super) use move_api::*;
+pub use move_api::Mve;
+pub use move_api::*;
 mod occupancy;
 pub(super) mod print;
 mod starting_config;
@@ -12,7 +13,7 @@ use crate::engine::{
     bitboard::Bitboard,
     movegen::Square,
     piece::{Color, Typ, *},
-    position::{occupancy::Occupancy, starting_config::STARTING_CONFIG},
+    position::{self, occupancy::Occupancy, starting_config::STARTING_CONFIG},
 };
 use std::hash::{Hash, Hasher};
 use strum::IntoEnumIterator;

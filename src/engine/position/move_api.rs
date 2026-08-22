@@ -123,20 +123,9 @@ pub fn test_make_unmake(position: &Position, chess_move: &ChessMove) {
     let mve = chess_move.mve;
 
     let undo = mum_position.make_move(mve);
-    if mum_position != chess_move.position {
-        println!("MoveType={:?}", chess_move.move_type);
-        assert_eq!(mum_position.boards, chess_move.position.boards, "Boards");
-        assert_eq!(
-            mum_position.castling_rights, chess_move.position.castling_rights,
-            "CastlingRights"
-        );
-        assert_eq!(mum_position.player, chess_move.position.player, "Player");
-        assert_eq!(
-            mum_position.en_passant, chess_move.position.en_passant,
-            "En Passant"
-        );
-        assert_eq!(mum_position, chess_move.position);
-    }
+    assert_eq!(mum_position, chess_move.position, "make missmatch");
+    mum_position.unmake(mve, undo);
+    assert_eq!(mum_position, *position, "unmake missmatch");
 }
 pub struct Undo {
     en_passant: Option<Square>,
