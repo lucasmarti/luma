@@ -5,6 +5,7 @@ pub(super) use castling_rights::CastlingRights;
 mod move_api;
 pub use move_api::Mve;
 pub use move_api::*;
+mod fen;
 mod occupancy;
 pub(super) mod print;
 mod starting_config;
