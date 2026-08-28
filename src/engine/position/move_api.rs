@@ -118,15 +118,6 @@ impl Position {
     }
 }
 
-pub fn test_make_unmake(position: &Position, chess_move: &ChessMove) {
-    let mut mum_position = *position;
-    let mve = chess_move.mve;
-
-    let undo = mum_position.make_move(mve);
-    assert_eq!(mum_position, chess_move.position, "make missmatch");
-    mum_position.unmake(mve, undo);
-    assert_eq!(mum_position, *position, "unmake missmatch");
-}
 pub struct Undo {
     en_passant: Option<Square>,
     castling_rights: CastlingRights,

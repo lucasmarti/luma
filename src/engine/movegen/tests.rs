@@ -160,7 +160,10 @@ fn test_progress_disallows_castling_for_rook_move() {
 #[test]
 fn test_all_moves_from_starting_position() {
     let position = Position::starting();
-    assert_eq!(get_white_moves(&position).len(), 20);
+    assert_eq!(
+        get_moves(&position, WHITE_MOVE_CONFIG, MoveMode::Legal).len(),
+        20
+    );
 }
 #[test]
 fn test_position1() {
@@ -176,7 +179,7 @@ fn test_position1() {
         .with_piece(WHITE_BISHOP, G2)
         .with_piece(WHITE_PAWN, G3)
         .with_piece(WHITE_PAWN, H2);
-    let positions = get_white_moves(&white);
+    let positions = get_moves(&white, WHITE_MOVE_CONFIG, MoveMode::Legal);
     assert_eq!(positions.len(), 35);
     let mut black = Position::default()
         .with_piece(BLACK_PAWN, A7)
@@ -191,7 +194,7 @@ fn test_position1() {
         .with_piece(BLACK_QUEEN, G6)
         .with_piece(BLACK_KING, G8);
     black.toggle_player();
-    let positions = get_black_moves(&black);
+    let positions = get_moves(&black, BLACK_MOVE_CONFIG, MoveMode::Legal);
     assert_eq!(positions.len(), 44);
     let mut all = Position::default()
         .with_piece(WHITE_PAWN, A2)
@@ -217,9 +220,15 @@ fn test_position1() {
         .with_piece(BLACK_QUEEN, G6)
         .with_piece(BLACK_KING, G8);
 
-    assert_eq!(get_white_moves(&all).len(), 29);
+    assert_eq!(
+        get_moves(&all, WHITE_MOVE_CONFIG, MoveMode::Legal).len(),
+        29
+    );
     all.toggle_player();
-    assert_eq!(get_black_moves(&all).len(), 39);
+    assert_eq!(
+        get_moves(&all, BLACK_MOVE_CONFIG, MoveMode::Legal).len(),
+        39
+    );
 }
 
 #[test]

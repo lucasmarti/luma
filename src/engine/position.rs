@@ -207,5 +207,29 @@ impl PartialEq for Position {
     }
 }
 
+impl Position {
+    pub fn iter(&self) -> impl Iterator<Item = (Piece, Square)> + '_ {
+        Color::iter().flat_map(move |color| {
+            Typ::iter().flat_map(move |typ| {
+                let piece = Piece::new(color, typ);
+
+                self.boards[(color, typ)]
+                    .iter()
+                    .map(move |square| (piece, square))
+            })
+        })
+    }
+
+    pub fn iter_color(&self, color: Color) -> impl Iterator<Item = (Piece, Square)> + '_ {
+        Typ::iter().flat_map(move |typ| {
+            let piece = Piece::new(color, typ);
+
+            self.boards[(color, typ)]
+                .iter()
+                .map(move |square| (piece, square))
+        })
+    }
+}
+
 #[cfg(test)]
 mod tests;

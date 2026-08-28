@@ -25,7 +25,7 @@ pub enum Player {
     Max,
 }
 
-pub fn get_best_move(position: Position) -> Option<ChessMove> {
+pub fn search_best_move(position: Position) -> Option<ChessMove> {
     let cache = &mut Cache::new();
     let depth = 2;
     let mut start = Instant::now();
