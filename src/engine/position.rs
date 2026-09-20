@@ -4,7 +4,6 @@ mod castling_rights;
 pub(super) use castling_rights::CastlingRights;
 mod move_api;
 pub use move_api::Mve;
-pub use move_api::*;
 mod fen;
 mod occupancy;
 pub(super) mod print;
@@ -14,7 +13,7 @@ use crate::engine::{
     bitboard::Bitboard,
     movegen::Square,
     piece::{Color, Typ, *},
-    position::{self, occupancy::Occupancy, starting_config::STARTING_CONFIG},
+    position::{occupancy::Occupancy, starting_config::STARTING_CONFIG},
 };
 use std::hash::{Hash, Hasher};
 use strum::IntoEnumIterator;
@@ -68,8 +67,9 @@ impl Position {
         assert_eq!(
             king.count_ones(),
             1,
-            "Expected exactly one {:?} king",
-            color
+            "Expected exactly one {:?} king, found {:?}",
+            color,
+            king.count_ones()
         );
 
         king.iter().next().unwrap()

@@ -1,16 +1,15 @@
 use crate::engine::{
-    chess_move::ChessMove,
     evaluation::Evaluation,
-    movegen::get_current_player_moves,
-    movegen::is_check,
+    movegen::{get_current_player_moves, is_check},
     piece::Color,
     position::Position,
     search_algorithms::{Player, MAX_VALUE, MIN_VALUE},
+    Mve,
 };
 
 #[allow(dead_code)]
-pub fn minimax(position: &Position, player: Player, depth: u8) -> (Option<ChessMove>, f32) {
-    let mut best_move: Option<ChessMove> = None;
+pub fn minimax(position: &Position, player: Player, depth: u8) -> (Option<Mve>, f32) {
+    let mut best_move: Option<Mve> = None;
     let children = get_children(position);
     if depth == 0 || children.is_empty() {
         (None, evaluate(position))
@@ -18,22 +17,26 @@ pub fn minimax(position: &Position, player: Player, depth: u8) -> (Option<ChessM
         match player {
             Player::Max => {
                 let mut best_value = MIN_VALUE;
-                for child in children {
-                    let (_, child_value) = minimax(&child.position, Player::Min, depth - 1);
+                for mve in children {
+                    let mut pos = *position;
+                    pos.make_move(mve);
+                    let (_, child_value) = minimax(&pos, Player::Min, depth - 1);
                     if child_value >= best_value {
                         best_value = child_value;
-                        best_move = Some(child);
+                        best_move = Some(mve);
                     }
                 }
                 (best_move, best_value)
             }
             Player::Min => {
                 let mut best_value = MAX_VALUE;
-                for child in children {
-                    let (_, child_value) = minimax(&child.position, Player::Max, depth - 1);
+                for mve in children {
+                    let mut pos = *position;
+                    pos.make_move(mve);
+                    let (_, child_value) = minimax(&pos, Player::Max, depth - 1);
                     if child_value <= best_value {
                         best_value = child_value;
-                        best_move = Some(child);
+                        best_move = Some(mve);
                     }
                 }
                 (best_move, best_value)
@@ -58,6 +61,6 @@ pub fn evaluate(position: &Position) -> f32 {
     }
 }
 
-pub fn get_children(position: &Position) -> Vec<ChessMove> {
+pub fn get_children(position: &Position) -> Vec<Mve> {
     get_current_player_moves(position)
 }

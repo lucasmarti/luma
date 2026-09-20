@@ -1,4 +1,4 @@
-use crate::engine::movegen::*;
+use crate::engine::{movegen::*, Mve};
 use crate::engine::{
     piece::*,
     position::{print::Print, Position},
@@ -12,10 +12,9 @@ fn test_get_best_move() {
         .with_piece(WHITE_KING, D2)
         .with_piece(WHITE_PAWN, B6)
         .with_piece(BLACK_KNIGHT, A7);
-    position.print_board();
     if let Some(best_move) = search_best_move(position) {
-        best_move.position.print_board();
-        assert!(best_move.position.is_occupied_by_piece(A7, WHITE_PAWN));
+        assert_eq!(best_move.to, A7);
+        assert_eq!(best_move.piece, WHITE_PAWN);
     }
 }
 
@@ -29,6 +28,7 @@ fn test_get_best_move2() {
     position.toggle_player();
     position.print_board();
     if let Some(best_move) = search_best_move(position) {
-        assert!(best_move.position.is_occupied_by_piece(A6, BLACK_PAWN));
+        assert_eq!(best_move.to, A6);
+        assert_eq!(best_move.piece, BLACK_PAWN);
     }
 }

@@ -1,12 +1,7 @@
-use std::{assert_eq, println};
 #[cfg(test)]
 mod tests;
 
-use crate::engine::{
-    chess_move,
-    position::{self, print::Print, CastlingRights},
-    ChessMove, Color, MoveType, Piece, Position, Square, Typ,
-};
+use crate::engine::{position::CastlingRights, Color, MoveType, Piece, Position, Square, Typ};
 
 impl Position {
     pub fn make_move(&mut self, mve: Mve) -> Undo {

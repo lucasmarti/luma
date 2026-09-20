@@ -50,7 +50,6 @@ const ONE_COLUMN: u32 = 1;
 const TWO_COLUMNS: u32 = 2;
 
 pub type DirectionFn = fn(Square) -> Option<Square>;
-pub type RowFn = fn(Square) -> bool;
 
 pub fn up(square: Square) -> Option<Square> {
     if !square.intersects(RANK_8) {

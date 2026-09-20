@@ -1,23 +1,22 @@
-use crate::engine::movegen::*;
 use crate::engine::{position::CastlingRights, Position, Square, *};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum FenError {
-    InvalidFieldCount,
-    InvalidBoard,
-    InvalidSideToMove,
-    InvalidCastlingRights,
-    InvalidEnPassantSquare,
-    InvalidHalfmoveClock,
-    InvalidFullmoveNumber,
+pub enum InvalidFenError {
+    FieldCount,
+    Board,
+    SideToMove,
+    CastlingRights,
+    EnPassantSquare,
+    HalfmoveClock,
+    FullmoveNumber,
 }
 
 impl Position {
-    pub fn from_fen(fen: &str) -> Result<Position, FenError> {
+    pub fn from_fen(fen: &str) -> Result<Position, InvalidFenError> {
         let fields: Vec<&str> = fen.split_whitespace().collect();
 
         if fields.len() != 6 {
-            return Err(FenError::InvalidFieldCount);
+            return Err(InvalidFenError::FieldCount);
         }
 
         let mut position = Position {
@@ -29,7 +28,7 @@ impl Position {
         let ranks = fields[0].split('/').collect::<Vec<_>>();
 
         if ranks.len() != 8 {
-            return Err(FenError::InvalidBoard);
+            return Err(InvalidFenError::Board);
         }
 
         for (fen_rank, rank) in ranks.iter().enumerate() {
@@ -43,14 +42,14 @@ impl Position {
 
                     'P' | 'N' | 'B' | 'R' | 'Q' | 'K' | 'p' | 'n' | 'b' | 'r' | 'q' | 'k' => {
                         if file >= 8 {
-                            return Err(FenError::InvalidBoard);
+                            return Err(InvalidFenError::Board);
                         }
 
                         // FEN starts at rank 8, our board starts at rank 1.
                         let rank_from_white = 7 - fen_rank as u32;
                         let square_index = rank_from_white * 8 + file;
 
-                        let square = Square::new(square_index).ok_or(FenError::InvalidBoard)?;
+                        let square = Square::new(square_index).ok_or(InvalidFenError::Board)?;
 
                         let piece = match c {
                             'P' => WHITE_PAWN,
@@ -74,12 +73,12 @@ impl Position {
                         file += 1;
                     }
 
-                    _ => return Err(FenError::InvalidBoard),
+                    _ => return Err(InvalidFenError::Board),
                 }
             }
 
             if file != 8 {
-                return Err(FenError::InvalidBoard);
+                return Err(InvalidFenError::Board);
             }
         }
 
@@ -87,7 +86,7 @@ impl Position {
         position.player = match fields[1] {
             "w" => Color::White,
             "b" => Color::Black,
-            _ => return Err(FenError::InvalidSideToMove),
+            _ => return Err(InvalidFenError::SideToMove),
         };
 
         // Castling rights
@@ -98,7 +97,7 @@ impl Position {
                 'k' => CastlingRights::BLACK_KINGSIDE,
                 'q' => CastlingRights::BLACK_QUEENSIDE,
                 '-' if fields[2] == "-" => continue,
-                _ => return Err(FenError::InvalidCastlingRights),
+                _ => return Err(InvalidFenError::CastlingRights),
             };
 
             position.castling_rights.add(rights);
@@ -115,50 +114,54 @@ impl Position {
         // Position currently does not store it, so only validate it.
         fields[4]
             .parse::<u32>()
-            .map_err(|_| FenError::InvalidHalfmoveClock)?;
+            .map_err(|_| InvalidFenError::HalfmoveClock)?;
 
         // Fullmove number.
         // Position currently does not store it, so only validate it.
         fields[5]
             .parse::<u32>()
-            .map_err(|_| FenError::InvalidFullmoveNumber)?;
+            .map_err(|_| InvalidFenError::FullmoveNumber)?;
 
         Ok(position)
     }
 }
 
-fn parse_fen_square(s: &str) -> Result<Square, FenError> {
+fn parse_fen_square(s: &str) -> Result<Square, InvalidFenError> {
     let bytes = s.as_bytes();
 
     if bytes.len() != 2 {
-        return Err(FenError::InvalidEnPassantSquare);
+        return Err(InvalidFenError::EnPassantSquare);
     }
 
     let file = match bytes[0] {
         b'a'..=b'h' => (bytes[0] - b'a') as u32,
-        _ => return Err(FenError::InvalidEnPassantSquare),
+        _ => return Err(InvalidFenError::EnPassantSquare),
     };
 
     let rank = match bytes[1] {
         b'1'..=b'8' => (bytes[1] - b'1') as u32,
-        _ => return Err(FenError::InvalidEnPassantSquare),
+        _ => return Err(InvalidFenError::EnPassantSquare),
     };
 
-    Square::new(rank * 8 + file).ok_or(FenError::InvalidEnPassantSquare)
+    Square::new(rank * 8 + file).ok_or(InvalidFenError::EnPassantSquare)
 }
+mod test {
+    #[warn(unused_imports)]
+    use crate::engine::movegen::*;
+    use crate::engine::*;
+    #[test]
+    fn from_fen_starting_position() {
+        let position =
+            Position::from_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1").unwrap();
 
-#[test]
-fn from_fen_starting_position() {
-    let position =
-        Position::from_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1").unwrap();
+        assert_eq!(position.get_player(), Color::White);
 
-    assert_eq!(position.get_player(), Color::White);
+        assert_eq!(position.get_piece_at(A1), Some(WHITE_ROOK));
 
-    assert_eq!(position.get_piece_at(A1), Some(WHITE_ROOK));
+        assert_eq!(position.get_piece_at(E1), Some(WHITE_KING));
 
-    assert_eq!(position.get_piece_at(E1), Some(WHITE_KING));
+        assert_eq!(position.get_piece_at(A8), Some(BLACK_ROOK));
 
-    assert_eq!(position.get_piece_at(A8), Some(BLACK_ROOK));
-
-    assert_eq!(position.get_piece_at(E8), Some(BLACK_KING));
+        assert_eq!(position.get_piece_at(E8), Some(BLACK_KING));
+    }
 }

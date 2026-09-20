@@ -1,9 +1,8 @@
 use crate::engine::{
-    chess_move::ChessMove,
-    movegen::{get_moves_by_color, MoveMode},
+    movegen::generate_pseude_legal_moves,
     piece::{self},
     position::Position,
-    Color,
+    Color, Mve,
 };
 
 const QUEEN_FACTOR: f32 = 0.25; // ~2.25 Punkte pro Feld
@@ -14,22 +13,14 @@ const KING_FACTOR: f32 = 0.05; // König-Aktivität ist später wichtig
 const PAWN_FACTOR: f32 = 0.0;
 
 pub fn count_black(position: &Position) -> f32 {
-    get_score(get_moves_by_color(
-        position,
-        Color::Black,
-        MoveMode::PseudoLegal,
-    ))
+    get_score(generate_pseude_legal_moves(position, Color::Black))
 }
 
 pub fn count_white(position: &Position) -> f32 {
-    get_score(get_moves_by_color(
-        position,
-        Color::White,
-        MoveMode::PseudoLegal,
-    ))
+    get_score(generate_pseude_legal_moves(position, Color::White))
 }
 
-fn get_score(chess_moves: Vec<ChessMove>) -> f32 {
+fn get_score(chess_moves: Vec<Mve>) -> f32 {
     let mut score: f32 = 0.0;
     for chess_move in chess_moves {
         let factor = match chess_move.piece.typ {

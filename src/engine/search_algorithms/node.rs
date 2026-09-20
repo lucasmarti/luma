@@ -1,11 +1,10 @@
 use crate::engine::{
-    chess_move::ChessMove,
     evaluation::Evaluation,
-    movegen::get_current_player_moves,
-    movegen::is_check,
+    movegen::{get_current_player_moves, is_check},
     piece::Color,
     position::Position,
     search_algorithms::{cache::Cache, MAX_VALUE, MIN_VALUE},
+    Mve,
 };
 
 pub fn evaluate(position: &Position, cache: &mut Cache) -> f32 {
@@ -28,6 +27,6 @@ pub fn evaluate(position: &Position, cache: &mut Cache) -> f32 {
     }
 }
 
-pub fn get_children(position: &Position) -> Vec<ChessMove> {
+pub fn get_children(position: &Position) -> Vec<Mve> {
     get_current_player_moves(position)
 }

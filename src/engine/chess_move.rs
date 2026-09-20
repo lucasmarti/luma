@@ -3,27 +3,8 @@ use crate::engine::{
         CastlingConfiguration, BLACK_KINGSIDE, BLACK_QUEENSIDE, WHITE_KINGSIDE, WHITE_QUEENSIDE,
     },
     piece::Piece,
-    position::{Mve, Position},
     Square,
 };
-
-#[derive(Clone, Copy, Eq, Hash, PartialEq, Debug)]
-pub struct ChessMove {
-    pub position: Position,
-    pub move_type: MoveType,
-    pub piece: Piece,
-    pub from: Square,
-    pub to: Square,
-    pub capture: Option<Piece>,
-    pub pormotion: Option<Piece>,
-    pub mve: Mve,
-}
-
-impl Into<Mve> for ChessMove {
-    fn into(self) -> Mve {
-        self.mve
-    }
-}
 
 #[derive(Clone, Copy, Eq, Hash, PartialEq, Debug)]
 pub enum MoveType {

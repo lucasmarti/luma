@@ -8,11 +8,11 @@ const KNIGHT_SCORE: u32 = 30;
 const PAWN_SCORE: u32 = 10;
 
 pub fn count_black(position: &Position) -> f32 {
-    count(position, Color::Black) as f32
+    count(position, Color::Black)
 }
 
 pub fn count_white(position: &Position) -> f32 {
-    count(position, Color::White) as f32
+    count(position, Color::White)
 }
 
 fn count(position: &Position, color: Color) -> f32 {

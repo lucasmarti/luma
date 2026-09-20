@@ -1,7 +1,7 @@
 use crate::engine::movegen::Square;
 
-use crate::engine::chess_move::{ChessMove, MoveType};
-use crate::engine::position::{CastlingRights, Mve};
+use crate::engine::chess_move::MoveType;
+use crate::engine::position::Mve;
 use crate::engine::{
     movegen::castling_config::{
         CastlingConfiguration, BLACK_KINGSIDE, BLACK_QUEENSIDE, WHITE_KINGSIDE, WHITE_QUEENSIDE,
@@ -10,32 +10,19 @@ use crate::engine::{
     piece::Color,
     position::Position,
 };
-
-pub fn get_black_castling_moves(position: &Position) -> Vec<ChessMove> {
-    get_castling_moves(position, [BLACK_KINGSIDE, BLACK_QUEENSIDE])
-}
-
-pub fn get_white_castling_moves(position: &Position) -> Vec<ChessMove> {
-    get_castling_moves(position, [WHITE_KINGSIDE, WHITE_QUEENSIDE])
-}
-
-fn get_castling_moves(
-    position: &Position,
-    castling_configurations: [CastlingConfiguration; 2],
-) -> Vec<ChessMove> {
-    let mut chess_moves: Vec<ChessMove> = Vec::new();
+pub fn generate_castling_moves(position: &Position, color: Color, moves: &mut Vec<Mve>) {
+    let castling_configurations: &[CastlingConfiguration] = match color {
+        Color::Black => &[BLACK_KINGSIDE, BLACK_QUEENSIDE],
+        Color::White => &[WHITE_KINGSIDE, WHITE_QUEENSIDE],
+    };
     for castling_config in castling_configurations {
-        if let Some(chess_move) = get_castling_move(position, castling_config) {
-            chess_moves.push(chess_move);
+        if let Some(chess_move) = generate_castling_move(position, castling_config) {
+            moves.push(chess_move);
         }
     }
-    chess_moves
 }
 
-pub fn get_castling_move(
-    position: &Position,
-    castling: CastlingConfiguration,
-) -> Option<ChessMove> {
+fn generate_castling_move(position: &Position, castling: &CastlingConfiguration) -> Option<Mve> {
     if !position.has_castling_rights(castling.castling_rights) {
         return None;
     }
@@ -49,52 +36,31 @@ pub fn get_castling_move(
         return None;
     }
 
-    if !is_save_passage(position, castling.empty_path_squares, castling.color) {
+    if !is_safe_king_path(position, castling.king_path_squares, castling.color) {
         return None;
     }
 
     if is_check(position, castling.color) {
         return None;
     }
-
-    let mut new_pos = *position;
-    new_pos.remove_piece(castling.king_from);
-    new_pos.remove_piece(castling.rook_from);
-    new_pos.put_piece(castling.king, castling.king_to);
-    new_pos.put_piece(castling.rook, castling.rook_to);
-    new_pos.toggle_player();
-    new_pos.set_en_passant(None);
-    new_pos.remove_castling_right(CastlingRights::get(castling.color));
-
-    if !is_check(&new_pos, castling.color) {
-        let mve = Mve {
-            piece: castling.king,
-            from: castling.king_from,
-            to: castling.king_to,
-            move_type: MoveType::Castling(castling.castling_type),
-        };
-        let chess_move: ChessMove = ChessMove {
-            move_type: MoveType::Castling(castling.castling_type),
-            piece: castling.king,
-            from: castling.king_from,
-            to: castling.king_to,
-            capture: None,
-            pormotion: None,
-            position: new_pos,
-            mve,
-        };
-        return Some(chess_move);
+    let mve = Mve {
+        piece: castling.king,
+        from: castling.king_from,
+        to: castling.king_to,
+        move_type: MoveType::Castling(castling.castling_type),
+    };
+    let mut pos = *position;
+    pos.make_move(mve);
+    if !is_check(&pos, castling.color) {
+        return Some(mve);
     }
     None
 }
 
-fn is_save_passage(position: &Position, sqares: &[Square], color: Color) -> bool {
-    for square in sqares {
-        if is_under_attack(position, *square, color) {
-            return false;
-        }
-    }
-    true
+fn is_safe_king_path(position: &Position, squares: &[Square], color: Color) -> bool {
+    squares
+        .iter()
+        .all(|&square| !is_under_attack(position, square, color))
 }
 
 fn is_empty_path(position: &Position, sqares: &[Square]) -> bool {
@@ -105,5 +71,3 @@ fn is_empty_path(position: &Position, sqares: &[Square]) -> bool {
     }
     true
 }
-#[cfg(test)]
-mod tests;

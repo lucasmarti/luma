@@ -2,15 +2,12 @@ mod alpha_beta;
 mod cache;
 mod minimax;
 mod node;
-use std::{
-    sync::Mutex,
-    time::{Duration, Instant},
-};
+use std::sync::Mutex;
 
 use crate::engine::{
-    chess_move::{self, ChessMove},
-    position::{print::Print, Position},
+    position::Position,
     search_algorithms::{alpha_beta::alpha_beta, cache::Cache},
+    Mve,
 };
 lazy_static::lazy_static! {
     pub static ref CALL_COUNT: Mutex<u64> = Mutex::new(0);
@@ -25,28 +22,22 @@ pub enum Player {
     Max,
 }
 
-pub fn search_best_move(position: Position) -> Option<ChessMove> {
+pub fn search_best_move(position: Position) -> Option<Mve> {
     let cache = &mut Cache::new();
     let depth = 2;
-    let mut start = Instant::now();
-    //let tree = build_tree(position, depth);
     let minimx_player = match position.get_player() {
         crate::engine::piece::Color::Black => Player::Min,
         crate::engine::piece::Color::White => Player::Max,
     };
-    let best_move =
-        alpha_beta(&position, minimx_player, MIN_VALUE, MAX_VALUE, depth, cache).best_move;
-    let mut hits = 0;
-    for evaluation in cache.values() {
-        hits += evaluation.hits;
-    }
-    println!("Duration = {:?}", start.elapsed());
-    println!("Cache size = {:?}", cache.len());
-    println!("Number of hits = {:?}", hits);
-    if let Some(chess_move) = best_move {
-        chess_move.position.print_board();
-    }
-    best_move
+    alpha_beta(
+        &mut position.clone(),
+        minimx_player,
+        MIN_VALUE,
+        MAX_VALUE,
+        depth,
+        cache,
+    )
+    .best_move
 }
 
 mod tests;

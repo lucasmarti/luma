@@ -1,5 +1,3 @@
-use std::matches;
-
 use flo_canvas::{Draw, DrawingTarget};
 
 use crate::{

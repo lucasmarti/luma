@@ -2,7 +2,7 @@ use std::cmp::Ordering;
 
 use crate::engine::bitboard::Bitboard;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Square(u32);
 impl Square {
     pub fn new(index: u32) -> Option<Self> {
@@ -25,6 +25,12 @@ impl Square {
     }
     pub fn get_column(&self) -> u32 {
         (self.as_index() % 8) + 1
+    }
+    fn notation(self) -> String {
+        let file = (self.0 % 8) as u8;
+        let rank = (self.0 / 8) + 1;
+
+        return format!("{}{}", (b'A' + file) as char, rank);
     }
 }
 
@@ -68,3 +74,15 @@ pub const RANK_4: Bitboard = Bitboard::new(0x0000_0000_FF00_0000);
 pub const RANK_5: Bitboard = Bitboard::new(0x0000_00FF_0000_0000);
 pub const RANK_7: Bitboard = Bitboard::new(0x00FF_0000_0000_0000);
 pub const RANK_8: Bitboard = Bitboard::new(0xFF00_0000_0000_0000);
+
+impl std::fmt::Display for Square {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(&self.notation())
+    }
+}
+
+impl std::fmt::Debug for Square {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(&self.notation())
+    }
+}

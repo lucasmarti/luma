@@ -1,445 +1,192 @@
+use std::assert_eq;
+
 use crate::engine::{
-    self,
-    movegen::{
-        common::{
-            get_moves_for_bishop_at_square, get_moves_for_king_at_square,
-            get_moves_for_knight_at_square, get_moves_for_queen_at_square,
-            get_moves_for_rook_at_square, progress,
-        },
-        pawn::{en_passant, promote},
-        *,
-    },
-    piece::*,
-    position::{CastlingRights, Position},
+    movegen::{get_current_player_moves, *},
+    MoveType, Position, Square,
 };
+
 #[test]
-fn test_progress_white_king() {
-    let position = Position::default();
-    let new_position = progress(&position, WHITE_KING, E1, E2);
-    assert!(!new_position.position.is_occupied_by_piece(E1, WHITE_KING));
-    assert!(new_position.position.is_occupied_by_piece(E2, WHITE_KING));
+fn test_castling_rights() {
+    // Beispiel: Teste, dass bestimmte Züge in kritischen Positionen erlaubt oder verboten sind
+    MoveTest::new("r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1")
+        .include(&[(E1, G1)]) // Kurze Rochade sollte erlaubt sein (Beispiel je nach deinen Square-Namen)
+        .run();
+}
+
+static KIWIPETE: &str = "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1";
+static STARTPOS: &str = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+static SJE_SYMMETRIC_ALTERNATIVE: &str =
+    "r4rk1/1pp1qppp/p1np1n2/2b1p1B1/2B1P1b1/P1NP1N2/1PP1QPPP/R4RK1 w - - 0 10";
+
+#[test]
+fn kiwipete() {
+    // &[48, 2039, 97862, 4085603, 193690690]
+    PerftTest::new(KIWIPETE).depth(4).expected(4085603).run();
 }
 
 #[test]
-fn test_promotion() {
-    let position = Position::default().with_piece(WHITE_PAWN, A7);
-    let new_position = promote(&position, A7, A8, WHITE_QUEEN);
-    assert!(new_position.position.is_occupied_by_piece(A8, WHITE_QUEEN));
-    assert!(!new_position.position.is_occupied_by_piece(A7, WHITE_PAWN));
+fn startpos() {
+    // &[20, 400, 8902, 197281, 4865609]
+    PerftTest::new(STARTPOS).depth(4).expected(197281).run();
 }
 #[test]
-fn test_en_passant() {
-    let position = Position::default()
-        .with_piece(WHITE_PAWN, D4)
-        .with_piece(BLACK_PAWN, E4);
-
-    let new_position = en_passant(&position, BLACK_PAWN, E4, D3, D4);
-    assert!(!new_position.position.is_occupied_by_piece(D4, WHITE_PAWN));
-    assert!(!new_position.position.is_occupied_by_piece(E4, BLACK_PAWN));
-    assert!(new_position.position.is_occupied_by_piece(D3, BLACK_PAWN));
-}
-// Tests for disallow_castling_if_necessary function
-#[test]
-fn test_disallow_castling_if_necessary_white_king_move() {
-    let mut position = Position::default();
-    position.remove_castling_right(CastlingRights::from(E1));
-    assert!(!position.has_castling_rights(CastlingRights::WHITE_KINGSIDE));
-    assert!(!position.has_castling_rights(CastlingRights::WHITE_QUEENSIDE));
-    // Black castling rights should remain unchanged
-    assert!(position.has_castling_rights(CastlingRights::BLACK_KINGSIDE));
-    assert!(position.has_castling_rights(CastlingRights::BLACK_QUEENSIDE));
+fn sje_symmetric_alternative() {
+    // &[46, 2079, 89890, 3894594]
+    PerftTest::new(SJE_SYMMETRIC_ALTERNATIVE)
+        .depth(4)
+        .expected(3894594)
+        .run();
 }
 
-#[test]
-fn test_disallow_castling_if_necessary_white_kingside_rook_move() {
-    let mut position = Position::default();
-    position.remove_castling_right(CastlingRights::from(H1));
-    assert!(!position.has_castling_rights(CastlingRights::WHITE_KINGSIDE));
-    // White queenside should remain allowed
-    assert!(position.has_castling_rights(CastlingRights::WHITE_QUEENSIDE));
-    // Black castling rights should remain unchanged
-    assert!(position.has_castling_rights(CastlingRights::BLACK_KINGSIDE));
-    assert!(position.has_castling_rights(CastlingRights::BLACK_QUEENSIDE));
-}
-
-#[test]
-fn test_disallow_castling_if_necessary_white_queenside_rook_move() {
-    let mut position = Position::default();
-    position.remove_castling_right(CastlingRights::from(A1));
-
-    assert!(!position.has_castling_rights(CastlingRights::WHITE_QUEENSIDE));
-    // White kingside should remain allowed
-    assert!(position.has_castling_rights(CastlingRights::WHITE_KINGSIDE));
-    // Black castling rights should remain unchanged
-    assert!(position.has_castling_rights(CastlingRights::BLACK_KINGSIDE));
-    assert!(position.has_castling_rights(CastlingRights::BLACK_QUEENSIDE));
-}
-
-#[test]
-fn test_disallow_castling_if_necessary_black_king_move() {
-    let mut position = Position::default();
-    position.remove_castling_right(CastlingRights::from(E8));
-
-    assert!(!position.has_castling_rights(CastlingRights::BLACK_KINGSIDE));
-    assert!(!position.has_castling_rights(CastlingRights::BLACK_QUEENSIDE));
-    // White castling rights should remain unchanged
-    assert!(position.has_castling_rights(CastlingRights::WHITE_KINGSIDE));
-    assert!(position.has_castling_rights(CastlingRights::WHITE_QUEENSIDE));
-}
-
-#[test]
-fn test_disallow_castling_if_necessary_black_kingside_rook_move() {
-    let mut position = Position::default();
-    position.remove_castling_right(CastlingRights::from(H8));
-    assert!(!position.has_castling_rights(CastlingRights::BLACK_KINGSIDE));
-    // Black queenside should remain allowed
-    assert!(position.has_castling_rights(CastlingRights::BLACK_QUEENSIDE));
-    // White castling rights should remain unchanged
-    assert!(position.has_castling_rights(CastlingRights::WHITE_KINGSIDE));
-    assert!(position.has_castling_rights(CastlingRights::WHITE_QUEENSIDE));
-}
-
-#[test]
-fn test_disallow_castling_if_necessary_black_queenside_rook_move() {
-    let mut position = Position::default();
-    position.remove_castling_right(CastlingRights::from(A8));
-
-    assert!(!position.has_castling_rights(CastlingRights::BLACK_QUEENSIDE));
-    // Black kingside should remain allowed
-    assert!(position.has_castling_rights(CastlingRights::BLACK_KINGSIDE));
-    // White castling rights should remain unchanged
-    assert!(position.has_castling_rights(CastlingRights::WHITE_KINGSIDE));
-    assert!(position.has_castling_rights(CastlingRights::WHITE_QUEENSIDE));
-}
-
-#[test]
-fn test_disallow_castling_if_necessary_other_piece_move() {
-    let mut position = Position::default();
-    position.remove_castling_right(CastlingRights::from(D4));
-
-    // Moving a piece from D4 should not affect castling rights
-    assert!(position.has_castling_rights(CastlingRights::WHITE_KINGSIDE));
-    assert!(position.has_castling_rights(CastlingRights::WHITE_QUEENSIDE));
-    assert!(position.has_castling_rights(CastlingRights::BLACK_KINGSIDE));
-    assert!(position.has_castling_rights(CastlingRights::BLACK_QUEENSIDE));
-}
-
-// Integration tests for progress function
-#[test]
-fn test_progress_toggles_player() {
-    let position = Position::default(); // White to move
-    let new_position = engine::movegen::pawn::progress(&position, WHITE_PAWN, E2, E3);
-    assert_eq!(new_position.position.get_player(), Color::Black);
-}
-
-#[test]
-fn test_progress_disallows_castling_for_king_move() {
-    let position = Position::default();
-    let new_position = progress(&position, WHITE_KING, E1, E2);
-    assert!(!new_position
-        .position
-        .has_castling_rights(CastlingRights::WHITE_KINGSIDE));
-    assert!(!new_position
-        .position
-        .has_castling_rights(CastlingRights::WHITE_QUEENSIDE));
-}
-
-#[test]
-fn test_progress_disallows_castling_for_rook_move() {
-    let position = Position::default();
-    let new_position = progress(&position, WHITE_ROOK, H1, H2);
-    assert!(!new_position
-        .position
-        .has_castling_rights(CastlingRights::WHITE_KINGSIDE));
-    // Queenside should still be allowed
-    assert!(new_position
-        .position
-        .has_castling_rights(CastlingRights::WHITE_QUEENSIDE));
-}
-
-#[test]
-fn test_all_moves_from_starting_position() {
-    let position = Position::starting();
-    assert_eq!(
-        get_moves(&position, WHITE_MOVE_CONFIG, MoveMode::Legal).len(),
-        20
-    );
-}
-#[test]
-fn test_position1() {
-    let white = Position::default()
-        .with_piece(WHITE_PAWN, A2)
-        .with_piece(WHITE_PAWN, C3)
-        .with_piece(WHITE_PAWN, C4)
-        .with_piece(WHITE_QUEEN, D3)
-        .with_piece(WHITE_ROOK, F1)
-        .with_piece(WHITE_PAWN, F2)
-        .with_piece(WHITE_KNIGHT, F3)
-        .with_piece(WHITE_KING, G1)
-        .with_piece(WHITE_BISHOP, G2)
-        .with_piece(WHITE_PAWN, G3)
-        .with_piece(WHITE_PAWN, H2);
-    let positions = get_moves(&white, WHITE_MOVE_CONFIG, MoveMode::Legal);
-    assert_eq!(positions.len(), 35);
-    let mut black = Position::default()
-        .with_piece(BLACK_PAWN, A7)
-        .with_piece(BLACK_PAWN, B7)
-        .with_piece(BLACK_PAWN, D6)
-        .with_piece(BLACK_PAWN, F7)
-        .with_piece(BLACK_PAWN, G7)
-        .with_piece(BLACK_PAWN, H6)
-        .with_piece(BLACK_BISHOP, B6)
-        .with_piece(BLACK_ROOK, E4)
-        .with_piece(BLACK_BISHOP, G4)
-        .with_piece(BLACK_QUEEN, G6)
-        .with_piece(BLACK_KING, G8);
-    black.toggle_player();
-    let positions = get_moves(&black, BLACK_MOVE_CONFIG, MoveMode::Legal);
-    assert_eq!(positions.len(), 44);
-    let mut all = Position::default()
-        .with_piece(WHITE_PAWN, A2)
-        .with_piece(WHITE_PAWN, C3)
-        .with_piece(WHITE_PAWN, C4)
-        .with_piece(WHITE_QUEEN, D3)
-        .with_piece(WHITE_ROOK, F1)
-        .with_piece(WHITE_PAWN, F2)
-        .with_piece(WHITE_KNIGHT, F3)
-        .with_piece(WHITE_KING, G1)
-        .with_piece(WHITE_BISHOP, G2)
-        .with_piece(WHITE_PAWN, G3)
-        .with_piece(WHITE_PAWN, H2)
-        .with_piece(BLACK_PAWN, A7)
-        .with_piece(BLACK_PAWN, B7)
-        .with_piece(BLACK_PAWN, D6)
-        .with_piece(BLACK_PAWN, F7)
-        .with_piece(BLACK_PAWN, G7)
-        .with_piece(BLACK_PAWN, H6)
-        .with_piece(BLACK_BISHOP, B6)
-        .with_piece(BLACK_ROOK, E4)
-        .with_piece(BLACK_BISHOP, G4)
-        .with_piece(BLACK_QUEEN, G6)
-        .with_piece(BLACK_KING, G8);
-
-    assert_eq!(
-        get_moves(&all, WHITE_MOVE_CONFIG, MoveMode::Legal).len(),
-        29
-    );
-    all.toggle_player();
-    assert_eq!(
-        get_moves(&all, BLACK_MOVE_CONFIG, MoveMode::Legal).len(),
-        39
+fn assert_move_exists(moves: &[Mve], from: Square, to: Square, fen: &str) {
+    assert!(
+        moves.iter().any(|m| m.from == from && m.to == to),
+        "Expected move {from} -> {to} for FEN {fen}"
     );
 }
 
-#[test]
-fn test_bishop_white_moves() {
-    let position = Position::default().with_piece(WHITE_BISHOP, G4);
-    let positions = get_moves_for_bishop_at_square(&position, WHITE_BISHOP, G4);
-    assert_eq!(positions.len(), 9);
-    let mut left_up = false;
-    let mut left_down = false;
-    let mut right_up = false;
-    let mut right_down = false;
-    let mut not_valid = false;
+fn assert_move_missing(moves: &[Mve], from: Square, to: Square, fen: &str) {
+    assert!(
+        !moves.iter().any(|m| m.from == from && m.to == to),
+        "Unexpected move {from} -> {to} for FEN {fen}"
+    );
+}
 
-    for position in positions {
-        if position.position.is_occupied_by_piece(F5, WHITE_BISHOP) {
-            left_up = true;
-        }
-        if position.position.is_occupied_by_piece(F3, WHITE_BISHOP) {
-            left_down = true;
-        }
-        if position.position.is_occupied_by_piece(H5, WHITE_BISHOP) {
-            right_up = true;
-        }
-        if position.position.is_occupied_by_piece(H3, WHITE_BISHOP) {
-            right_down = true;
-        }
-        if position.position.is_occupied_by_piece(B2, WHITE_BISHOP) {
-            not_valid = true;
+const fn mv(piece: Piece, from: Square, to: Square, move_type: MoveType) -> Mve {
+    Mve {
+        piece,
+        from,
+        to,
+        move_type,
+    }
+}
+
+#[derive(Debug, Default)]
+struct MoveTest {
+    fen: &'static str,
+    include: &'static [(Square, Square)],
+    exclude: &'static [(Square, Square)],
+    expected: &'static [(Square, Square)],
+}
+
+impl MoveTest {
+    fn new(fen: &'static str) -> Self {
+        Self {
+            fen,
+            ..Default::default()
         }
     }
 
-    assert!(left_up);
-    assert!(left_down);
-    assert!(right_up);
-    assert!(right_down);
-    assert!(!not_valid);
+    fn include(mut self, moves: &'static [(Square, Square)]) -> Self {
+        self.include = moves;
+        self
+    }
+
+    fn exclude(mut self, moves: &'static [(Square, Square)]) -> Self {
+        self.exclude = moves;
+        self
+    }
+
+    fn expected(mut self, moves: &'static [(Square, Square)]) -> Self {
+        self.expected = moves;
+        self
+    }
+
+    fn run(self) {
+        let position = Position::from_fen(self.fen).unwrap();
+        let moves = get_current_player_moves(&position);
+
+        // Moves that must exist
+        for &(from, to) in self.include {
+            assert_move_exists(&moves, from, to, self.fen);
+        }
+
+        // Moves that must not exist
+        for &(from, to) in self.exclude {
+            assert_move_missing(&moves, from, to, self.fen);
+        }
+
+        // Exact move list
+        if !self.expected.is_empty() {
+            assert_eq!(
+                moves.len(),
+                self.expected.len(),
+                "Wrong number of moves for FEN {}",
+                self.fen
+            );
+
+            for (expected_from, expected_to) in self.expected {
+                assert!(
+                    moves
+                        .iter()
+                        .any(|mve| mve.from == *expected_from && mve.to == *expected_to),
+                    "Missing move (from: {:?}, to: {:?}) for FEN {}",
+                    expected_from,
+                    expected_to,
+                    self.fen
+                );
+            }
+        }
+    }
 }
-#[test]
-fn test_king_black_moves() {
-    let position: Position = Position::starting();
-    assert!(get_moves_for_king_at_square(&position, BLACK_KING, D8).len() == 0);
-    assert!(get_moves_for_king_at_square(&position, BLACK_KING, D3).len() == 8);
-    assert!(get_moves_for_king_at_square(&position, BLACK_KING, F6).len() == 5);
-    assert!(get_moves_for_king_at_square(&position, BLACK_KING, H6).len() == 3);
+
+#[derive(Debug, Default)]
+struct PerftTest {
+    fen: &'static str,
+    expected: u64,
+    depth: usize,
 }
 
-#[test]
-fn test_king_white_moves() {
-    let position: Position = Position::starting();
-
-    assert!(get_moves_for_king_at_square(&position, WHITE_KING, D8).len() == 5);
-    assert!(get_moves_for_king_at_square(&position, WHITE_KING, D3).len() == 5);
-    assert!(get_moves_for_king_at_square(&position, WHITE_KING, F2).len() == 3);
-    assert!(get_moves_for_king_at_square(&position, WHITE_KING, H6).len() == 5);
-}
-
-#[test]
-fn test_knight_moves() {
-    let mut position = Position::default();
-    position = position
-        .with_piece(WHITE_KNIGHT, E4)
-        .with_piece(WHITE_PAWN, C5)
-        .with_piece(BLACK_PAWN, G2);
-
-    let positions = get_moves_for_knight_at_square(&position, WHITE_KNIGHT, E4);
-
-    let mut found_c3 = false;
-    let mut found_d6 = false;
-    let mut found_f6 = false;
-    let mut found_d2 = false;
-    let mut found_f2 = false;
-    let mut found_g3 = false;
-    let mut found_g5 = false;
-    let mut found_not_c5 = true;
-
-    println!("{:?}", positions.len());
-    for position in positions {
-        if position.position.is_occupied_by_piece(C3, WHITE_KNIGHT) {
-            found_c3 = true;
-        }
-        if position.position.is_occupied_by_piece(D6, WHITE_KNIGHT) {
-            found_d6 = true;
-        }
-        if position.position.is_occupied_by_piece(F6, WHITE_KNIGHT) {
-            found_f6 = true;
-        }
-        if position.position.is_occupied_by_piece(D2, WHITE_KNIGHT) {
-            found_d2 = true;
-        }
-        if position.position.is_occupied_by_piece(F2, WHITE_KNIGHT) {
-            found_f2 = true;
-        }
-        if position.position.is_occupied_by_piece(G3, WHITE_KNIGHT) {
-            found_g3 = true;
-        }
-        if position.position.is_occupied_by_piece(G5, WHITE_KNIGHT) {
-            found_g5 = true;
-        }
-        if position.position.is_occupied_by_piece(C5, WHITE_KNIGHT) {
-            found_not_c5 = false;
+impl PerftTest {
+    fn new(fen: &'static str) -> Self {
+        Self {
+            fen,
+            ..Default::default()
         }
     }
 
-    assert!(found_c3);
-    assert!(found_d6);
-    assert!(found_f6);
-    assert!(found_d2);
-    assert!(found_f2);
-    assert!(found_g3);
-    assert!(found_g5);
-    assert!(found_not_c5);
-}
-#[test]
-fn test_queen_white_moves() {
-    let positions = get_moves_for_queen_at_square(&Position::default(), WHITE_QUEEN, G4);
-    assert!(positions.len() == 23);
-
-    let mut found_up = false;
-    let mut found_down = false;
-    let mut found_left = false;
-    let mut found_right = false;
-    let mut found_not = true;
-    let mut found_left_up = false;
-    let mut found_left_down = false;
-    let mut found_right_up = false;
-    let mut found_right_down = false;
-
-    for position in positions {
-        if position.position.is_occupied_by_piece(G3, WHITE_QUEEN) {
-            found_down = true;
-        }
-        if position.position.is_occupied_by_piece(G8, WHITE_QUEEN) {
-            found_up = true;
-        }
-        if position.position.is_occupied_by_piece(A4, WHITE_QUEEN) {
-            found_left = true;
-        }
-        if position.position.is_occupied_by_piece(H4, WHITE_QUEEN) {
-            found_right = true;
-        }
-        if position.position.is_occupied_by_piece(B2, WHITE_QUEEN) {
-            found_not = false;
-        }
-        if position.position.is_occupied_by_piece(F5, WHITE_QUEEN) {
-            found_left_up = true;
-        }
-        if position.position.is_occupied_by_piece(F3, WHITE_QUEEN) {
-            found_left_down = true;
-        }
-        if position.position.is_occupied_by_piece(H5, WHITE_QUEEN) {
-            found_right_up = true;
-        }
-        if position.position.is_occupied_by_piece(H3, WHITE_QUEEN) {
-            found_right_down = true;
-        }
+    fn expected(mut self, expected: u64) -> Self {
+        self.expected = expected;
+        self
     }
-    // down
-    assert!(found_down);
-    // up
-    assert!(found_up);
-    // left
-    assert!(found_left);
-    // right
-    assert!(found_right);
-    // not
-    assert!(found_not);
-    // left up
-    assert!(found_left_up);
-    // left down
-    assert!(found_left_down);
-    // right up
-    assert!(found_right_up);
-    // right down
-    assert!(found_right_down);
-}
-#[test]
-fn test_rook_white_moves() {
-    let positions = get_moves_for_rook_at_square(&Position::default(), BLACK_ROOK, G4);
 
-    assert!(positions.len() == 14);
-    let mut found_up = false;
-    let mut found_down = false;
-    let mut found_left = false;
-    let mut found_right = false;
-    let mut found_not = true;
-
-    for position in positions {
-        if position.position.is_occupied_by_piece(G3, BLACK_ROOK) {
-            found_down = true;
-        }
-        if position.position.is_occupied_by_piece(G8, BLACK_ROOK) {
-            found_up = true;
-        }
-        if position.position.is_occupied_by_piece(A4, BLACK_ROOK) {
-            found_left = true;
-        }
-        if position.position.is_occupied_by_piece(H4, BLACK_ROOK) {
-            found_right = true;
-        }
-        if position.position.is_occupied_by_piece(B2, BLACK_ROOK) {
-            found_not = false;
-        }
+    fn depth(mut self, depth: usize) -> Self {
+        self.depth = depth;
+        self
     }
-    // down
-    assert!(found_down);
-    // up
-    assert!(found_up);
-    // left
-    assert!(found_left);
-    // right
-    assert!(found_right);
-    // not
-    assert!(found_not);
+
+    fn run(self) {
+        let mut position = Position::from_fen(self.fen).unwrap();
+        let calculated = perft(&mut position, self.depth);
+
+        println!(
+            "Depth {}: calculated = {}, expected = {}",
+            self.depth, calculated, self.expected
+        );
+        assert_eq!(
+            calculated as u64, self.expected,
+            "Perft mismatch at depth {} for FEN: {}",
+            self.depth, self.fen
+        );
+    }
+}
+
+fn perft(position: &mut Position, depth: usize) -> usize {
+    if depth == 0 {
+        return 1;
+    }
+
+    let moves = get_current_player_moves(position);
+
+    if depth == 1 {
+        return moves.len();
+    }
+
+    let mut total_nodes = 0;
+    for mve in moves {
+        let undo = position.make_move(mve);
+        total_nodes += perft(position, depth - 1);
+        position.unmake(mve, undo);
+    }
+    total_nodes
 }

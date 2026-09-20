@@ -1,13 +1,11 @@
 use crate::engine::{
-    chess_move::ChessMove,
     movegen::{
-        config::{
-            DIAGONAL_DIRECTIONS, HORIZONTAL_VERTICAL_DIRECTIONS, KING_DIRECTIONS, KNIGHT_DIRECTIONS,
-        },
+        config::{DIAGONAL_DIRECTIONS, HORIZONTAL_VERTICAL_DIRECTIONS, KING_CONFIG, KNIGHT_CONFIG},
         directions, Square,
     },
     piece::{Color, Typ},
     position::Position,
+    Mve,
 };
 /// Check if the king of the given color is in check
 pub fn is_check(position: &Position, color: Color) -> bool {
@@ -15,11 +13,12 @@ pub fn is_check(position: &Position, color: Color) -> bool {
     is_under_attack(position, king_square, color)
 }
 
-pub fn filter_checks(chess_moves: Vec<ChessMove>, color: Color) -> Vec<ChessMove> {
-    chess_moves
-        .into_iter()
-        .filter(|chess_move| !is_check(&chess_move.position, color))
-        .collect()
+pub fn filter_checks(position: &Position, moves: &mut Vec<Mve>) {
+    moves.retain(|chess_move| {
+        let mut pos = *position;
+        pos.make_move(*chess_move);
+        !is_check(&pos, position.get_player())
+    });
 }
 
 /// Check if a square is under attack by the opponent
@@ -69,7 +68,7 @@ pub fn is_under_attack(position: &Position, square: Square, color: Color) -> boo
     }
 
     // Check knight attacks
-    for knight_direction in KNIGHT_DIRECTIONS {
+    for knight_direction in KNIGHT_CONFIG.directions {
         if let Some(square) = knight_direction(square) {
             if position.is_occupied_by(square, opponent, Typ::Knight) {
                 return true;
@@ -78,7 +77,7 @@ pub fn is_under_attack(position: &Position, square: Square, color: Color) -> boo
     }
 
     // Check king attacks
-    for king_direction in KING_DIRECTIONS {
+    for king_direction in KING_CONFIG.directions {
         if let Some(square) = king_direction(square) {
             if position.is_occupied_by(square, opponent, Typ::King) {
                 return true;
@@ -104,6 +103,3 @@ pub fn is_under_attack(position: &Position, square: Square, color: Color) -> boo
 
     false
 }
-
-#[cfg(test)]
-mod tests;

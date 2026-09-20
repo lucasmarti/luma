@@ -1,22 +1,20 @@
-use std::assert_eq;
-
 use crate::engine::{
-    chess_move::{self, ChessMove},
     position::Position,
     search_algorithms::{
         cache::Cache,
         node::{evaluate, get_children},
         Player, MAX_VALUE, MIN_VALUE,
     },
+    Mve,
 };
 
 pub struct AlphaBetaResult {
     pub value: f32,
     pub leaf: Option<Position>,
-    pub best_move: Option<ChessMove>,
+    pub best_move: Option<Mve>,
 }
 pub fn alpha_beta(
-    position: &Position,
+    position: &mut Position,
     player: Player,
     mut alpha: f32,
     mut beta: f32,
@@ -34,14 +32,16 @@ pub fn alpha_beta(
         match player {
             Player::Max => {
                 let mut max_value = MIN_VALUE;
-                let mut max_move: Option<ChessMove> = None;
+                let mut max_move: Option<Mve> = None;
                 let mut leaf: Option<Position> = None;
-                for child in children {
+                for mve in children {
+                    let undo = position.make_move(mve);
                     let alpha_beta_result =
-                        alpha_beta(&child.position, Player::Min, alpha, beta, depth - 1, cache);
+                        alpha_beta(position, Player::Min, alpha, beta, depth - 1, cache);
+                    position.unmake(mve, undo);
                     if alpha_beta_result.value > max_value {
                         max_value = alpha_beta_result.value;
-                        max_move = Some(child);
+                        max_move = Some(mve);
                         leaf = alpha_beta_result.leaf;
                     }
                     alpha = max(alpha, max_value);
@@ -57,14 +57,16 @@ pub fn alpha_beta(
             }
             Player::Min => {
                 let mut min_value = MAX_VALUE;
-                let mut min_move: Option<ChessMove> = None;
+                let mut min_move: Option<Mve> = None;
                 let mut leaf: Option<Position> = None;
-                for child in children {
+                for mve in children {
+                    let undo = position.make_move(mve);
                     let alpha_beta_result =
-                        alpha_beta(&child.position, Player::Max, alpha, beta, depth - 1, cache);
+                        alpha_beta(position, Player::Max, alpha, beta, depth - 1, cache);
+                    position.unmake(mve, undo);
                     if alpha_beta_result.value < min_value {
                         min_value = alpha_beta_result.value;
-                        min_move = Some(child);
+                        min_move = Some(mve);
                         leaf = alpha_beta_result.leaf;
                     }
                     beta = min(beta, min_value);
